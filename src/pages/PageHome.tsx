@@ -3,7 +3,7 @@ import { BoltIcon } from '@heroicons/react/24/solid';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navbar/Navigation';
 
-const HomePage = () => {
+const PageHome = () => {
   return (
     <>
       <Navigation child={<Outlet />} />
@@ -11,4 +11,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default PageHome;
