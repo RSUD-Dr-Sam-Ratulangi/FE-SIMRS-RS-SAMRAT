@@ -13,6 +13,9 @@ const Navigation = (props: TypeNavigation) => {
           <img src={logo} alt="logo" className="mb-5" />
           <div className="flex flex-col gap-3 flex-2 text-slate-600"></div>
         </div>
+        <div className={`h-full overflow-auto w-[85%] fixed right-0`}>
+          <div className="p-3">{props.child}</div>
+        </div>
       </div>
     </div>
   );
