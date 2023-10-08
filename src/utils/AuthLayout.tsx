@@ -24,7 +24,7 @@ const AuthLayout: React.FC = () => {
           </div>
           <hr className='stroke-[rgba(224, 225, 226, 0.00)]' />
           {/* Navbar Links */}
-          <Navbar activeLink={activeLink} setActiveLink={setActiveLink} />
+          <Navbar />
           {/* Logout Button */}
           <div className='mt-auto p-4'>
             <button className='flex items-center gap-3 text-lg text-red-500'>
