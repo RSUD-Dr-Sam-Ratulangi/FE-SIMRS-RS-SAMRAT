@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { HomeModernIcon, BuildingOfficeIcon, HomeIcon, UsersIcon } from '@heroicons/react/24/solid'
 
@@ -16,6 +16,11 @@ const navLinks = [
 ]
 
 const Navbar: React.FC<NavbarProps> = ({ activeLink, setActiveLink }) => {
+  useEffect(() => {
+    setActiveLink(window.location.pathname)
+    console.log('Navbar rendered')
+  }, [])
+
   return (
     <div className='flex flex-col gap-4 flex-2 text-slate-600'>
       {navLinks.map((linkItem) => (
