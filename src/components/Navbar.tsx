@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { HiMiniHomeModern, HiMiniBuildingOffice, HiMiniHome } from 'react-icons/hi2'
+import { HomeModernIcon, BuildingOfficeIcon, HomeIcon, UsersIcon } from '@heroicons/react/24/solid'
 
 interface NavbarProps {
   activeLink: string
@@ -9,9 +9,10 @@ interface NavbarProps {
 
 // Define an array of navigation links and their corresponding icons
 const navLinks = [
-  { to: '/dashboard', text: 'Dasbor', icon: <HiMiniHome /> },
-  { to: '/rawat-jalan', text: 'Rawat Jalan', icon: <HiMiniHomeModern /> },
-  { to: '/rawat-inap', text: 'Rawat Inap', icon: <HiMiniBuildingOffice /> },
+  { to: '/dashboard', text: 'Dasbor', icon: <HomeIcon className='w-6' /> },
+  { to: '/rawat-jalan', text: 'Rawat Jalan', icon: <HomeModernIcon className='w-6' /> },
+  { to: '/rawat-inap', text: 'Rawat Inap', icon: <BuildingOfficeIcon className='w-6' /> },
+  { to: '/pasien', text: 'Pasien', icon: <UsersIcon className='w-6' /> },
 ]
 
 const Navbar: React.FC<NavbarProps> = ({ activeLink, setActiveLink }) => {

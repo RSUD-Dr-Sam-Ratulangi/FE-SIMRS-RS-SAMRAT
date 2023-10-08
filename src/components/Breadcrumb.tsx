@@ -1,14 +1,17 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { ROUTES, ROUTES_NAME } from '../routes'
 
 const Breadcrumb: React.FC = () => {
   const { pathname } = useLocation()
 
-  const pathnameEnum = {
-    '/dashboard': 'Dashboard',
-    '/rawat-jalan': 'Rawat Jalan',
-    '/rawat-inap': 'Rawat Inap',
-  }
+  const pathnameEnum = Object.keys(ROUTES).reduce(
+    (acc, key) => {
+      acc[ROUTES[key]] = ROUTES_NAME[ROUTES[key]]
+      return acc
+    },
+    {} as Record<string, string>,
+  )
 
   const pathParts = pathname.split('/').filter((part) => part !== '') // Split the pathname into parts
 

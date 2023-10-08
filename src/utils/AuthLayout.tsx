@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useOutlet } from 'react-router-dom'
 import Navbar from '../components/Navbar' // Import the Navbar component
 import DashboardLayout from './DashboardLayout' // Import the DashboardLayout component
-import { HiLogout } from 'react-icons/hi'
+import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/solid'
 
 const AuthLayout: React.FC = () => {
   const outlet = useOutlet()
@@ -28,7 +28,7 @@ const AuthLayout: React.FC = () => {
           {/* Logout Button */}
           <div className='mt-auto p-4'>
             <button className='flex items-center gap-3 text-lg text-red-500'>
-              <HiLogout />
+              <ArrowLeftOnRectangleIcon className='w-6' />
               <span className='font-bold'>Keluar</span>
             </button>
           </div>
