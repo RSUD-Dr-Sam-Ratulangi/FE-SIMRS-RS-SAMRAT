@@ -58,6 +58,6 @@ module.exports = {
   },
   plugins: [require('daisyui')],
   daisyui: {
-    themes: ['light', 'emerald', 'cupcake'],
+    themes: ['light', 'autumn'],
   },
 }
