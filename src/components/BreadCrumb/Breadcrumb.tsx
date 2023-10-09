@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ROUTES, ROUTES_NAME } from '../routes'
+import { ROUTES, ROUTES_NAME } from '../../routes'
 
 const Breadcrumb: React.FC = () => {
   const { pathname } = useLocation()

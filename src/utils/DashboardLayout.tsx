@@ -1,5 +1,5 @@
 import React from 'react'
-import Breadcrumb from '../components/Breadcrumb' // Import the Breadcrumb component
+import Breadcrumb from '../components/BreadCrumb/Breadcrumb' // Import the Breadcrumb component
 
 interface DashboardLayoutProps {
   activeLink: string

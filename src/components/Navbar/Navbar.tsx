@@ -1,5 +1,5 @@
 import React from 'react'
-import { ROUTES, ROUTES_NAME } from '../routes'
+import { ROUTES, ROUTES_NAME } from '../../routes'
 import { NavLink } from 'react-router-dom'
 import { HomeModernIcon, BuildingOfficeIcon, HomeIcon, UsersIcon } from '@heroicons/react/24/solid'
 

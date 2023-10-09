@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useOutlet } from 'react-router-dom'
-import Navbar from '../components/Navbar' // Import the Navbar component
+import Navbar from '../components/Navbar/Navbar' // Import the Navbar component
 import DashboardLayout from './DashboardLayout' // Import the DashboardLayout component
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/solid'
 
