@@ -10,22 +10,12 @@ import {
   FunnelIcon,
 } from '@heroicons/react/24/solid'
 
-export type DataItem = {
-  id: number
-  title: string
-  description: string
-  price: number
-  discountPercentage: number
-  rating: number
-  stock: number
-  brand: string
-  category: string
-  thumbnail: string
-  images: string[]
+type templateObject = {
+  [key: string]: any
 }
 
 type Props = {
-  data: DataItem[]
+  data: templateObject
   columns: any[]
 }
 

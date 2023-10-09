@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import TableData, { DataItem } from '../../components/Table/Table'
+import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
 
 export default function PageRawatJalan() {
@@ -17,6 +17,20 @@ export default function PageRawatJalan() {
     }
     fetchData()
   }, [])
+
+  type DataItem = {
+    id: number
+    title: string
+    description: string
+    price: number
+    discountPercentage: number
+    rating: number
+    stock: number
+    brand: string
+    category: string
+    thumbnail: string
+    images: string[]
+  }
 
   const columns = [
     { name: 'ID', selector: (row: DataItem) => row.id, sortable: true },
