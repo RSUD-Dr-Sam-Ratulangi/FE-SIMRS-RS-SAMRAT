@@ -1,6 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import PageError from './pages/PageError'
-import PageDashboard from './pages/PageDahsboard/PageDashboard'
+import PageDashboard from './pages/PageDashboard/PageDashboard'
 import PageRawatInap from './pages/PageRawatInap/PageRawatInap'
 import PageRawatJalan from './pages/PageRawatJalan/PageRawatJalan'
 import PagePasien from './pages/PagePasien/PagePasien'
