@@ -1,18 +1,18 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import PageHome from './pages/PageHome';
-import PageError from './pages/PageError';
-import PageDashboard from './pages/PageDahsboard/PageDashboard';
-import PageRawatInap from './pages/PageRawatInap/PageRawatInap';
-import PageRawatJalan from './pages/PageRawatJalan/PageRawatJalan';
-import PagePasien from './pages/PagePasien/PagePasien';
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import PageHome from "./pages/PageHome";
+import PageError from "./pages/PageError";
+import PageDashboard from "./pages/PageDahsboard/PageDashboard";
+import PageRawatInap from "./pages/PageRawatInap/PageRawatInap";
+import PageRawatJalan from "./pages/PageRawatJalan/PageRawatJalan";
+import PagePasien from "./pages/PagePasien/PagePasien";
 
 export const ROUTES = {
-  HOME: '/',
-  PAGE_404: '*',
-  PAGE_RAWAT_INAP: '/rawat-inap',
-  PAGE_RAWAT_JALAN: '/rawat-jalan',
-  PAGE_DASHBOARD: '/dashboard',
-  PAGE_PASIEN: '/pasien'
+  HOME: "/",
+  PAGE_404: "*",
+  PAGE_RAWAT_INAP: "/rawat-inap",
+  PAGE_RAWAT_JALAN: "/rawat-jalan",
+  PAGE_DASHBOARD: "/dashboard",
+  PAGE_PASIEN: "/pasien",
 };
 
 export const routerList = [
@@ -35,12 +35,12 @@ export const routerList = [
       },
       {
         path: ROUTES.PAGE_RAWAT_JALAN,
-        element: <PageRawatJalan />
+        element: <PageRawatJalan />,
       },
       {
         path: ROUTES.PAGE_PASIEN,
-        element: <PagePasien />
-      }
+        element: <PagePasien />,
+      },
     ],
   },
 
