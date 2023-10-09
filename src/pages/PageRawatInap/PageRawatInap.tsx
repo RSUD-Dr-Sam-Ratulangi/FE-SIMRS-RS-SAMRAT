@@ -1,12 +1,5 @@
-import BreadCrumb from "../../components/BreadCrumbs/BreadCrumbs";
+import React from 'react'
 
-
-const PageRawatInap = () => {
-  return (
-    <div>
-      <h1 className="text">Page Rawat Inap</h1>
-    </div>
-  );
-};
-
-export default PageRawatInap;
+export default function PageRawatInap() {
+  return <div>PageRawatInap</div>
+}

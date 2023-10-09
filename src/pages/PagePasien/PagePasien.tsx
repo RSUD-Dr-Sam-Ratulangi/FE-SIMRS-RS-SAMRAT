@@ -1,11 +1,5 @@
+import React from 'react'
 
-const PagePasien = () => {
-    return (
-        <div>
-            <p>Page Pasien</p>
-        </div>
-    )
+export default function PagePasien() {
+  return <div>PagePasien</div>
 }
-
-
-export default PagePasien;

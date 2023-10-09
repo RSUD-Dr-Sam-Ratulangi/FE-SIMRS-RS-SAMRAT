@@ -1,24 +1,40 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import PageHome from "./pages/PageHome";
-import PageError from "./pages/PageError";
-import PageDashboard from "./pages/PageDahsboard/PageDashboard";
-import PageRawatInap from "./pages/PageRawatInap/PageRawatInap";
-import PageRawatJalan from "./pages/PageRawatJalan/PageRawatJalan";
-import PagePasien from "./pages/PagePasien/PagePasien";
+import { createBrowserRouter, Navigate } from 'react-router-dom'
+import PageError from './pages/PageError'
+import PageDashboard from './pages/PageDahsboard/PageDashboard'
+import PageRawatInap from './pages/PageRawatInap/PageRawatInap'
+import PageRawatJalan from './pages/PageRawatJalan/PageRawatJalan'
+import PagePasien from './pages/PagePasien/PagePasien'
+import AuthLayout from './utils/AuthLayout'
+import PageLogin from './pages/PageLogin/PageLogin'
 
 export const ROUTES = {
-  HOME: "/",
-  PAGE_404: "*",
-  PAGE_RAWAT_INAP: "/rawat-inap",
-  PAGE_RAWAT_JALAN: "/rawat-jalan",
-  PAGE_DASHBOARD: "/dashboard",
-  PAGE_PASIEN: "/pasien",
-};
+  HOME: '/',
+  PAGE_404: '*',
+  PAGE_LOGIN: '/login',
+  PAGE_DASHBOARD: '/dashboard',
+  PAGE_RAWAT_INAP: '/rawat-inap',
+  PAGE_RAWAT_JALAN: '/rawat-jalan',
+  PAGE_PASIEN: '/pasien',
+}
+
+export const ROUTES_NAME = {
+  [ROUTES.HOME]: 'Home',
+  [ROUTES.PAGE_LOGIN]: 'Login',
+  [ROUTES.PAGE_404]: 'Page 404',
+  [ROUTES.PAGE_DASHBOARD]: 'Dashboard',
+  [ROUTES.PAGE_RAWAT_INAP]: 'Rawat Inap',
+  [ROUTES.PAGE_RAWAT_JALAN]: 'Rawat Jalan',
+  [ROUTES.PAGE_PASIEN]: 'Pasien',
+}
 
 export const routerList = [
   {
+    path: ROUTES.PAGE_LOGIN,
+    element: <PageLogin />,
+  },
+  {
     path: ROUTES.HOME,
-    element: <PageHome />,
+    element: <AuthLayout />,
     errorElement: <PageError />,
     children: [
       {
@@ -48,6 +64,6 @@ export const routerList = [
     path: ROUTES.PAGE_404,
     element: <PageError />,
   },
-];
+]
 
-export const router = createBrowserRouter(routerList);
+export const router = createBrowserRouter(routerList)
