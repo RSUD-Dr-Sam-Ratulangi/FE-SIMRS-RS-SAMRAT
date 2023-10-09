@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import TableData, { DataItem } from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
-import BreadCrumb from '../../components/BreadCrumb/Breadcrumb'
-import { MagnifyingGlassIcon, ChevronDownIcon, FunnelIcon } from '@heroicons/react/24/solid'
 
 export default function PageRawatJalan() {
   const [data, setData] = useState()

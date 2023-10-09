@@ -1,6 +1,5 @@
 import DataTable from 'react-data-table-component'
-import { tableCustomStyles } from './TableCustomStyle'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
