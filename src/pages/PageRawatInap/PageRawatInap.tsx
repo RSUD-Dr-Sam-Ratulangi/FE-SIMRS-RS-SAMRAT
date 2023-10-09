@@ -5,6 +5,10 @@ import { api } from '../../services/api/config.api'
 export default function PageRawatInap() {
   const [data, setData] = useState()
 
+  function handleEdit() {
+    window.open('/rawat-inap/rme/1', '_blank')
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -67,6 +71,15 @@ export default function PageRawatInap() {
     },
     { name: 'Email', selector: (row: DataItem) => row.email, sortable: true },
     { name: 'Birth Date', selector: (row: DataItem) => row.birthDate, sortable: true },
+    // make button to edit and redirect
+    {
+      name: '',
+      selector: () => (
+        <button className='btn btn-xs btn-ghost' onClick={handleEdit}>
+          Edit
+        </button>
+      ),
+    },
   ]
   return (
     <div>
