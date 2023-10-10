@@ -6,6 +6,7 @@ import PageRawatJalan from './pages/PageRawatJalan/PageRawatJalan'
 import PagePasien from './pages/PagePasien/PagePasien'
 import AuthLayout from './utils/AuthLayout'
 import PageLogin from './pages/PageLogin/PageLogin'
+import PageRanapRME from './pages/PageRanapRME/PageRanapRME'
 
 export const ROUTES = {
   HOME: '/',
@@ -15,6 +16,7 @@ export const ROUTES = {
   PAGE_RAWAT_INAP: '/rawat-inap',
   PAGE_RAWAT_JALAN: '/rawat-jalan',
   PAGE_PASIEN: '/pasien',
+  PAGE_RANAP_RME: '/rawat-inap/rme/:id',
 }
 
 export const ROUTES_NAME = {
@@ -25,6 +27,7 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_RAWAT_INAP]: 'Rawat Inap',
   [ROUTES.PAGE_RAWAT_JALAN]: 'Rawat Jalan',
   [ROUTES.PAGE_PASIEN]: 'Pasien',
+  [ROUTES.PAGE_RANAP_RME]: 'Ranap RME',
 }
 
 export const routerList = [
@@ -48,6 +51,10 @@ export const routerList = [
       {
         path: ROUTES.PAGE_RAWAT_INAP,
         element: <PageRawatInap />,
+      },
+      {
+        path: ROUTES.PAGE_RANAP_RME,
+        element: <PageRanapRME />,
       },
       {
         path: ROUTES.PAGE_RAWAT_JALAN,
