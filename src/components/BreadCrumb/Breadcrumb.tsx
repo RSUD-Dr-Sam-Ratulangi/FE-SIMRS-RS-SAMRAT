@@ -5,31 +5,30 @@ import { ROUTES, ROUTES_NAME } from '../../routes'
 const Breadcrumb: React.FC = () => {
   const { pathname } = useLocation()
 
-  const pathnameEnum = Object.keys(ROUTES).reduce(
-    (acc, key) => {
-      acc[ROUTES[key]] = ROUTES_NAME[ROUTES[key]]
-      return acc
-    },
-    {} as Record<string, string>,
-  )
-
-  const pathParts = pathname.split('/').filter((part) => part !== '') // Split the pathname into parts
+  // Split the current pathname into parts
+  const pathParts = pathname.split('/').filter((part) => part !== '')
 
   return (
     <div className='text-sm breadcrumbs'>
       <ul>
         <li>
-          <Link to='/'>Pages</Link>
+          <Link to={ROUTES.HOME}>Home</Link>
         </li>
-        {pathParts.map((part, index) => (
-          <li key={index}>
-            <Link to={`/${pathParts.slice(0, index + 1).join('/')}`}>
-              {pathnameEnum[`/${part}`]}
-            </Link>
-          </li>
-        ))}
+        {pathParts.map((part, index) => {
+          // Generate the path up to the current part
+          const pathSlice = `/${pathParts.slice(0, index + 1).join('/')}`
+
+          // Use ROUTES_NAME to get the breadcrumb name
+          const breadcrumbName = ROUTES_NAME[pathSlice] || part
+
+          return (
+            <li key={index}>
+              <Link to={pathSlice}>{breadcrumbName}</Link>
+            </li>
+          )
+        })}
       </ul>
-      <b className='text-xl'>{pathnameEnum[pathname]}</b>
+      <b className='text-xl'>{ROUTES_NAME[pathname]}</b>
     </div>
   )
 }
