@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
 import { useNavigate } from 'react-router-dom'
+import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 
 type DataItem = {
   id: number
@@ -80,6 +81,7 @@ export default function PageRawatJalan() {
 
   return (
     <div>
+      <Breadcrumb />
       <TableData data={data} columns={columns} />
     </div>
   )

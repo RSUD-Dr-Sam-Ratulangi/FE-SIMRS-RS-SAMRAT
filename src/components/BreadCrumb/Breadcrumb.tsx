@@ -43,23 +43,8 @@ import { ROUTES, ROUTES_NAME } from '../../routes'
 const Breadcrumb: React.FC = () => {
   const { pathname } = useLocation()
 
+  // Split the current pathname into parts
   const pathParts = pathname.split('/').filter((part) => part !== '')
-
-  const breadcrumbItems = pathParts.map((part, index) => {
-    const pathSegment = `/${pathParts.slice(0, index + 1).join('/')}`
-    const routeName = ROUTES_NAME[pathSegment]
-
-    if (index === pathParts.length - 1) {
-      return <li key={index}>{routeName || part}</li>
-    } else {
-      return (
-        <li key={index}>
-          <Link to={pathSegment}>{routeName || part}</Link>
-        </li>
-      )
-    }
-  })
-
   const currentPageName = ROUTES_NAME[pathname] || pathParts[pathParts.length - 1]
 
   return (
@@ -68,9 +53,21 @@ const Breadcrumb: React.FC = () => {
         <li>
           <Link to={ROUTES.HOME}>Home</Link>
         </li>
-        {breadcrumbItems}
+        {pathParts.map((part, index) => {
+          // Generate the path up to the current part
+          const pathSlice = `/${pathParts.slice(0, index + 1).join('/')}`
+
+          // Use ROUTES_NAME to get the breadcrumb name
+          const breadcrumbName = ROUTES_NAME[pathSlice] || part
+
+          return (
+            <li key={index}>
+              <Link to={pathSlice}>{breadcrumbName}</Link>
+            </li>
+          )
+        })}
       </ul>
-      <b className='text-xl'>: {currentPageName}</b>
+      <b className='text-xl'>{currentPageName}</b>
     </div>
   )
 }

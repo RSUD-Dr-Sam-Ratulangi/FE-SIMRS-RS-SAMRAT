@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router-dom'
+import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 
 type DataItem = {
   id: number
@@ -22,6 +23,7 @@ export default function PageRalanRME() {
 
   return (
     <div>
+      <Breadcrumb />
       <p> Hello {data.id}</p>
       <p>Tittle {data.title}</p>
       <p>Price :{data.price}</p>

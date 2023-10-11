@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
+import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 
 export default function PageRawatInap() {
   const [data, setData] = useState()
@@ -83,6 +84,7 @@ export default function PageRawatInap() {
   ]
   return (
     <div>
+      <Breadcrumb />
       <TableData data={data} columns={columns} />
     </div>
   )
