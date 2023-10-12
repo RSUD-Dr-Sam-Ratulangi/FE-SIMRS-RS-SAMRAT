@@ -8,6 +8,7 @@ import {
   MagnifyingGlassIcon,
   ChevronDownIcon,
   FunnelIcon,
+  ArrowRightIcon,
 } from '@heroicons/react/24/solid'
 
 type templateObject = {
@@ -77,12 +78,62 @@ const TableData = ({ data, columns }: Props) => {
                 className='w-full input input-bordered'
               />
             </div>
-            <div className='relative'>
-              <button className='flex btn w-72 text-white bg-[#55A46B]'>
+            <div className='relative dropdown  dropdown-bottom dropdown-end'>
+              <button tabIndex={0} className='flex btn w-72 text-white bg-[#55A46B]'>
                 <FunnelIcon className='font-bold text-white h-[17px] w-[17px]' />
                 Filter
               </button>
               <ChevronDownIcon className='absolute bottom-4 right-5 font-bold text-white h-[17px] w-[17px]' />
+              <div
+                tabIndex={0}
+                className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg shadow-2xl'
+              >
+                <div>
+                  <div>
+                    <p className='font-bold'>Filter Pasien</p>
+                  </div>
+                  <div className='w-full mt-3 p-3'>
+                    <p className='pb-2'>Tanggal</p>
+                    <div className='flex items-center justify-center gap-3'>
+                      <div className='w-fit'>
+                        <div className='flex items-center justify-center gap-2'>
+                          <input type='date' className='input input-bordered' />
+                        </div>
+                      </div>
+                      <span className='flex items-center'>
+                        <ArrowRightIcon className='w-5' />
+                      </span>
+                      <div className='w-fit'>
+                        <div className='flex items-center justify-center gap-2'>
+                          <input type='date' className='input input-bordered' />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className='w-full mt-3 p-3'>
+                  <div>
+                    <p className='pb-2'>Status</p>
+                  </div>
+                  <div>
+                    <div className='grid grid-cols-3 gap-3'>
+                      <button className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'>
+                        Semua
+                      </button>
+                      <button className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'>
+                        Masuk
+                      </button>
+                      <button className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'>
+                        Pulang
+                      </button>
+                      <button className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'>
+                        Sudah Bayar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button className='btn bg-[#55A46B]'>Terapkan Filter</button>
+              </div>
             </div>
           </div>
         </div>
