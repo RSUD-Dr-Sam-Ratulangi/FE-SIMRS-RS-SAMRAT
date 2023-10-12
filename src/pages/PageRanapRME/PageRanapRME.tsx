@@ -1,16 +1,16 @@
 import React from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 import Rme from '../../components/Rme/Rme'
 
-export default function PageRME() {
-  const { id } = useParams()
+export default function PageRanapRME() {
+  // const { id } = useParams()
   const location = useLocation()
   const links = [
     {
       name: 'Elektronik Rekam Medis',
-      link: `/rawat-inap/rme/${id}`,
+      link: '/rawat-inap/rme/1',
     },
     {
       name: 'SOAP & Pemeriksaan',
@@ -27,7 +27,7 @@ export default function PageRME() {
   ];
 
   return (
-    <div className='flex-row h-screen bg-lightgray p-4'>
+    <div className='flex-row h-auto bg-lightgray p-4 '>
       <div className="navbar bg-white rounded-xl">
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1 ">
@@ -58,7 +58,7 @@ export default function PageRME() {
               <a
                 key={index}
                 href={link.link} 
-                className={` text-[#121713] font-sans font-bold mb-4 ${
+                className={` text-[#121713] text-2xl font-sans font-bold mb-4 ${
                   location.pathname === link.link ? '' : 'hidden'
                 }`}
               >{link.name}</a>

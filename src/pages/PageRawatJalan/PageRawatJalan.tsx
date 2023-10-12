@@ -1,10 +1,27 @@
 import { useEffect, useState } from 'react'
 import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
+import { useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
+
+type DataItem = {
+  id: number
+  title: string
+  description: string
+  price: number
+  discountPercentage: number
+  rating: number
+  stock: number
+  brand: string
+  category: string
+  thumbnail: string
+  images: string[]
+}
 
 export default function PageRawatJalan() {
   const [data, setData] = useState()
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,20 +35,6 @@ export default function PageRawatJalan() {
     }
     fetchData()
   }, [])
-
-  type DataItem = {
-    id: number
-    title: string
-    description: string
-    price: number
-    discountPercentage: number
-    rating: number
-    stock: number
-    brand: string
-    category: string
-    thumbnail: string
-    images: string[]
-  }
 
   const columns = [
     { name: 'ID', selector: (row: DataItem) => row.id, sortable: true },
@@ -62,6 +65,17 @@ export default function PageRawatJalan() {
       name: 'Category',
       selector: (row: DataItem) => row.category,
       sortable: true,
+    },
+    {
+      name: 'Actions',
+      selector: (row: DataItem) => (
+        <button
+          className='btn btn-xs btn-ghost'
+          onClick={() => navigate(`/rawat-jalan/rme/${row.id}`, { state: { data: row } })}
+        >
+          Edit
+        </button>
+      ),
     },
   ]
 
