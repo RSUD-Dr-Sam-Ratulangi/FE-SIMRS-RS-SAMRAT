@@ -1,8 +1,8 @@
 import {
   ArrowRightIcon,
+  ExclamationCircleIcon,
   EyeIcon,
   EyeSlashIcon,
-  InformationCircleIcon,
 } from '@heroicons/react/24/solid'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -102,7 +102,7 @@ export default function PageLogin() {
             </button>
             {isError && (
               <div className='mb-14 flex self-center text-[#D3444A]'>
-                <InformationCircleIcon className='w-4' />
+                <ExclamationCircleIcon className='w-4' />
                 <p className='text-xs'>username atau password salah</p>
               </div>
             )}
