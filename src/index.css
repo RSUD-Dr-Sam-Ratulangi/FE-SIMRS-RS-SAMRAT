@@ -7,3 +7,8 @@
 body {
   background-color: #f8f9fa;
 }
+
+.hero {
+  background-image: url('../public/assets/images/bgLoginPage.png');
+  background-size: cover;
+}
