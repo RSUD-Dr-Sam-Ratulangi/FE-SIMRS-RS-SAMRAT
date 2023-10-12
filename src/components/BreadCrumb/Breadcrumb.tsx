@@ -7,7 +7,7 @@ const Breadcrumb: React.FC = () => {
 
   // Split the current pathname into parts
   const pathParts = pathname.split('/').filter((part) => part !== '')
-  const currentPageName = ROUTES_NAME[pathname] || pathParts[pathParts.length - 1]
+  // const currentPageName = ROUTES_NAME[pathname] || pathParts[pathParts.length - 1]
 
   return (
     <div className='text-sm breadcrumbs'>
@@ -29,7 +29,7 @@ const Breadcrumb: React.FC = () => {
           )
         })}
       </ul>
-      <b className='text-xl'>{currentPageName}</b>
+      {/* <b className='text-xl'>{currentPageName}</b> */}
     </div>
   )
 }
