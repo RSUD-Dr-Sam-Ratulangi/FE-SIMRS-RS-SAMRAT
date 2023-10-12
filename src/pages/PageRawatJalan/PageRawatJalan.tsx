@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
-import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
+import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 
 export default function PageRawatJalan() {
   const [data, setData] = useState()

@@ -1,5 +1,5 @@
 import React from 'react'
-import Breadcrumb from '../../components/Breadcrumb/Breadcrumb'
+import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { ArrowLeftOnRectangleIcon, ClockIcon, UserIcon } from '@heroicons/react/24/solid'
 import Chart from 'react-apexcharts'
 

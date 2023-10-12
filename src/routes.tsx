@@ -7,6 +7,7 @@ import PagePasien from './pages/PagePasien/PagePasien'
 import AuthLayout from './utils/AuthLayout'
 import PageLogin from './pages/PageLogin/PageLogin'
 import PageRanapRME from './pages/PageRanapRME/PageRanapRME'
+import Rme from './components/Rme/Rme'
 
 export const ROUTES = {
   HOME: '/',
@@ -17,6 +18,7 @@ export const ROUTES = {
   PAGE_RAWAT_JALAN: '/rawat-jalan',
   PAGE_PASIEN: '/pasien',
   PAGE_RANAP_RME: '/rawat-inap/rme/:id',
+  DATA_RME: '/rawat-inap/rme/:id/rme',
 }
 
 export const ROUTES_NAME = {
@@ -28,6 +30,7 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_RAWAT_JALAN]: 'Rawat Jalan',
   [ROUTES.PAGE_PASIEN]: 'Pasien',
   [ROUTES.PAGE_RANAP_RME]: 'Ranap RME',
+  [ROUTES.DATA_RME]: 'Data RME',
 }
 
 export const routerList = [
@@ -64,6 +67,10 @@ export const routerList = [
         path: ROUTES.PAGE_PASIEN,
         element: <PagePasien />,
       },
+      {
+        path: ROUTES.DATA_RME,
+        Element: <Rme />,
+      }
     ],
   },
 
