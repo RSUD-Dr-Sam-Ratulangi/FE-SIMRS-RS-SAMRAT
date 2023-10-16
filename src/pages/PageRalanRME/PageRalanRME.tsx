@@ -1,5 +1,7 @@
-import { useLocation } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
+import { ArrowLeftIcon } from '@heroicons/react/24/solid'
+import { ROUTES } from '../../routes'
 
 type DataItem = {
   id: number
@@ -16,6 +18,28 @@ type DataItem = {
 }
 
 export default function PageRalanRME() {
+  const links = [
+    {
+      name: 'Elektronik Rekam Medis',
+      link: '/rawat-jalan/rme/1',
+      to: ROUTES.PAGE_RALAN_RME,
+    },
+    {
+      name: 'SOAP & Pemeriksaan',
+      link: '/rawat-jalan/soap-pemeriksaan/1',
+      to: ROUTES.PAGE_SOAP_RALAN,
+    },
+    {
+      name: 'Layanan & Obat',
+      link: '/rawat-jalan/layanan-obat/1',
+      to: ROUTES.PAGE_SOAP_RALAN,
+    },
+    {
+      name: 'Berkas Digital',
+      link: '/rawat-jalan/berkas-digital/1',
+      to: ROUTES.PAGE_SOAP_RALAN,
+    },
+  ]
   const location = useLocation()
   const data: DataItem = location.state.data
 
@@ -23,11 +47,46 @@ export default function PageRalanRME() {
 
   return (
     <div>
-      <Breadcrumb />
       {/* <p> Hello {data.id}</p>
       <p>Tittle {data.title}</p>
       <p>Price :{data.price}</p> */}
       <div className='w-full h-full bg-white p-3 rounded-xl shadow-soft'>
+        <div className='navbar bg-white rounded-xl'>
+          <div className='navbar-center hidden lg:flex'>
+            <div className='menu menu-horizontal px-1 flex gap-4 '>
+              {links.map((link) => (
+                <NavLink key={link.to} to={link.to}>
+                  <a
+                    href={link.link}
+                    className={`text-disabled text-base font-sans font-bold ${
+                      location.pathname === link.link ? 'text-primary' : ''
+                    }`}
+                  >
+                    {link.name}
+                  </a>
+                </NavLink>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className='flex text-disabled mt-4'>
+          <ArrowLeftIcon className='w-4 mr-1' />
+          <p className=' font-sans'>Kembali</p>
+        </div>
+        <Breadcrumb />
+        {links.map((link, index) => (
+          <div key={index}>
+            <a
+              key={index}
+              href={link.link}
+              className={` text-[#121713] text-2xl font-sans font-bold mb-4 ${
+                location.pathname === link.link ? '' : 'hidden'
+              }`}
+            >
+              {link.name}
+            </a>
+          </div>
+        ))}
         <p className='text text-lg font-bold pb-3'>Riwayat Perawatan</p>
         <p className='font-light'>Data Riwayat Perawatan Pasien</p>
         <div>

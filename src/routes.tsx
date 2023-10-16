@@ -8,6 +8,7 @@ import AuthLayout from './utils/AuthLayout'
 import PageLogin from './pages/PageLogin/PageLogin'
 import PageRanapRME from './pages/PageRanapRME/PageRanapRME'
 import PageRalanRME from './pages/PageRalanRME/PageRalanRME'
+import SoapRalan from './components/Rme/soapPemeriksaanRalan'
 
 export const ROUTES = {
   HOME: '/',
@@ -19,6 +20,7 @@ export const ROUTES = {
   PAGE_PASIEN: '/pasien',
   PAGE_RANAP_RME: '/rawat-inap/rme/:id',
   PAGE_RALAN_RME: '/rawat-jalan/rme/:id',
+  PAGE_SOAP_RALAN: '/rawat-jalan/soap/:id',
 }
 
 export const ROUTES_NAME = {
@@ -31,6 +33,7 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_PASIEN]: 'Pasien',
   [ROUTES.PAGE_RANAP_RME]: 'Ranap RME',
   [ROUTES.PAGE_RALAN_RME]: 'Ralan RME',
+  [ROUTES.PAGE_SOAP_RALAN]: 'Soap & Pemeriksaan',
 }
 
 export const routerList = [
@@ -70,6 +73,10 @@ export const routerList = [
       {
         path: ROUTES.PAGE_PASIEN,
         element: <PagePasien />,
+      },
+      {
+        path: ROUTES.PAGE_SOAP_RALAN,
+        element: <SoapRalan />,
       },
     ],
   },
