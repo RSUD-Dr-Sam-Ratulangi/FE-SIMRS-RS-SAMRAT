@@ -2,10 +2,9 @@ import React from 'react'
 import { useLocation } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
-import Rme from '../../components/Rme/Rme'
+import RmeRanap from '../../components/Rme/RmeRanap'
 
 export default function PageRanapRME() {
-  // const { id } = useParams()
   const location = useLocation()
   const links = [
     {
@@ -14,35 +13,35 @@ export default function PageRanapRME() {
     },
     {
       name: 'SOAP & Pemeriksaan',
-      link: '/rawat-inap/soap-pemeriksaan/1'
+      link: '/rawat-inap/soap-pemeriksaan/1',
     },
     {
       name: 'Layanan & Obat',
-      link: '/rawat-inap/layanan-obat/1'
+      link: '/rawat-inap/layanan-obat/1',
     },
     {
       name: 'Berkas Digital',
-      link: '/rawat-inap/berkas-digital/1'
-    }
-  ];
+      link: '/rawat-inap/berkas-digital/1',
+    },
+  ]
 
   return (
     <div className='flex-row h-auto bg-lightgray p-4 '>
-      <div className="navbar bg-white rounded-xl">
-        <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1 ">
-            {
-              links.map((link, index)=>(
-                <li key={index}>
-                  <a
-                    href={link.link} 
-                    className={`text-disabled text-base font-sans font-bold ${
-                      location.pathname === link.link ? 'text-primary' : ''
-                    }`}
-                  >{link.name}</a>
-                </li>
-              ))
-            }
+      <div className='navbar bg-white rounded-xl'>
+        <div className='navbar-center hidden lg:flex'>
+          <ul className='menu menu-horizontal px-1 '>
+            {links.map((link, index) => (
+              <li key={index}>
+                <a
+                  href={link.link}
+                  className={`text-disabled text-base font-sans font-bold ${
+                    location.pathname === link.link ? 'text-primary' : ''
+                  }`}
+                >
+                  {link.name}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -52,20 +51,20 @@ export default function PageRanapRME() {
           <p className=' font-sans'>Kembali</p>
         </div>
         <Breadcrumb />
-        {
-          links.map((link, index)=>(
-            <div key={index}>
-              <a
-                key={index}
-                href={link.link} 
-                className={` text-[#121713] text-2xl font-sans font-bold mb-4 ${
-                  location.pathname === link.link ? '' : 'hidden'
-                }`}
-              >{link.name}</a>
-            </div>
-          ))
-        }
-        <Rme />
+        {links.map((link, index) => (
+          <div key={index}>
+            <a
+              key={index}
+              href={link.link}
+              className={` text-[#121713] text-2xl font-sans font-bold mb-4 ${
+                location.pathname === link.link ? '' : 'hidden'
+              }`}
+            >
+              {link.name}
+            </a>
+          </div>
+        ))}
+        <RmeRanap />
       </div>
     </div>
   )
