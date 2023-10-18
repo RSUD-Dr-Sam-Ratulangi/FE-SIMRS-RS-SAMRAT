@@ -9,6 +9,9 @@ import PageLogin from './pages/PageLogin/PageLogin'
 import PageRanapRME from './pages/PageRanapRME/PageRanapRME'
 import PageRalanRME from './pages/PageRalanRME/PageRalanRME'
 import SoapRalan from './components/Rme/soapPemeriksaanRalan'
+import RanapSoapPemeriksaan from './components/RanapSoapPemeriksaan/RanapSoapPemeriksaan'
+import RanapLayananObat from './components/RanapLayananObat/RanapLayananObat'
+import RanapBerkasDigital from './components/RanapBerkasDigital/RanapBerkasDigital'
 
 export const ROUTES = {
   HOME: '/',
@@ -19,6 +22,9 @@ export const ROUTES = {
   PAGE_RAWAT_JALAN: '/rawat-jalan',
   PAGE_PASIEN: '/pasien',
   PAGE_RANAP_RME: '/rawat-inap/rme/:id',
+  PAGE_RANAP_SOAP_PEMERIKSAAN: '/rawat-inap/soap-pemeriksaan/:id',
+  PAGE_RANAP_LAYANAN_OBAT: '/rawat-inap/layanan-obat/:id',
+  PAGE_RANAP_BERKAS_DIGITAL: '/rawat-inap/berkas-digital/:id',
   PAGE_RALAN_RME: '/rawat-jalan/rme/:id',
   PAGE_SOAP_RALAN: '/rawat-jalan/soap/:id',
 }
@@ -32,6 +38,9 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_RAWAT_JALAN]: 'Rawat Jalan',
   [ROUTES.PAGE_PASIEN]: 'Pasien',
   [ROUTES.PAGE_RANAP_RME]: 'Ranap RME',
+  [ROUTES.PAGE_RANAP_SOAP_PEMERIKSAAN]: 'Ranap SOAP & Pemeriksaan',
+  [ROUTES.PAGE_RANAP_LAYANAN_OBAT]: 'Ranap Layanan & Obat',
+  [ROUTES.PAGE_RANAP_BERKAS_DIGITAL]: 'Ranap Berkas Digital',
   [ROUTES.PAGE_RALAN_RME]: 'Ralan RME',
   [ROUTES.PAGE_SOAP_RALAN]: 'Soap & Pemeriksaan',
 }
@@ -61,6 +70,18 @@ export const routerList = [
       {
         path: ROUTES.PAGE_RANAP_RME,
         element: <PageRanapRME />,
+      },
+      {
+        path: ROUTES.PAGE_RANAP_SOAP_PEMERIKSAAN,
+        element: <RanapSoapPemeriksaan />,
+      },
+      {
+        path: ROUTES.PAGE_RANAP_LAYANAN_OBAT,
+        element: <RanapLayananObat />,
+      },
+      {
+        path: ROUTES.PAGE_RANAP_BERKAS_DIGITAL,
+        element: <RanapBerkasDigital />,
       },
       {
         path: ROUTES.PAGE_RAWAT_JALAN,

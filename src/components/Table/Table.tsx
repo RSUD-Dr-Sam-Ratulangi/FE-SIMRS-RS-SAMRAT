@@ -234,4 +234,5 @@ const TableData = ({ data, columns }: Props) => {
     </div>
   )
 }
+
 export default TableData

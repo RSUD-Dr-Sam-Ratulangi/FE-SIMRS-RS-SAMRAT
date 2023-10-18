@@ -2,13 +2,11 @@ import { useEffect, useState } from 'react'
 import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
+import { useNavigate } from 'react-router-dom'
 
 export default function PageRawatInap() {
   const [data, setData] = useState()
-
-  function handleEdit() {
-    window.open('/rawat-inap/rme/1', '_blank')
-  }
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,8 +73,11 @@ export default function PageRawatInap() {
     // make button to edit and redirect
     {
       name: '',
-      selector: () => (
-        <button className='btn btn-xs btn-ghost' onClick={handleEdit}>
+      selector: (row: DataItem) => (
+        <button 
+          className='btn btn-xs btn-ghost'
+          onClick={() => navigate(`/rawat-inap/rme/${row.id}`, { state: { data: row } })}
+        >
           Edit
         </button>
       ),
