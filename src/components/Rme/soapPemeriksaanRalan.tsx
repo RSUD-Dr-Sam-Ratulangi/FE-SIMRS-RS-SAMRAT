@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../services/api/config.api'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useParams } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import {
   ArrowLeftIcon,
@@ -149,15 +149,18 @@ const SoapRalan = () => {
     { name: 'Birth Date', selector: (row: DataItem) => row.birthDate, sortable: true },
     // make button to edit and redirect
   ]
+  const idParams = useParams().id
+  console.log('param', idParams)
+
   const links = [
     {
       name: 'Elektronik Rekam Medis',
-      link: ROUTES.PAGE_RALAN_RME,
+      link: `/rawat-jalan/rme/${idParams}`,
       to: ROUTES.PAGE_RALAN_RME,
     },
     {
       name: 'SOAP & Pemeriksaan',
-      link: ROUTES.PAGE_SOAP_RALAN,
+      link: `/rawat-jalan/soap/${idParams}`,
       to: ROUTES.PAGE_SOAP_RALAN,
     },
     {
@@ -171,7 +174,6 @@ const SoapRalan = () => {
       to: ROUTES.PAGE_SOAP_RALAN,
     },
   ]
-
   const location = useLocation()
 
   return (
@@ -181,7 +183,7 @@ const SoapRalan = () => {
           <div className='navbar-center hidden lg:flex'>
             <div className='menu menu-horizontal px-1 flex gap-4 '>
               {links.map((link) => (
-                <NavLink key={link.to} to={link.to}>
+                <NavLink key={link.link} to={link.link}>
                   <a
                     href={link.link}
                     className={`text-disabled text-base font-sans font-bold ${

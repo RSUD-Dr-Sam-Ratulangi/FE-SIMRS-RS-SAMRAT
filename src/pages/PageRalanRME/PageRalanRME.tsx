@@ -1,32 +1,21 @@
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useParams } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 import { ROUTES } from '../../routes'
 
-type DataItem = {
-  id: number
-  title: string
-  description: string
-  price: number
-  discountPercentage: number
-  rating: number
-  stock: number
-  brand: string
-  category: string
-  thumbnail: string
-  images: string[]
-}
-
 export default function PageRalanRME() {
+  const idParams = useParams().id
+  console.log('param', idParams)
+
   const links = [
     {
       name: 'Elektronik Rekam Medis',
-      link: '/rawat-jalan/rme/1',
+      link: `/rawat-jalan/rme/${idParams}`,
       to: ROUTES.PAGE_RALAN_RME,
     },
     {
       name: 'SOAP & Pemeriksaan',
-      link: '/rawat-jalan/soap-pemeriksaan/1',
+      link: `/rawat-jalan/soap/${idParams}`,
       to: ROUTES.PAGE_SOAP_RALAN,
     },
     {
@@ -40,35 +29,30 @@ export default function PageRalanRME() {
       to: ROUTES.PAGE_SOAP_RALAN,
     },
   ]
-  const location = useLocation()
-  const data: DataItem = location.state.data
 
-  console.log('rme ralan', data)
+  const location = useLocation()
 
   return (
-    <div>
-      {/* <p> Hello {data.id}</p>
-      <p>Tittle {data.title}</p>
-      <p>Price :{data.price}</p> */}
-      <div className='w-full h-full bg-white p-3 rounded-xl shadow-soft'>
-        <div className='navbar bg-white rounded-xl'>
-          <div className='navbar-center hidden lg:flex'>
-            <div className='menu menu-horizontal px-1 flex gap-4 '>
-              {links.map((link) => (
-                <NavLink key={link.to} to={link.to}>
-                  <a
-                    href={link.link}
-                    className={`text-disabled text-base font-sans font-bold ${
-                      location.pathname === link.link ? 'text-primary' : ''
-                    }`}
-                  >
-                    {link.name}
-                  </a>
-                </NavLink>
-              ))}
-            </div>
+    <div className='p-2'>
+      <div className='navbar rounded-xl bg-white '>
+        <div className='navbar-center hidden lg:flex'>
+          <div className='menu menu-horizontal px-1 flex gap-4 '>
+            {links.map((link) => (
+              <NavLink key={link.to} to={link.link}>
+                <a
+                  href={link.link}
+                  className={`text-disabled text-base font-sans font-bold ${
+                    location.pathname === link.link ? 'text-primary' : ''
+                  }`}
+                >
+                  {link.name}
+                </a>
+              </NavLink>
+            ))}
           </div>
         </div>
+      </div>
+      <div className='p-3'>
         <div className='flex text-disabled mt-4'>
           <ArrowLeftIcon className='w-4 mr-1' />
           <p className=' font-sans'>Kembali</p>
@@ -87,6 +71,8 @@ export default function PageRalanRME() {
             </a>
           </div>
         ))}
+      </div>
+      <div className='w-full h-full bg-white p-3 rounded-xl shadow-soft'>
         <p className='text text-lg font-bold pb-3'>Riwayat Perawatan</p>
         <p className='font-light'>Data Riwayat Perawatan Pasien</p>
         <div>
