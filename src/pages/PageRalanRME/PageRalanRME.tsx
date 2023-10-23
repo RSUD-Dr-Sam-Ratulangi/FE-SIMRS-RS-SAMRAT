@@ -1,132 +1,87 @@
-import { NavLink, useLocation, useParams } from 'react-router-dom'
-import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
-import { ArrowLeftIcon } from '@heroicons/react/24/solid'
-import { ROUTES } from '../../routes'
+// import { useEffect, useState } from 'react'
 
-export default function PageRalanRME() {
-  const idParams = useParams().id
-  console.log('param', idParams)
+import RalanEditHeader from '../../components/RalanEdit/RalanEditHeader'
+// import { ROUTES } from '../../routes'
 
-  const links = [
-    {
-      name: 'Elektronik Rekam Medis',
-      link: `/rawat-jalan/rme/${idParams}`,
-      to: ROUTES.PAGE_RALAN_RME,
-    },
-    {
-      name: 'SOAP & Pemeriksaan',
-      link: `/rawat-jalan/soap/${idParams}`,
-      to: ROUTES.PAGE_SOAP_RALAN,
-    },
-    {
-      name: 'Layanan & Obat',
-      link: '/rawat-jalan/layanan-obat/1',
-      to: ROUTES.PAGE_SOAP_RALAN,
-    },
-    {
-      name: 'Berkas Digital',
-      link: '/rawat-jalan/berkas-digital/1',
-      to: ROUTES.PAGE_SOAP_RALAN,
-    },
-  ]
+const PageRalanRME = () => {
+  // const [idPasien, setIdPasien] = useState(null)
 
-  const location = useLocation()
+  // console.log(window.location.pathname)
+  // console.log(id)
+
+  // useEffect(() => {
+  //   if (id) {
+  //     const parsedNumber = parseInt(id, 10)
+  //     setIdPasien(parsedNumber)
+  //   }
+  //   // setIdPasien(id)
+  // }, [id])
+
+  // const data: DataItem = location.state.data
+
+  // console.log('rme ralan', data)
 
   return (
-    <div className='p-2'>
-      <div className='navbar rounded-xl bg-white '>
-        <div className='navbar-center hidden lg:flex'>
-          <div className='menu menu-horizontal px-1 flex gap-4 '>
-            {links.map((link) => (
-              <NavLink key={link.to} to={link.link}>
-                <a
-                  href={link.link}
-                  className={`text-disabled text-base font-sans font-bold ${
-                    location.pathname === link.link ? 'text-primary' : ''
-                  }`}
-                >
-                  {link.name}
-                </a>
-              </NavLink>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className='p-3'>
-        <div className='flex text-disabled mt-4'>
-          <ArrowLeftIcon className='w-4 mr-1' />
-          <p className=' font-sans'>Kembali</p>
-        </div>
-        <Breadcrumb />
-        {links.map((link, index) => (
-          <div key={index}>
-            <a
-              key={index}
-              href={link.link}
-              className={` text-[#121713] text-2xl font-sans font-bold mb-4 ${
-                location.pathname === link.link ? '' : 'hidden'
-              }`}
-            >
-              {link.name}
-            </a>
-          </div>
-        ))}
-      </div>
+    <div>
+      {/* <p> Hello {data.id}</p>
+      <p>Tittle {data.title}</p>
+      <p>Price :{data.price}</p> */}
+      <RalanEditHeader />
       <div className='w-full h-full bg-white p-3 rounded-xl shadow-soft'>
         <p className='text text-lg font-bold pb-3'>Riwayat Perawatan</p>
         <p className='font-light'>Data Riwayat Perawatan Pasien</p>
         <div>
           <div className='grid grid-cols-4 gap-2'>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>NO.RM</label>
+              <label className='label-text-alt text-[11px] font-light'>NO.RM</label>
               <p className='text font-bold'>165647</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>UMUR</label>
+              <label className='label-text-alt text-[11px] font-light'>UMUR</label>
               <p className='text font-bold'>19 Th 10 Bl 18 Hr Tahun</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>GOLONGAN DARAH</label>
+              <label className='label-text-alt text-[11px] font-light'>GOLONGAN DARAH</label>
               <p className='text font-bold'>-</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>AGAMA</label>
+              <label className='label-text-alt text-[11px] font-light'>AGAMA</label>
               <p className='text font-bold'>Kristen</p>
             </div>
           </div>
           <div className='grid grid-cols-4 gap-2'>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>NAMA PASIEN</label>
+              <label className='label-text-alt text-[11px] font-light'>NAMA PASIEN</label>
               <p className='text font-bold'>Ranomerut</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>JENIS KELAMIN</label>
+              <label className='label-text-alt text-[11px] font-light'>JENIS KELAMIN</label>
               <p className='text font-bold'>Perempuan</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>IBU KANDUNG</label>
+              <label className='label-text-alt text-[11px] font-light'>IBU KANDUNG</label>
               <p className='text font-bold'>-</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>PENDIDIKAN TERAKHIR</label>
+              <label className='label-text-alt text-[11px] font-light'>PENDIDIKAN TERAKHIR</label>
               <p className='text font-bold'>-</p>
             </div>
           </div>
           <div className='grid grid-cols-4 gap-2'>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>ALAMAT</label>
+              <label className='label-text-alt text-[11px] font-light'>ALAMAT</label>
               <p className='text font-bold'>Ranomerut</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>TANGGAL LAHIR</label>
+              <label className='label-text-alt text-[11px] font-light'>TANGGAL LAHIR</label>
               <p className='text font-bold'>2003-11-15</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>STATUS MENIKAH</label>
+              <label className='label-text-alt text-[11px] font-light'>STATUS MENIKAH</label>
               <p className='text font-bold'>Menikah</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>PERTAMA DAFTAR</label>
+              <label className='label-text-alt text-[11px] font-light'>PERTAMA DAFTAR</label>
               <p className='text font-bold'>2023-10-23</p>
             </div>
           </div>
@@ -136,35 +91,35 @@ export default function PageRalanRME() {
           </div>
           <div className='flex gap-16'>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>NO RAWAT</label>
+              <label className='label-text-alt text-[11px] font-light'>NO RAWAT</label>
               <p className='text font-bold'>2023/10/03/000374</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>NO REGISTRASI</label>
+              <label className='label-text-alt text-[11px] font-light'>NO REGISTRASI</label>
               <p className='text font-bold'>020</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>TANGGAL REGISTRASI</label>
+              <label className='label-text-alt text-[11px] font-light'>TANGGAL REGISTRASI</label>
               <p className='text font-bold'>2023-10-23</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>UNIT POLIKLINIK</label>
+              <label className='label-text-alt text-[11px] font-light'>UNIT POLIKLINIK</label>
               <p className='text font-bold'>2023-10-23</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>DOKTER</label>
+              <label className='label-text-alt text-[11px] font-light'>DOKTER</label>
               <p className='text font-bold'>DR. JANE DOE</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>PENJAMIN</label>
+              <label className='label-text-alt text-[11px] font-light'>PENJAMIN</label>
               <p className='text font-bold'>BPJS</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>STATUS</label>
+              <label className='label-text-alt text-[11px] font-light'>STATUS</label>
               <p className='text font-bold'>RAWAT INAP</p>
             </div>
             <div>
-              <label className='font-bold text-gray-400 text-xs'>PEMERIKSAAN</label>
+              <label className='label-text-alt text-[11px] font-light'>PEMERIKSAAN</label>
               <p className='text font-bold'>-</p>
             </div>
           </div>
@@ -211,67 +166,67 @@ export default function PageRalanRME() {
               <div className='grid'>
                 <div className='flex gap-8'>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Jam</label>
+                    <label className='label-text-alt font-light'>Jam</label>
                     <p className='font-bold'>020</p>
                   </div>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Suhu(C)</label>
+                    <label className='label-text-alt font-light'>Suhu(C)</label>
                     <p className='font-bold'>36</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Tensi(mmHg)</label>
+                    <label className='label-text-alt font-light'>Tensi(mmHg)</label>
                     <p className='font-bold'>121///78</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Nadi(/menit)</label>
+                    <label className='label-text-alt font-light'>Nadi(/menit)</label>
                     <p className='font-bold'>69</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>RR(/menit)</label>
+                    <label className='label-text-alt font-light'>RR(/menit)</label>
                     <p className='font-bold'>-</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Tinggi(Cm)</label>
+                    <label className='label-text-alt font-light'>Tinggi(Cm)</label>
                     <p className='font-bold'>-</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Berat(/Kg)</label>
+                    <label className='label-text-alt font-light'>Berat(/Kg)</label>
                     <p className='font-bold'>-</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>GCS(E,V,M)</label>
+                    <label className='label-text-alt font-light'>GCS(E,V,M)</label>
                     <p className='font-bold'>3, 5, 6</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>SPO2</label>
+                    <label className='label-text-alt font-light'>SPO2</label>
                     <p className='font-bold'>90</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Alergi</label>
+                    <label className='label-text-alt font-light'>Alergi</label>
                     <p className='font-bold'>-</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Kesadaran</label>
+                    <label className='label-text-alt font-light'>Kesadaran</label>
                     <p className='font-bold'>Compos Mentis</p>
                   </div>
                 </div>
                 <div className='flex gap-8 mt-3'>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Subjek</label>
+                    <label className='label-text-alt font-light'>Subjek</label>
                     <p className='font-bold'>Nyeri +</p>
                   </div>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Objek</label>
+                    <label className='label-text-alt font-light'>Objek</label>
                     <p className='font-bold'>-</p>
                   </div>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Assessment</label>
+                    <label className='label-text-alt font-light'>Assessment</label>
                     <p className='font-bold'>Post Herpetika</p>
                   </div>
                 </div>
                 <div className='flex gap-8 mt-3'>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Plan</label>
+                    <label className='label-text-alt font-light'>Plan</label>
                     <p className='font-bold'>
                       Ibuprofen 3x400 mg Omeprazole 2x20 mg ac Lapibal 1x500 ug Gabapentin 3x300
                       Resep : Ibuprofen 400 mg Jumlah 21 Aturan Pakai 3x1 tab Omeprazole 20 mg tab
@@ -291,67 +246,67 @@ export default function PageRalanRME() {
               <div className='grid'>
                 <div className='flex gap-8'>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Jam</label>
+                    <label className='label-text-alt font-light'>Jam</label>
                     <p className='font-bold'>020</p>
                   </div>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Suhu(C)</label>
+                    <label className='label-text-alt font-light'>Suhu(C)</label>
                     <p className='font-bold'>36</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Tensi(mmHg)</label>
+                    <label className='label-text-alt font-light'>Tensi(mmHg)</label>
                     <p className='font-bold'>121///78</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Nadi(/menit)</label>
+                    <label className='label-text-alt font-light'>Nadi(/menit)</label>
                     <p className='font-bold'>69</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>RR(/menit)</label>
+                    <label className='label-text-alt font-light'>RR(/menit)</label>
                     <p className='font-bold'>-</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Tinggi(Cm)</label>
+                    <label className='label-text-alt font-light'>Tinggi(Cm)</label>
                     <p className='font-bold'>-</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Berat(/Kg)</label>
+                    <label className='label-text-alt font-light'>Berat(/Kg)</label>
                     <p className='font-bold'>-</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>GCS(E,V,M)</label>
+                    <label className='label-text-alt font-light'>GCS(E,V,M)</label>
                     <p className='font-bold'>3, 5, 6</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>SPO2</label>
+                    <label className='label-text-alt font-light'>SPO2</label>
                     <p className='font-bold'>90</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Alergi</label>
+                    <label className='label-text-alt font-light'>Alergi</label>
                     <p className='font-bold'>-</p>
                   </div>
                   <div>
-                    <label className='font-bold text-gray-400 text-xs'>Kesadaran</label>
+                    <label className='label-text-alt font-light'>Kesadaran</label>
                     <p className='font-bold'>Compos Mentis</p>
                   </div>
                 </div>
                 <div className='flex gap-8 mt-3'>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Subjek</label>
+                    <label className='label-text-alt font-light'>Subjek</label>
                     <p className='font-bold'>Nyeri +</p>
                   </div>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Objek</label>
+                    <label className='label-text-alt font-light'>Objek</label>
                     <p className='font-bold'>-</p>
                   </div>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Assessment</label>
+                    <label className='label-text-alt font-light'>Assessment</label>
                     <p className='font-bold'>Post Herpetika</p>
                   </div>
                 </div>
                 <div className='flex gap-8 mt-3'>
                   <div className='col-span-1'>
-                    <label className='font-bold text-gray-400 text-xs'>Plan</label>
+                    <label className='label-text-alt font-light'>Plan</label>
                     <p className='font-bold'>
                       Ibuprofen 3x400 mg Omeprazole 2x20 mg ac Lapibal 1x500 ug Gabapentin 3x300
                       Resep : Ibuprofen 400 mg Jumlah 21 Aturan Pakai 3x1 tab Omeprazole 20 mg tab
@@ -364,7 +319,7 @@ export default function PageRalanRME() {
             </div>
           </div>
 
-          <label className='font-bold text-gray-400 text-xs'>TINDAKAN PERAWATAN</label>
+          <label className='label-text-alt font-light'>TINDAKAN PERAWATAN</label>
           <div className='w-full h-full p-1 outline outline-1 rounded-xl outline-slate-400 mb-5'>
             <div className='flex'>
               <div className='w-24 font-light text-xs font-inter'>
@@ -420,7 +375,7 @@ export default function PageRalanRME() {
             </div>
           </div>
 
-          <label className='font-bold text-gray-400 text-xs'>TINDAKAN PERAWATAN</label>
+          <label className='label-text-alt font-light'>TINDAKAN PERAWATAN</label>
           <div className='w-full h-full outline outline-1 rounded-xl outline-slate-400 '>
             <div className='flex'>
               <div className='flex w-full'>
@@ -454,3 +409,5 @@ export default function PageRalanRME() {
     </div>
   )
 }
+
+export default PageRalanRME

@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../services/api/config.api'
-import { NavLink, useLocation, useParams } from 'react-router-dom'
-import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import {
-  ArrowLeftIcon,
   InformationCircleIcon,
   ArchiveBoxArrowDownIcon,
   BellIcon,
@@ -11,7 +8,8 @@ import {
   CheckIcon,
 } from '@heroicons/react/24/solid'
 import TableDataNoSearch from '../Table/TableNoSearch'
-import { ROUTES } from '../../routes'
+
+import RalanEditHeader from './RalanEditHeader'
 
 const buttonsData = [
   {
@@ -70,15 +68,15 @@ const soapLabels = [
 const rawatPasienLabels = [
   {
     label: <label>ID Rawat</label>,
-    input: <input className='input input-bordered w-full' placeholder='1111111111111' />,
+    input: <input className='input input-bordered w-full' placeholder='2023/10/9/000161' />,
   },
   {
-    label: <label>Nomor Pasien</label>,
-    input: <input className='input input-bordered w-full' placeholder='1111111111111' />,
+    label: <label>Nama Pasien</label>,
+    input: <input className='input input-bordered w-full' placeholder='Esthera Jackson' />,
   },
   {
     label: <label>Nomor RM</label>,
-    input: <input className='input input-bordered w-full' placeholder='1111111111111' />,
+    input: <input className='input input-bordered w-full' placeholder='0000/00/00/000000' />,
   },
 ]
 
@@ -149,73 +147,11 @@ const SoapRalan = () => {
     { name: 'Birth Date', selector: (row: DataItem) => row.birthDate, sortable: true },
     // make button to edit and redirect
   ]
-  const idParams = useParams().id
-  console.log('param', idParams)
-
-  const links = [
-    {
-      name: 'Elektronik Rekam Medis',
-      link: `/rawat-jalan/rme/${idParams}`,
-      to: ROUTES.PAGE_RALAN_RME,
-    },
-    {
-      name: 'SOAP & Pemeriksaan',
-      link: `/rawat-jalan/soap/${idParams}`,
-      to: ROUTES.PAGE_SOAP_RALAN,
-    },
-    {
-      name: 'Layanan & Obat',
-      link: '/rawat-jalan/layanan-obat/1',
-      to: ROUTES.PAGE_SOAP_RALAN,
-    },
-    {
-      name: 'Berkas Digital',
-      link: '/rawat-jalan/berkas-digital/1',
-      to: ROUTES.PAGE_SOAP_RALAN,
-    },
-  ]
-  const location = useLocation()
 
   return (
     <>
-      <div className='w-full h-full p-3 rounded-xl shadow-soft'>
-        <div className='navbar rounded-xl'>
-          <div className='navbar-center hidden lg:flex'>
-            <div className='menu menu-horizontal px-1 flex gap-4 '>
-              {links.map((link) => (
-                <NavLink key={link.link} to={link.link}>
-                  <a
-                    href={link.link}
-                    className={`text-disabled text-base font-sans font-bold ${
-                      location.pathname === link.link ? 'text-primary' : ''
-                    }`}
-                  >
-                    {link.name}
-                  </a>
-                </NavLink>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className='flex text-disabled mt-4'>
-          <ArrowLeftIcon className='w-4 mr-1' />
-          <p className=' font-sans'>Kembali</p>
-        </div>
-        <Breadcrumb />
-        {links.map((link, index) => (
-          <div key={index}>
-            <a
-              key={index}
-              href={link.link}
-              className={` text-[#121713] text-2xl font-sans font-bold mb-4 ${
-                location.pathname === link.link ? '' : 'hidden'
-              }`}
-            >
-              {link.name}
-            </a>
-          </div>
-        ))}
-
+      <RalanEditHeader />
+      <div className='w-full h-full rounded-xl shadow-soft'>
         <div className='bg-white h-auto w-full p-4 mt-4 rounded-xl'>
           <p className='font-sans text-xl font-bold text-[#2D3748]'>Tambah Pasien</p>
           <p className='font-sans text-base text-disabled font-normal'>
@@ -256,7 +192,7 @@ const SoapRalan = () => {
               </div>
             </div>
             <div className=' w-[30%]'>
-              <div className='flex gap-1'>
+              <div className='flex gap-1 mb-2'>
                 <InformationCircleIcon className='w-6' />
                 <p> Informasi</p>
               </div>
@@ -280,7 +216,7 @@ const SoapRalan = () => {
           </div>
         </div>
         <div className='bg-white h-auto w-full p-4 mt-6 rounded-xl'>
-          <p className='font-sans text-base font-bold text-[#2D3748]'>Rincian riwayat</p>
+          <p className='font-sans text-xl font-bold text-[#2D3748] mb-4'>Rincian Riwayat</p>
           <TableDataNoSearch data={data} columns={columns} />
         </div>
       </div>
