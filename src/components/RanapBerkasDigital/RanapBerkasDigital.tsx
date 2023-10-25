@@ -13,39 +13,39 @@ const RanapBerkasDigital: React.FC = () => {
                     <div className='flex pt-4'>
                         <div className="w-full ">
                             <div>
-                                <div className="text-base text-[#121713] font-sans flex">
+                                <div className=" text-base text-[#121713] font-sans flex">
                                     <div className=" mr-6">
                                         <div className="flex">
                                             <div className="form-control">
                                                 <label className="label">
                                                     <span>Tanggal</span>
                                                 </label>
-                                                <input type="date" className="input input-bordered rounded-2xl border-disabled w-[374px]"/>
+                                                <input type="date" className="input input-bordered text-sm rounded-2xl border-disabled w-[374px]"/>
                                             </div>
                                             <div className="form-control ml-4">
                                                 <label className="label">
                                                     <span>Jam</span>
                                                 </label>
-                                                <input type="time" defaultValue="19:44" className="input input-bordered rounded-2xl border-disabled w-[150px]"/>
+                                                <input type="time" defaultValue="19:44" className="input input-bordered text-sm rounded-2xl border-disabled w-[150px]"/>
                                             </div>
                                         </div>
                                         <div className="form-control mt-4">
                                             <label className="label">
                                                 <span>ID Rawat</span>
                                             </label>
-                                            <input type="Text" placeholder="2023/10/19/000161" className="input input-bordered rounded-2xl border-disabled w-[540px]"/>
+                                            <input type="Text" placeholder="2023/10/19/000161" className="input input-bordered text-sm rounded-2xl border-disabled w-[540px]"/>
                                         </div>
                                         <div className="form-control mt-4">
                                             <label className="label">
                                                 <span>Nomor RM</span>
                                             </label>
-                                            <input type="Text" placeholder="183138" className="input input-bordered rounded-2xl border-disabled w-[540px]"/>
+                                            <input type="Text" placeholder="183138" className="input input-bordered text-sm rounded-2xl border-disabled w-[540px]"/>
                                         </div>
                                         <div className="form-control mt-4">
                                             <label className="label">
                                                 <span>Nama Pasien</span>
                                             </label>
-                                            <input type="Text" placeholder="DELLY SEPANG" className="input input-bordered rounded-2xl border-disabled w-[540px]"/>
+                                            <input type="Text" placeholder="DELLY SEPANG" className="input input-bordered text-sm rounded-2xl border-disabled w-[540px]"/>
                                         </div>
                                     </div>
                                     <div className="w-full">
@@ -60,13 +60,14 @@ const RanapBerkasDigital: React.FC = () => {
                                                 <option>Berkas 3</option>
                                             </select>
                                         </div>
-                                        <div className="form-control w-full">
+                                        <div className="form-control w-full mt-4">
                                             <label className="label">
                                                 <span>Nama Pasien</span>
                                             </label>
-                                            <div className='flex border-[1px] border-disabled rounded-2xl h-[50px] items-center px-5'>
-                                                <input type="file"/>
-                                                <ArrowUpTrayIcon width={20} />
+                                            <div className='flex relative justify-between border-[1px] border-disabled rounded-2xl h-[50px] items-center px-5'>
+                                                <input type="file" className=' opacity-0 cursor-pointer absolute'/>
+                                                <p className=' text-sm text-disabled'>Pilih File</p>
+                                                <ArrowUpTrayIcon width={20} className=' text-primary' />
                                             </div>
                                         </div>
                                     </div>

@@ -26,32 +26,32 @@ const RanapLayananObat: React.FC = () => {
                                                 <label className="label">
                                                     <span>Tanggal</span>
                                                 </label>
-                                                <input type="date" className="input input-bordered rounded-2xl border-disabled w-[374px]"/>
+                                                <input type="date" className="input input-bordered text-sm rounded-2xl border-disabled w-[374px]"/>
                                             </div>
                                             <div className="form-control ml-4">
                                                 <label className="label">
                                                     <span>Jam</span>
                                                 </label>
-                                                <input type="time" defaultValue="19:44" className="input input-bordered rounded-2xl border-disabled w-[150px]"/>
+                                                <input type="time" defaultValue="19:44" className="input input-bordered text-sm rounded-2xl border-disabled w-[150px]"/>
                                             </div>
                                         </div>
                                         <div className="form-control mt-4">
                                             <label className="label">
                                                 <span>ID Rawat</span>
                                             </label>
-                                            <input type="Text" placeholder="2023/10/19/000161" className="input input-bordered rounded-2xl border-disabled w-[540px]"/>
+                                            <input type="Text" placeholder="2023/10/19/000161" className="input input-bordered text-sm rounded-2xl border-disabled w-[540px]"/>
                                         </div>
                                         <div className="form-control mt-4">
                                             <label className="label">
                                                 <span>Tindakan</span>
                                             </label>
-                                            <input type="Text" placeholder="Input Tindakan/layanan" className="input input-bordered rounded-2xl border-disabled w-[540px]"/>
+                                            <input type="Text" placeholder="Input Tindakan/layanan" className="input input-bordered text-sm rounded-2xl border-disabled w-[540px]"/>
                                         </div>
                                         <div className="form-control mt-4">
                                             <label className="label">
                                                 <span>Obat (e-Resep)</span>
                                             </label>
-                                            <input type="Text" placeholder="Input obat/BHP" className="input input-bordered rounded-2xl border-disabled w-[540px]"/>
+                                            <input type="Text" placeholder="Input obat/BHP" className="input input-bordered text-sm rounded-2xl border-disabled w-[540px]"/>
                                         </div>
                                     </div>
                                     <div className="w-full">
@@ -59,25 +59,25 @@ const RanapLayananObat: React.FC = () => {
                                             <label className="label">
                                                 <span>Nomor RM</span>
                                             </label>
-                                            <input type="Text" placeholder="0000/00/00/000000" className="input input-bordered rounded-2xl border-disabled w-full"/>
+                                            <input type="Text" placeholder="0000/00/00/000000" className="input input-bordered text-sm rounded-2xl border-disabled w-full"/>
                                         </div>
                                         <div className="form-control mt-4">
                                             <label className="label">
                                                 <span>Nama Pasien</span>
                                             </label>
-                                            <input type="Text" placeholder="Esthera Jackson" className="input input-bordered rounded-2xl border-disabled w-full"/>
+                                            <input type="Text" placeholder="Esthera Jackson" className="input input-bordered text-sm rounded-2xl border-disabled w-full"/>
                                         </div>
                                         <div className="form-control mt-4">
                                             <label className="label">
                                                 <span>Jenis</span>
                                             </label>
-                                            <input type="Text" placeholder="Nama tindakan/layanan/obat/BHP" className="input input-bordered rounded-2xl border-disabled w-full"/>
+                                            <input type="Text" placeholder="Nama tindakan/layanan/obat/BHP" className="input input-bordered text-sm rounded-2xl border-disabled w-full"/>
                                         </div>
                                         <div className="form-control mt-4">
                                             <label className="label">
                                                 <span>Biaya</span>
                                             </label>
-                                            <input type="Text" placeholder="Rp. 100.000" className="input input-bordered rounded-2xl border-disabled w-full"/>
+                                            <input type="Text" placeholder="Rp. 100.000" className="input input-bordered text-sm rounded-2xl border-disabled w-full"/>
                                         </div>
                                     </div>
                                 </div>
