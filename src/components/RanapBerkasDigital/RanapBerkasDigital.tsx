@@ -1,7 +1,13 @@
 import { ArchiveBoxArrowDownIcon, ArrowUpTrayIcon, DocumentIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
 import SecNavbar from '../SecNavbar/SecNavbar'
+import { useState } from 'react'
 
 const RanapBerkasDigital: React.FC = () => {
+    const [onFile, setOnFile] = useState(false);
+
+    const changeFile = () => {
+        setOnFile(true);
+    }
 
     return (
         <div className='flex-1 p-4'>
@@ -65,9 +71,9 @@ const RanapBerkasDigital: React.FC = () => {
                                                 <span>Nama Pasien</span>
                                             </label>
                                             <div className='flex relative justify-between border-[1px] border-disabled rounded-2xl h-[50px] items-center px-5'>
-                                                <input type="file" className=' opacity-0 cursor-pointer absolute'/>
-                                                <p className=' text-sm text-disabled'>Pilih File</p>
-                                                <ArrowUpTrayIcon width={20} className=' text-primary' />
+                                                <input type="file" className={`cursor-pointer absolute text-sm w-[350px] ${onFile ? 'opacity-90' : 'opacity-0'}`} onChange={changeFile}/>
+                                                <p className={`text-sm text-disabled ${onFile ? 'hidden' : ''}`}>Pilih File</p>
+                                                <ArrowUpTrayIcon width={20} className={`text-primary ${onFile ? 'hidden' : ''}`}/>
                                             </div>
                                         </div>
                                     </div>
