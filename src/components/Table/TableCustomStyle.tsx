@@ -5,6 +5,7 @@ const tableCustomStyles = {
       fontWeight: 'bold',
       paddingLeft: '0 8px',
       justifyContent: 'center',
+      width: '50rem',
     },
   },
   pagination: {

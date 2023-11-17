@@ -11,9 +11,9 @@ export default function PageRawatInap() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get('/users')
-        console.log(response.data.users)
-        setData(response.data.users)
+        const response = await api.get('/api/v1/getDataPasienRanap?statusPulang=-&bangsalName=')
+        console.log(response.data)
+        setData(response.data)
       } catch (err) {
         console.log(err)
       }
@@ -23,60 +23,64 @@ export default function PageRawatInap() {
 
   type DataItem = {
     id: number
-    firstName: string
-    lastName: string
-    maidenName: string
-    age: number
-    gender: string
-    email: string
-    phone: string
-    username: string
-    password: string
-    birthDate: string
-    image: string
-    bloodGroup: string
-    height: number
-    weight: number
-    eyeColor: string
-    hair: {
-      color: string
-      type: string
-    }
-    domain: string
-    ip: string
+    no_rawat: string
+    status_lanjut: string
+    nm_dokter: string
+    nm_pasien: string
+    no_rkm_medis: string
+    kd_bangsal: string
+    status: string
+    kelas: string
+    statusdata: string
+    nm_bangsal: string
+    kd_kamar: string
+    trf_kamar: number
+    diagnosa_awal: string
+    diagnosa_akhir: string
+    tgl_masuk: string
+    jam_masuk: string
+    lama: number
+    ttl_biaya: number
+    stts_pulang: string
   }
 
   const columns = [
-    { name: 'ID', selector: (row: DataItem) => row.id, sortable: true },
-    { name: 'First Name', selector: (row: DataItem) => row.firstName, sortable: true },
     {
-      name: 'Last Name',
-      selector: (row: DataItem) => row.lastName,
+      name: 'No.RM',
+      selector: (row: DataItem) => row.no_rkm_medis,
       sortable: true,
     },
     {
-      name: 'Age',
-      selector: (row: DataItem) => (
-        <p className='text-white btn btn-xs text-center text-[10px] bg-[#48BB78] rounded-xl'>
-          {row.age}
-        </p>
-      ),
+      name: 'Nama Pasien',
+      selector: (row: DataItem) => row.nm_pasien,
       sortable: true,
+      width: '15rem',
     },
     {
-      name: 'Gender',
-      selector: (row: DataItem) => row.gender,
+      name: 'Bangsal/Kamar',
+      selector: (row: DataItem) => row.nm_bangsal,
       sortable: true,
+      width: '15rem',
     },
-    { name: 'Email', selector: (row: DataItem) => row.email, sortable: true },
-    { name: 'Birth Date', selector: (row: DataItem) => row.birthDate, sortable: true },
-    // make button to edit and redirect
+    { name: 'Dokter', selector: (row: DataItem) => row.nm_dokter, sortable: true, width: '15rem' },
+    {
+      name: 'Diagnosa Awal',
+      selector: (row: DataItem) => row.diagnosa_awal,
+      sortable: true,
+      width: '14rem',
+    },
+    {
+      name: 'Masuk/Keluar',
+      selector: (row: DataItem) => `${row.tgl_masuk} ${row.jam_masuk}`,
+      sortable: true,
+      width: '15rem',
+    },
     {
       name: '',
       selector: (row: DataItem) => (
-        <button 
+        <button
           className='btn btn-xs btn-ghost'
-          onClick={() => navigate(`/rawat-inap/rme/${row.id}`, { state: { data: row } })}
+          onClick={() => navigate(`/rawat-inap/rme/${row.no_rkm_medis}`, { state: { data: row } })}
         >
           Edit
         </button>
