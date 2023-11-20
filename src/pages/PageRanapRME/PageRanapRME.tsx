@@ -1,5 +1,5 @@
 import RanapSoapPemeriksaan from '../../components/RanapSoapPemeriksaan/RanapSoapPemeriksaan'
-import RmeRanap from '../../components/Rme/RmeRanap'
+import RanapRme from '../../components/RanapRme/RanapRme'
 import SecNavbar from '../../components/SecNavbar/SecNavbar'
 
 export default function PageRanapRME() {
@@ -9,7 +9,7 @@ export default function PageRanapRME() {
       <div className='flex pt-[55px] '>
         <div>
           <p className='className=text-[#121713] text-2xl font-sans font-bold mb-8'>Elektronik Rekam Medis</p>
-          <RmeRanap />
+          <RanapRme />
         </div>
         <div className='ml-4'>
           <p className='className=text-[#121713] text-2xl font-sans font-bold mb-8'>SOAP & Pemeriksaan</p>
