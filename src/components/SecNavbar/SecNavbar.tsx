@@ -28,7 +28,7 @@ const SecNavbar: React.FC = () => {
     ]
 
   return (
-    <div>
+    <div className=''>
         <div className='navbar bg-white rounded-xl'>
             <div className='navbar-center hidden lg:flex'>
                 <ul className='menu menu-horizontal px-1 '>
@@ -47,8 +47,15 @@ const SecNavbar: React.FC = () => {
                 </ul>
             </div>
         </div>
+        <div className='flex text-disabled mt-4'>
+            <ArrowLeftIcon className='w-4 mr-1' />
+            <a
+            className=' font-sans cursor-pointer'
+            onClick={()=>navigate('/rawat-inap')}
+            >Kembali</a>
+        </div>
         <Breadcrumb />
-        {links.map((link, index) => (
+        {/* {links.map((link, index) => (
             <div key={index}>
                 <a
                 key={index}
@@ -60,14 +67,7 @@ const SecNavbar: React.FC = () => {
                 {link.name}
                 </a>
             </div>
-        ))}
-        <div className='flex text-disabled mt-4'>
-            <ArrowLeftIcon className='w-4 mr-1' />
-            <a
-            className=' font-sans cursor-pointer'
-            onClick={()=>navigate('/rawat-inap')}
-            >Kembali</a>
-        </div>
+        ))} */}
     </div>
     )
 }
