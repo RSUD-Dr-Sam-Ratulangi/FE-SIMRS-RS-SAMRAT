@@ -1,4 +1,4 @@
-import RmeRanap from '../../components/Rme/RmeRanap'
+import RanapRme from '../../components/RanapRme/RanapRme'
 import SecNavbar from '../../components/SecNavbar/SecNavbar'
 
 export default function PageRanapRME() {
@@ -6,7 +6,7 @@ export default function PageRanapRME() {
     <div className='flex-row h-auto bg-lightgray p-4 '>
       <SecNavbar />
       <div>
-        <RmeRanap />
+        <RanapRme />
       </div>
     </div>
   )
