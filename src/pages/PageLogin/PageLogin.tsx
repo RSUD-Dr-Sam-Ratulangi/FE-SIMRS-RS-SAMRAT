@@ -7,10 +7,10 @@ import {
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const dataDummyLogin = {
-  username: 'John doe',
-  password: '123456',
-}
+// const dataDummyLogin = {
+//   username: 'John doe',
+//   password: '123456',
+// }
 
 export default function PageLogin() {
   const [isChecked, setIsChecked] = useState(false)
@@ -20,17 +20,45 @@ export default function PageLogin() {
   const [isError, setIsError] = useState(false)
   const navigate = useNavigate()
 
-  const handleLogin = () => {
-    if (username === '' || password === '') {
-      console.log('Please fill in both username and password fields.')
-    } else {
-      if (username != dataDummyLogin.username && password != dataDummyLogin.password) {
+  // const handleLogin = () => {
+  //   if (username === '' || password === '') {
+  //     console.log('Please fill in both username and password fields.')
+  //   } else {
+  //     if (username != dataDummyLogin.username && password != dataDummyLogin.password) {
+  //       setIsError(true)
+  //       console.log(isError)
+  //     } else {
+  //       navigate('/dashboard')
+  //     }
+  //   }
+  // }
+
+  const loginUser = async () => {
+    try {
+      const response = await fetch('http://172.20.10.3:8080/api/v1/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      })
+
+      const data = await response.json()
+
+      // Check if the login was successful
+      if (response.ok) {
+        // Save the response data to localStorage
+        localStorage.setItem('token', JSON.stringify(data))
+        navigate('/dashboard')
+        console.log('Response from backend:', data)
+      } else {
+        // Handle login error
+        console.error('Login failed:', data.error)
         setIsError(true)
         console.log(isError)
-      } else {
-        console.log('hayuu')
-        navigate('/dashboard')
       }
+    } catch (error) {
+      console.error('Error during login:', error)
     }
   }
 
@@ -96,7 +124,7 @@ export default function PageLogin() {
             </div>
             <button
               className='mb-5 p-0 btn bg-primary text-white h-[50px] w-[50px] rounded-xl border-0 hover:bg-dark'
-              onClick={handleLogin}
+              onClick={loginUser}
             >
               <ArrowRightIcon className='w-5' />
             </button>
