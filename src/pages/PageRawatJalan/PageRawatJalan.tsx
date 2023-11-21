@@ -76,6 +76,8 @@ type DataItem = {
 }
 
 export default function PageRawatJalan() {
+  const token = localStorage.getItem('token')
+  console.log(token)
   const [data, setData] = useState()
 
   const navigate = useNavigate()
