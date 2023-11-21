@@ -55,7 +55,7 @@ const SecNavbar: React.FC = () => {
             >Kembali</a>
         </div>
         <Breadcrumb />
-        {/* {links.map((link, index) => (
+        {links.map((link, index) => (
             <div key={index}>
                 <a
                 key={index}
@@ -67,7 +67,7 @@ const SecNavbar: React.FC = () => {
                 {link.name}
                 </a>
             </div>
-        ))} */}
+        ))}
     </div>
     )
 }
