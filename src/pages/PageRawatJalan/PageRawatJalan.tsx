@@ -88,7 +88,7 @@ export default function PageRawatJalan() {
     const fetchData = async () => {
       try {
         const response = await api.get(
-          `/api/v1/getalllpasienmendaftar?kd_poli=U0004&tglKunjungan=2023-01-01&tglKunjunganAkhir=${tglSkrng}`,
+          `/api/v1/getalllpasienmendaftar?kd_poli=UU030&tglKunjungan=2023-01-01&tglKunjunganAkhir=${tglSkrng}`,
         )
         console.log(response)
         setData(response.data)

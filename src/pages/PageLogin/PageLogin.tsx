@@ -35,7 +35,7 @@ export default function PageLogin() {
 
   const loginUser = async () => {
     try {
-      const response = await fetch('http://172.20.10.3:8080/api/v1/login', {
+      const response = await fetch('http://rsudsamrat.site:8901/api/v1/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
