@@ -1,6 +1,6 @@
 import React from 'react'
 import { ROUTES, ROUTES_NAME } from '../../routes'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import {
   HomeModernIcon,
   BuildingOfficeIcon,
@@ -10,6 +10,14 @@ import {
 } from '@heroicons/react/24/solid'
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate()
+  const handleExitClick = () => {
+    // Clear all items from local storage
+    localStorage.clear()
+    console.log('Local storage cleared')
+    navigate('/login')
+  }
+
   const navLinks = [
     {
       to: ROUTES.PAGE_DASHBOARD,
@@ -60,7 +68,7 @@ const Navbar: React.FC = () => {
         ))}
       </div>
       <div className='p-4 mt-auto'>
-        <button className='flex items-center gap-3 text-lg text-red-500'>
+        <button className='flex items-center gap-3 text-lg text-red-500' onClick={handleExitClick}>
           <ArrowLeftOnRectangleIcon className='w-6' />
           <span className='font-bold'>Keluar</span>
         </button>

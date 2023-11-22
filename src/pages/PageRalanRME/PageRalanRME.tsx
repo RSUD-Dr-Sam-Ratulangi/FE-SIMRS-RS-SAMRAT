@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { api } from '../../services/api/config.api'
 import RalanEditHeader from '../../components/RalanEdit/RalanEditHeader'
 import TabelDiagnosaPenyakit from '../../components/Table/tableDiagnosaPenyakit'
 import RenderDataPemeriksaan from '../../components/RalanEdit/pemeriksaanComponent'
@@ -28,7 +30,77 @@ const PageRalanRME = () => {
   const [riwayatPerawatanData, setRiwayatPerawatanData] = useState([])
   const [dataRiwayat, setDataRiwayat] = useState([])
 
+  type userData = {
+    no_rkm_medis: string
+    nm_pasien: string
+    no_ktp: string
+    pnd: string
+    jk: string
+    tmp_lahir: string
+    tgl_lahir: string
+    nm_ibu: string
+    alamat: string
+    gol_darah: string
+    stts_nikah: string
+    agama: string
+    tgl_daftar: string
+    umur: string
+    tgl_perawatan: string
+    jam_rawat: string
+    suhu_tubuh: string
+    tensi: string
+    nadi: string
+    respirasi: string
+    tinggi: string
+    berat: string
+    gcs: string
+    spo2: string
+    kesadaran: string
+    keluhan: string
+    pemeriksaan: string
+    alergi: string
+    lingkar_perut: string
+    rtl: string
+    penilaian: string
+    instruksi: string
+    evaluasi: string
+    nip: string
+    nama: string
+    jbtn: string
+    no_rawat: string
+    kd_penyakit: string
+    status: string
+    prioritas: number
+    status_penyakit: string
+    nm_penyakit: string
+    tgl_registrasi: string
+    kd_dokter: string
+    nm_dokter: string
+  }
+  type ApiData = userData[]
+  const { id } = useParams()
   useEffect(() => {
+    const fetchPersonalData = async () => {
+      try {
+        const response = await api.get(`/api/v1/getPatientData?noRkmMedis=${id}`)
+        const data: userData = await response.data
+        setRiwayatPerawatan(Object.values(data))
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    const fetchDiagnosa = async () => {
+      try {
+        const response = await api.get(`/api/v1/getDiagnosaPasien/${id}`)
+        const data: ApiData = await response.data
+        console.log(data)
+        // perlu data diagnosa-> no.registrasi, penjamin, tanggal registrasi, unit/poliklinik, pemeriksaan, tindakan/perawatan
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchPersonalData()
+    fetchDiagnosa()
     console.log(riwayatPerawatanData)
 
     const apiData = [
@@ -246,23 +318,23 @@ const PageRalanRME = () => {
     const dataRiwayatArray = dataRiwayat
     setDataRiwayat(apiData[0].dataRiwayat)
 
-    const extractedDataRiwayatPerawatanPasien = apiData.map(({ dataRiwayat, ...otherData }) => {
-      return { dataRiwayat, ...otherData }
-    })
-    const values = extractedDataRiwayatPerawatanPasien.map((item) => [
-      item.noRm,
-      item.namaPasien,
-      item.alamat,
-      item.umur,
-      item.jenisKelamin,
-      item.tanggalLahir,
-      item.golonganDarah,
-      item.ibuKandung,
-      item.statusMenikah,
-      item.agama,
-      item.pendidikanTerakhir,
-      item.pertamaMendaftar,
-    ])
+    // const extractedDataRiwayatPerawatanPasien = apiData.map(({ dataRiwayat, ...otherData }) => {
+    //   return { dataRiwayat, ...otherData }
+    // })
+    // const values = extractedDataRiwayatPerawatanPasien.map((item) => [
+    //   item.noRm,
+    //   item.namaPasien,
+    //   item.alamat,
+    //   item.umur,
+    //   item.jenisKelamin,
+    //   item.tanggalLahir,
+    //   item.golonganDarah,
+    //   item.ibuKandung,
+    //   item.statusMenikah,
+    //   item.agama,
+    //   item.pendidikanTerakhir,
+    //   item.pertamaMendaftar,
+    // ])
     const values2 = apiData[0].dataRiwayat
     const extractedValues = values2.map((item) => ({
       noRawat: item.noRawat,
@@ -285,7 +357,8 @@ const PageRalanRME = () => {
     //   ...dataRiwayatArray.map((riwayat) => riwayat.pemeriksaanRawatJalan),
     // )
     setPemeriksaanRawatJalanState(newArray)
-    setRiwayatPerawatan(values[0])
+
+    console.log('this is riwayat perawatan', riwayatPerawatan)
   }, [])
   type DataItem = {
     kode: string
@@ -325,7 +398,8 @@ const PageRalanRME = () => {
 
   const rowCount = 3
 
-  // split the number labels and values in each object based on rowCount
+  //  split the number labels and values in each object based on rowCount
+
   for (let i = 0; i < labelRiwayatPerawatan.length; i += rowCount) {
     const labelsSlice = labelRiwayatPerawatan.slice(i, i + rowCount)
     const valuesSlice = riwayatPerawatan.slice(i, i + rowCount)
@@ -341,95 +415,99 @@ const PageRalanRME = () => {
   return (
     <div>
       <RalanEditHeader />
-      <div className='w-full h-full bg-white p-3 rounded-xl shadow-soft '>
-        <p className='text text-lg font-bold pb-3'>Riwayat Perawatan</p>
-        <p className='font-light'>Data Riwayat Perawatan Pasien</p>
-        <div className='mb-4'>
-          <div className='flex font-sans text-base font-normal text-[#121713] leading-6 mt-2'>
-            {infoBlocks.map((block, rowIndex) => (
-              <div key={rowIndex} className={rowIndex !== 0 ? 'ml-32' : ''}>
-                {block.map(({ label, value }, index) => (
-                  <div key={index} className={index % 2 === 0 ? 'my-2' : ''}>
-                    <p className='font-bold text-gray-400 text-xs $'>{label}</p>
-                    <p>{value}</p>
+      <div className='flex gap-4'>
+        <div className='h-full bg-white p-3 rounded-xl shadow-soft mt-4'>
+          <p className='text text-lg font-bold pb-3'>Riwayat Perawatan</p>
+          <p className='font-light'>Data Riwayat Perawatan Pasien</p>
+          <div className='mb-4'>
+            <div className='flex font-sans text-base font-normal text-[#121713] leading-6 mt-2'>
+              {infoBlocks.map((block, rowIndex) => (
+                <div key={rowIndex} className={rowIndex !== 0 ? 'ml-32' : ''}>
+                  {block.map(({ label, value }, index) => (
+                    <div key={index} className={index % 2 === 0 ? 'my-2' : ''}>
+                      <p className='font-bold text-gray-400 text-xs $'>{label}</p>
+                      <p>{value}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className='pt-3'>
+              <label className='text font-light'>Data Riwayat</label>
+            </div>
+            <div className='flex gap-16 flex-col'>
+              {dataRiwayat.map((data, index) => (
+                <div key={index}>
+                  <div className='flex gap-16'>
+                    <div>
+                      <label className='label-text-alt text-[11px] font-light'>NO RAWAT</label>
+                      <p className='text'>{data.no_rawat}</p>
+                    </div>
+                    <div>
+                      <label className='label-text-alt text-[11px] font-light'>NO REGISTRASI</label>
+                      <p className='text'>{data.noRegis}</p>
+                    </div>
+                    <div>
+                      <label className='label-text-alt text-[11px] font-light'>
+                        TANGGAL REGISTRASI
+                      </label>
+                      <p className='text'>{data.tanggalRegis}</p>
+                    </div>
+                    <div>
+                      <label className='label-text-alt text-[11px] font-light'>
+                        UNIT POLIKLINIK
+                      </label>
+                      <p className='text'>{data.unitPoliklinik}</p>
+                    </div>
+                    <div>
+                      <label className='label-text-alt text-[11px] font-light'>DOKTER</label>
+                      <p className='text'>{data.dokter}</p>
+                    </div>
+                    <div>
+                      <label className='label-text-alt text-[11px] font-light'>PENJAMIN</label>
+                      <p className='text'>{data.penjamin}</p>
+                    </div>
+                    <div>
+                      <label className='label-text-alt text-[11px] font-light'>STATUS</label>
+                      <p className='text'>{data.status}</p>
+                    </div>
+                    <div>
+                      <label className='label-text-alt text-[11px] font-light'>PEMERIKSAAN</label>
+                      <p className='text'>{data.pemeriksaan}</p>
+                    </div>
                   </div>
-                ))}
-              </div>
-            ))}
+                  <div className='pt-3'>
+                    <label className='label-text font-light'>DIAGNOSA/PENYAKIT/ICD 10</label>
+                  </div>
+                  <div className='w-full  outline outline-1 rounded-xl outline-disabled'>
+                    <TabelDiagnosaPenyakit columns={columnDiagnosa} data={data.diagnosaPenyakit} />
+                  </div>
+                  <div>
+                    <label className='label-text font-light'>PEMERIKSAAN</label>
+                  </div>
+
+                  <div className='flex flex-col'>
+                    <RenderDataPemeriksaan values={pemeriksaanValues[index]} />
+                  </div>
+                  <TindakanPerawatan
+                    dataDokter={data.tindakanRalanDokter}
+                    dataPerawat={data.tindakanRalanPerawat}
+                    dataTindakan={data.dataObat}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className='pt-3'>
-            <label className='text font-light'>Data Riwayat</label>
+          <div className='flex text-white justify-end'>
+            <button className='flex justify-center items-center font-semibold text-base w-[360px] h-auto py-2 bg-primary rounded-xl hover:opacity-80'>
+              <ArchiveBoxArrowDownIcon width={20} height={20} />
+              <p className='ml-1'>Cetak</p>
+            </button>
+            <button className='flex justify-center items-center font-semibold text-base text-[#8B8B8B] w-[360px] h-auto py-2 ml-4 border-2 border-[#8B8B8B] rounded-xl hover:opacity-80'>
+              <ArrowLeftOnRectangleIcon width={20} height={20} />
+              <p className='ml-1'>Tutup</p>
+            </button>
           </div>
-          <div className='flex gap-16 flex-col'>
-            {dataRiwayat.map((data, index) => (
-              <div key={index}>
-                <div className='flex gap-16'>
-                  <div>
-                    <label className='label-text-alt text-[11px] font-light'>NO RAWAT</label>
-                    <p className='text font-bold'>{data.noRawat}</p>
-                  </div>
-                  <div>
-                    <label className='label-text-alt text-[11px] font-light'>NO REGISTRASI</label>
-                    <p className='text font-bold'>{data.noRegis}</p>
-                  </div>
-                  <div>
-                    <label className='label-text-alt text-[11px] font-light'>
-                      TANGGAL REGISTRASI
-                    </label>
-                    <p className='text font-bold'>{data.tanggalRegis}</p>
-                  </div>
-                  <div>
-                    <label className='label-text-alt text-[11px] font-light'>UNIT POLIKLINIK</label>
-                    <p className='text font-bold'>{data.unitPoliklinik}</p>
-                  </div>
-                  <div>
-                    <label className='label-text-alt text-[11px] font-light'>DOKTER</label>
-                    <p className='text font-bold'>{data.dokter}</p>
-                  </div>
-                  <div>
-                    <label className='label-text-alt text-[11px] font-light'>PENJAMIN</label>
-                    <p className='text font-bold'>{data.penjamin}</p>
-                  </div>
-                  <div>
-                    <label className='label-text-alt text-[11px] font-light'>STATUS</label>
-                    <p className='text font-bold'>{data.status}</p>
-                  </div>
-                  <div>
-                    <label className='label-text-alt text-[11px] font-light'>PEMERIKSAAN</label>
-                    <p className='text font-bold'>{data.pemeriksaan}</p>
-                  </div>
-                </div>
-                <div className='pt-3'>
-                  <label className='label-text font-light'>DIAGNOSA/PENYAKIT/ICD 10</label>
-                </div>
-                <div className='w-full  outline outline-1 rounded-xl outline-disabled'>
-                  <TabelDiagnosaPenyakit columns={columnDiagnosa} data={data.diagnosaPenyakit} />
-                </div>
-                <div>
-                  <label className='label-text font-light'>PEMERIKSAAN</label>
-                </div>
-                {/* Bisa lebih dari dua, map lagi */}
-                <div className='flex flex-col'>
-                  <RenderDataPemeriksaan values={pemeriksaanValues[index]} />
-                </div>
-                <TindakanPerawatan
-                  dataDokter={data.tindakanRalanDokter}
-                  dataPerawat={data.tindakanRalanPerawat}
-                  dataTindakan={data.dataObat}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className='flex text-white justify-end'>
-          <button className='flex justify-center items-center font-semibold text-base w-[360px] h-auto py-2 bg-primary rounded-xl hover:opacity-80'>
-            <ArchiveBoxArrowDownIcon width={20} height={20} />
-            <p className='ml-1'>Cetak</p>
-          </button>
-          <button className='flex justify-center items-center font-semibold text-base text-[#8B8B8B] w-[360px] h-auto py-2 ml-4 border-2 border-[#8B8B8B] rounded-xl hover:opacity-80'>
-            <ArrowLeftOnRectangleIcon width={20} height={20} />
-            <p className='ml-1'>Tutup</p>
-          </button>
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import {
 } from '@heroicons/react/24/solid'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { api } from '../../services/api/config.api'
 
 // const dataDummyLogin = {
 //   username: 'John doe',
@@ -48,9 +49,27 @@ export default function PageLogin() {
       // Check if the login was successful
       if (response.ok) {
         // Save the response data to localStorage
+
         localStorage.setItem('token', JSON.stringify(data))
         navigate('/dashboard')
         console.log('Response from backend:', data)
+        const fetchJadwal = async () => {
+          const tokenString = localStorage.getItem('token')
+          const token = JSON.parse(tokenString)
+          const kdDokter = token?.dokter?.kd_dokter
+          try {
+            const response = await api.get(
+              `http://rsudsamrat.site:8901/api/v1/getJadwalDokter?kdDokter=${kdDokter}`,
+            )
+            const kode = response.data
+            localStorage.setItem('kd_poli', JSON.stringify(kode))
+            console.log('data kode dokter', kode)
+          } catch (err) {
+            console.log(err)
+          }
+        }
+
+        fetchJadwal()
       } else {
         // Handle login error
         console.error('Login failed:', data.error)

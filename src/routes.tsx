@@ -14,6 +14,7 @@ import RanapLayananObat from './components/RanapLayananObat/RanapLayananObat'
 import RanapBerkasDigital from './components/RanapBerkasDigital/RanapBerkasDigital'
 import LayananObatRalan from './components/RalanEdit/layananObatRalan'
 import BerkasDigitalRalan from './components/RalanEdit/berkasDigital'
+// import NewPageRalanRME from './components/RalanEdit/newPageRalanRME'
 
 export const ROUTES = {
   HOME: '/',
@@ -98,7 +99,7 @@ export const routerList = [
     children: [
       {
         index: true,
-        element: <Navigate to={ROUTES.PAGE_DASHBOARD} replace={true} />,
+        element: <Navigate to={ROUTES.PAGE_LOGIN} replace={true} />,
       },
       {
         path: ROUTES.PAGE_DASHBOARD,

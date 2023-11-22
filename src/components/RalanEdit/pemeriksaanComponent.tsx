@@ -87,7 +87,7 @@ const RenderDataPemeriksaan: React.FC<RenderDataProps> = ({ values }) => {
                 {staticLabels.slice(section.start, section.end).map((label, index) => (
                   <div key={index}>
                     <label className='label-text-alt font-light'>{label}</label>
-                    <p className='font-bold'>{data[mapLabelToProperty(label).toLowerCase()]}</p>
+                    <p className=''>{data[mapLabelToProperty(label).toLowerCase()]}</p>
                   </div>
                 ))}
               </div>
