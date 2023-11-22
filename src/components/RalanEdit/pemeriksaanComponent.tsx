@@ -77,16 +77,18 @@ const RenderDataPemeriksaan: React.FC<RenderDataProps> = ({ values }) => {
   return (
     <div className='flex flex-col text-sm mb-5 gap-6'>
       {values.map((data, dataIndex) => (
-        <div className='flex gap-0' key={dataIndex}>
+        <div className='flex gap-2' key={dataIndex}>
           <div className='flex w-32'>
-            <p className='label-text font-light'>Rawat Jalan</p>
+            <p className='label-text text-[12px] font-bold text-disabled'>Rawat Jalan</p>
           </div>
           <div key={dataIndex} className='flex flex-col'>
             {sections.map((section, sectionIndex) => (
               <div key={sectionIndex} className={`flex gap-8${sectionIndex > 0 ? ' mt-3' : ''}`}>
                 {staticLabels.slice(section.start, section.end).map((label, index) => (
                   <div key={index}>
-                    <label className='label-text-alt font-light'>{label}</label>
+                    <label className='label-text-alt text-[12px] font-bold text-disabled'>
+                      {label}
+                    </label>
                     <p className=''>{data[mapLabelToProperty(label).toLowerCase()]}</p>
                   </div>
                 ))}

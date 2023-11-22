@@ -105,11 +105,11 @@ const RanapSoapPemeriksaan: React.FC = () => {
                   <div className='mt-8'>
                     <div>
                       <p className=' font-bold text-gray-400 text-xs'>NO. RAWAT</p>
-                      <p className=''>{personalData.nm_ibu || '-'}</p>
+                      <p className=''>{'-'}</p>
                     </div>
                     <div className=' my-2'>
                       <p className=' font-bold text-gray-400 text-xs'>DOKTER</p>
-                      <p className=' whitespace-nowrap'>{personalData.nm_ibu || '-'}</p>
+                      <p className=' whitespace-nowrap'>{'-'}</p>
                     </div>
                   </div>
                 </div>
@@ -129,11 +129,11 @@ const RanapSoapPemeriksaan: React.FC = () => {
                   <div className='mt-8'>
                     <div>
                       <p className=' font-bold text-gray-400 text-xs'>NO. REGISTRASI</p>
-                      <p className=''>{personalData.nm_ibu || '-'}</p>
+                      <p className=''>{'-'}</p>
                     </div>
                     <div className=' my-2'>
                       <p className=' font-bold text-gray-400 text-xs'>PENJAMIN</p>
-                      <p className=' whitespace-nowrap'>{personalData.nm_ibu || '-'}</p>
+                      <p className=' whitespace-nowrap'>{'-'}</p>
                     </div>
                   </div>
                 </div>
@@ -155,11 +155,11 @@ const RanapSoapPemeriksaan: React.FC = () => {
                   <div className='mt-8'>
                     <div>
                       <p className=' font-bold text-gray-400 text-xs'>TANGGAL REGISTRASI</p>
-                      <p className=''>{personalData.nm_ibu || '-'}</p>
+                      <p className=''>{'-'}</p>
                     </div>
                     <div className=' my-2'>
                       <p className=' font-bold text-gray-400 text-xs'>STATUS</p>
-                      <p className=' whitespace-nowrap'>{personalData.nm_ibu || '-'}</p>
+                      <p className=' whitespace-nowrap'>{'-'}</p>
                     </div>
                   </div>
                 </div>
@@ -183,11 +183,11 @@ const RanapSoapPemeriksaan: React.FC = () => {
                   <div className='mt-8'>
                     <div>
                       <p className=' font-bold text-gray-400 text-xs'>UNIT/POLIKLINIK</p>
-                      <p className=''>{personalData.nm_ibu || '-'}</p>
+                      <p className=''>{'-'}</p>
                     </div>
                     <div className=' my-2'>
                       <p className=' font-bold text-gray-400 text-xs'>PEMERIKSAAN</p>
-                      <p className=' whitespace-nowrap'>{personalData.nm_ibu || '-'}</p>
+                      <p className=' whitespace-nowrap'>{'-'}</p>
                     </div>
                   </div>
                 </div>

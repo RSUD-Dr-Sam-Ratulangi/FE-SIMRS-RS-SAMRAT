@@ -416,10 +416,10 @@ const PageRalanRME = () => {
     <div>
       <RalanEditHeader />
       <div className='flex gap-4'>
-        <div className='h-full bg-white p-3 rounded-xl shadow-soft mt-4'>
-          <p className='text text-lg font-bold pb-3'>Riwayat Perawatan</p>
-          <p className='font-light'>Data Riwayat Perawatan Pasien</p>
-          <div className='mb-4'>
+        <div className='h-full rounded-xl shadow-soft mt-4'>
+          <div className='mb-4 bg-white p-3'>
+            <p className='text text-lg font-bold pb-3'>Riwayat Perawatan</p>
+            <p className='font-light text-disabled'>Data Riwayat Perawatan Pasien</p>
             <div className='flex font-sans text-base font-normal text-[#121713] leading-6 mt-2'>
               {infoBlocks.map((block, rowIndex) => (
                 <div key={rowIndex} className={rowIndex !== 0 ? 'ml-32' : ''}>
@@ -432,58 +432,74 @@ const PageRalanRME = () => {
                 </div>
               ))}
             </div>
-            <div className='pt-3'>
-              <label className='text font-light'>Data Riwayat</label>
-            </div>
-            <div className='flex gap-16 flex-col'>
+          </div>
+          <div className=' mb-4'>
+            <div className='flex gap-4 flex-col'>
               {dataRiwayat.map((data, index) => (
-                <div key={index}>
+                <div key={index} className='bg-white p-3 rounded-xl'>
+                  <p className='text text-lg font-bold'>Riwayat Perawatan</p>
                   <div className='flex gap-16'>
                     <div>
-                      <label className='label-text-alt text-[11px] font-light'>NO RAWAT</label>
-                      <p className='text'>{data.no_rawat}</p>
+                      <label className='label-text-alt text-[12px] font-bold text-disabled'>
+                        NO RAWAT
+                      </label>
+                      <p className='text'>{data.noRawat}</p>
                     </div>
                     <div>
-                      <label className='label-text-alt text-[11px] font-light'>NO REGISTRASI</label>
+                      <label className='label-text-alt text-[12px] font-bold text-disabled'>
+                        NO REGISTRASI
+                      </label>
                       <p className='text'>{data.noRegis}</p>
                     </div>
                     <div>
-                      <label className='label-text-alt text-[11px] font-light'>
+                      <label className='label-text-alt text-[12px] font-bold text-disabled'>
                         TANGGAL REGISTRASI
                       </label>
                       <p className='text'>{data.tanggalRegis}</p>
                     </div>
                     <div>
-                      <label className='label-text-alt text-[11px] font-light'>
+                      <label className='label-text-alt text-[12px] font-bold text-disabled'>
                         UNIT POLIKLINIK
                       </label>
                       <p className='text'>{data.unitPoliklinik}</p>
                     </div>
                     <div>
-                      <label className='label-text-alt text-[11px] font-light'>DOKTER</label>
+                      <label className='label-text-alt text-[12px] font-bold text-disabled'>
+                        DOKTER
+                      </label>
                       <p className='text'>{data.dokter}</p>
                     </div>
                     <div>
-                      <label className='label-text-alt text-[11px] font-light'>PENJAMIN</label>
+                      <label className='label-text-alt text-[12px] text-disabled font-bold'>
+                        PENJAMIN
+                      </label>
                       <p className='text'>{data.penjamin}</p>
                     </div>
                     <div>
-                      <label className='label-text-alt text-[11px] font-light'>STATUS</label>
+                      <label className='label-text-alt text-[12px]  text-disabled font-bold'>
+                        STATUS
+                      </label>
                       <p className='text'>{data.status}</p>
                     </div>
                     <div>
-                      <label className='label-text-alt text-[11px] font-light'>PEMERIKSAAN</label>
+                      <label className='label-text-alt text-[12px] text-disabled font-bold'>
+                        PEMERIKSAAN
+                      </label>
                       <p className='text'>{data.pemeriksaan}</p>
                     </div>
                   </div>
                   <div className='pt-3'>
-                    <label className='label-text font-light'>DIAGNOSA/PENYAKIT/ICD 10</label>
+                    <label className='label-text text-[12px] font-bold text-disabled'>
+                      DIAGNOSA/PENYAKIT/ICD 10
+                    </label>
                   </div>
                   <div className='w-full  outline outline-1 rounded-xl outline-disabled'>
                     <TabelDiagnosaPenyakit columns={columnDiagnosa} data={data.diagnosaPenyakit} />
                   </div>
                   <div>
-                    <label className='label-text font-light'>PEMERIKSAAN</label>
+                    <label className='label-text text-[12px] font-bold text-disabled'>
+                      PEMERIKSAAN
+                    </label>
                   </div>
 
                   <div className='flex flex-col'>
