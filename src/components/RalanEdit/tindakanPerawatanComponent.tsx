@@ -135,14 +135,18 @@ const columnsPemeriksaan = [
 const TindakanPerawatan = ({ dataDokter, dataPerawat, dataTindakan }: Props) => {
   return (
     <div>
-      <label className='label-text-alt font-light text-disabled'>TINDAKAN PERAWATAN</label>
+      <label className='label-text-alt text-[12px] font-bold text-disabled'>
+        TINDAKAN PERAWATAN
+      </label>
       <TabelTindakanPerawatanDokterPerawat
         dataDokter={dataDokter}
         dataPerawat={dataPerawat}
         columns={columnsPemeriksaan}
       />
 
-      <label className='label-text-alt font-light text-disabled'>TINDAKAN PERAWATAN</label>
+      <label className='label-text-alt text-[12px] font-bold text-disabled'>
+        TINDAKAN PERAWATAN
+      </label>
       <TabelTindakanPerawatan data={dataTindakan} columns={columnObat} />
     </div>
   )

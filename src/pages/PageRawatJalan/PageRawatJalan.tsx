@@ -76,9 +76,8 @@ type DataItem = {
 }
 
 export default function PageRawatJalan() {
-  const token = localStorage.getItem('token')
-  console.log(token)
   const [data, setData] = useState()
+  // const [kdPoli, setKdPoli] = useState()
 
   const navigate = useNavigate()
   const tglSkrng = dateNow()
@@ -86,11 +85,14 @@ export default function PageRawatJalan() {
 
   useEffect(() => {
     const fetchData = async () => {
+      const tokenPoliString = localStorage.getItem('kd_poli')
+      const tokenPoli = JSON.parse(tokenPoliString)
+
       try {
         const response = await api.get(
-          `/api/v1/getalllpasienmendaftar?kd_poli=UU030&tglKunjungan=2023-01-01&tglKunjunganAkhir=${tglSkrng}`,
+          `/api/v1/getalllpasienmendaftar?kd_poli=${tokenPoli[0].kd_poli}&tglKunjungan=2023-08-01&tglKunjunganAkhir=${tglSkrng}`,
         )
-        console.log(response)
+        console.log('this is the table data', response)
         setData(response.data)
       } catch (err) {
         console.log(err)
