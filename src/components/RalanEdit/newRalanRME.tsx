@@ -49,6 +49,7 @@ type userData = {
   tgl_registrasi: string
   kd_dokter: string
   nm_dokter: string
+  tanggal: string
 }
 
 type ApiData = userData[]
@@ -58,6 +59,8 @@ const NewRalanRME: React.FC = () => {
   const [soap, setSoap] = useState<ApiData>([])
   const [diagnosa, setDiagnosa] = useState<ApiData>([])
   const [personalData, setPersonalData] = useState<userData>()
+  const [arrA, setArrA] = useState([])
+  const [arrB, setArrB] = useState([])
 
   useEffect(() => {
     const fetchSoap = async () => {
@@ -94,8 +97,119 @@ const NewRalanRME: React.FC = () => {
     fetchPersonalData()
     fetchDiagnosa()
     fetchSoap()
-  }, [])
 
+    console.log('this is the modified diagnosaa', diagnosa)
+    const mergedArray = [...diagnosa, ...soap].sort((a, b) => {
+      const dateA = a.tgl_perawatan || a.tgl_registrasi
+      const dateB = b.tgl_perawatan || b.tgl_registrasi
+      return dateA.localeCompare(dateB)
+    })
+
+    const groupedArray = mergedArray.reduce((acc, item) => {
+      const existingItem = acc.find((group) => {
+        const groupDate = group.Date || group.date || group.tgl_registrasi
+        const itemDate = item.tgl_perawatan || item.tgl_registrasi
+        return groupDate === itemDate
+      })
+
+      if (existingItem) {
+        if (item.no_rawat !== undefined) {
+          existingItem.noRawat = item.no_rawat
+          existingItem.tglregistrasi = item.tgl_registrasi
+          existingItem.nmDokter = item.nm_dokter
+          existingItem.status = item.status
+          existingItem.noRegis = '-'
+          existingItem.penjamin = '-'
+          existingItem.unitPoli = '-'
+          existingItem.pemeriksaan = '-'
+        }
+        if (item.tgl_registrasi !== undefined) {
+          // const existingDiagnosa = existingItem.diagnosa.find(
+          //   (diagnosaItem) => diagnosaItem.tgl_perawatan === item.tgl_perawatan,
+          // )
+          existingItem.diagnosa.push({
+            tglRegistrasi: item.tgl_registrasi,
+            kdPenyakit: item.kd_penyakit,
+            pemeriksaan: item.pemeriksaan,
+            nmDokter: item.nm_dokter,
+          })
+        }
+        if (item.jam_rawat !== undefined) {
+          // const existingPemeriksaanRalan = existingItem.pRalan.find(
+          //   (pRalanItem) => pRalanItem.tgl_perawatan === item.tgl_perawatan,
+          // )
+          existingItem.pemeriksaanRawatJalan.push({
+            tglPerawatan: item.tgl_perawatan,
+            jamRawat: item.jam_rawat,
+            suhuTubuh: item.suhu_tubuh,
+            tensi: item.tensi,
+            nadi: item.tensi,
+            respirasi: item.tensi,
+            tinggi: item.tensi,
+            gcs: item.gcs,
+            spo2: item.spo2,
+            kesadaran: item.kesadaran,
+            berat: item.berat,
+            rtl: item.rtl,
+            subjek: '-',
+            objek: '-',
+            asesmen: '-',
+          })
+        }
+      } else {
+        const newItem = {
+          Date: item.tgl_registrasi || item.tgl_perawatan,
+          noRawat: item.no_rawat !== undefined ? item.no_rawat : '-',
+          tglRegistrasi: item.tgl_registrasi !== undefined ? item.tgl_registrasi : '-',
+          nmDokter: item.nm_dokter !== undefined ? item.nm_dokter : '-',
+          status: item.status !== undefined ? item.status : '-',
+          noRegis: '-',
+          penjamin: '-',
+          unitPoli: '-',
+          pemeriksaan: '-',
+          diagnosa: [],
+          pemeriksaanRawatJalan: [],
+        }
+
+        if (item.tgl_registrasi !== undefined) {
+          newItem.diagnosa.push({
+            tglRegistrasi: item.status !== undefined ? item.status : '-',
+            kdPenyakit: item.kd_penyakit !== undefined ? item.kd_penyakit : '-',
+            pemeriksaan: item.pemeriksaan !== undefined ? item.pemeriksaan : '-',
+            nmDokter: item.nm_dokter !== undefined ? item.nm_dokter : '-',
+          })
+        }
+        if (item.jam_rawat !== undefined) {
+          newItem.pemeriksaanRawatJalan.push({
+            tglPerawatan: item.tgl_perawatan !== undefined ? item.tgl_perawatan : '-',
+            jamRawat: item.jam_rawat !== undefined ? item.jam_rawat : '-',
+            suhuTubuh: item.suhu_tubuh !== undefined ? item.suhu_tubuh : '-',
+            tensi: item.tensi !== undefined ? item.tensi : '-',
+            nadi: item.nadi !== undefined ? item.nadi : '-',
+            respirasi: item.respirasi !== undefined ? item.respirasi : '-',
+            tinggi: item.tinggi !== undefined ? item.tinggi : '-',
+            gcs: item.gcs !== undefined ? item.gcs : '-',
+            spo2: item.spo2 !== undefined ? item.spo2 : '-',
+            kesadaran: item.kesadaran !== undefined ? item.kesadaran : '-',
+            berat: item.berat !== undefined ? item.berat : '-',
+            rtl: item.rtl !== undefined ? item.rtl : '-',
+            subjek: '-',
+            objek: '-',
+            asesmen: '-',
+          })
+        }
+
+        acc.push(newItem)
+      }
+
+      return acc
+    }, [])
+
+    setArrA(mergedArray)
+    setArrB(groupedArray)
+  }, [])
+  console.log('this is the grouped array', arrA)
+  console.log('this is the merged arraya', arrB)
   const handleButton = () => {
     console.log('display personal data:', personalData)
     console.log('display soap data:', soap)

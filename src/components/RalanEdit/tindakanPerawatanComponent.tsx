@@ -106,33 +106,40 @@ const columnObat = [
 const columnsPemeriksaan = [
   {
     name: 'Date',
-    selector: 'date',
-
+    selector: (row) => row.tglRegistrasi,
     width: '7rem',
   },
   {
     name: 'Kode',
-    selector: 'kode',
+    selector: (row) => row.kdPenyakit,
     width: '6rem',
   },
   {
     name: 'Name Tindakan/Perawatan',
-    selector: 'namaTindakan',
-
+    selector: (row) => row.pemeriksaan,
+    style: { marginRight: '' },
     width: '10rem',
   },
   {
+    name: '                      ',
+    width: '25rem',
+  },
+  {
     name: 'Pemeriksa',
-    selector: 'pemeriksa',
-    style: { marginLeft: '7.1rem' },
-
-    width: '50%',
-    grow: 1,
-    right: true,
+    selector: (row) => row.nmDokter,
+    // conditionalCellStyles: [
+    //   {
+    //     when: (row) => row.nmDokter.length > 0,
+    //     style: (row) => ({ marginRight: `${0.5 / row.nmDokter.length}px` }),
+    //   },
+    // ],
+    // style: { marginRight: '10rem' },
+    width: '15rem',
   },
 ]
 
 const TindakanPerawatan = ({ dataDokter, dataPerawat, dataTindakan }: Props) => {
+  console.log(dataDokter)
   return (
     <div>
       <label className='label-text-alt text-[12px] font-bold text-disabled'>
