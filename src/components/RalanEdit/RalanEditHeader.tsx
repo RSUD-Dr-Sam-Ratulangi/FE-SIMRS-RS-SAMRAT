@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate, useParams, Link } from 'react-router-dom'
 import Breadcrumb from '../BreadCrumb/Breadcrumb'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 
@@ -34,14 +34,14 @@ const RalanEditHeader: React.FC = () => {
           <div className='menu menu-horizontal px-1 flex gap-4 '>
             {links.map((link) => (
               <NavLink key={link.link} to={link.link}>
-                <a
-                  href={link.link}
+                <Link
+                  to={link.link}
                   className={`text-disabled text-base font-sans font-bold ${
                     location.pathname === link.link ? 'text-primary' : ''
                   }`}
                 >
                   {link.name}
-                </a>
+                </Link>
               </NavLink>
             ))}
           </div>

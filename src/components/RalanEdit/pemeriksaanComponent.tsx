@@ -46,9 +46,9 @@ const RenderDataPemeriksaan: React.FC<RenderDataProps> = ({ values }) => {
   const mapLabelToProperty = (label) => {
     // Add your label to property name mappings here
     const labelMappings = {
-      Tanggal: 'tanggal',
-      Jam: 'jam',
-      'Suhu(C)': 'suhu',
+      Tanggal: 'tglPerawatan',
+      Jam: 'jamRawat',
+      'Suhu(C)': 'suhuTubuh',
       'Tensi(mmHg)': 'tensi',
       'Nadi(/menit)': 'nadi',
       'RR(/menit)': 'rr',
@@ -60,8 +60,8 @@ const RenderDataPemeriksaan: React.FC<RenderDataProps> = ({ values }) => {
       Kesadaran: 'kesadaran',
       Subjek: 'subjek',
       Objek: 'Objek',
-      Assessment: 'assessment',
-      Plan: 'plan',
+      Assessment: 'asesmen',
+      Plan: 'rtl',
     }
 
     // Use the mapping, or return the original label if not found
@@ -89,7 +89,7 @@ const RenderDataPemeriksaan: React.FC<RenderDataProps> = ({ values }) => {
                     <label className='label-text-alt text-[12px] font-bold text-disabled'>
                       {label}
                     </label>
-                    <p className=''>{data[mapLabelToProperty(label).toLowerCase()]}</p>
+                    <p className=''>{data[mapLabelToProperty(label)]}</p>
                   </div>
                 ))}
               </div>

@@ -27,6 +27,8 @@ const tableStyles = {
       borderBottomWidth: '1px',
       borderColor: '#f8f9fa',
       minHeight: '30px',
+      // marginRight: 'auto',
+      // marginLeft: '0rem',
     },
   },
   cells: {

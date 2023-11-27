@@ -3,6 +3,8 @@ import { api } from '../../services/api/config.api'
 import { ArchiveBoxArrowDownIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
 
 const InsertSoapRalan: React.FC = () => {
+  const [noRawat, setNoRawat] = useState('')
+  const [nip, setNip] = useState('')
   const [tanggal, setTanggal] = useState('')
   const [jam, setJam] = useState('')
   const [suhu, setSuhu] = useState('')
@@ -33,7 +35,7 @@ const InsertSoapRalan: React.FC = () => {
           label: penyakit.nm_penyakit,
         }))
         setListPenyakit(penyakitData)
-        console.log('response', penyakitData)
+        console.log('data penyakit: ', penyakitData)
       } catch (error) {
         console.error('Error fetching all penyakit:', error)
       }
@@ -69,12 +71,73 @@ const InsertSoapRalan: React.FC = () => {
     option.label.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
+  const handlePostSoap = async () => {
+    const data = {
+      noRawat: noRawat,
+      suhuTubuh: suhu,
+      tensi: tensi,
+      nadi: nadi,
+      respirasi: rr,
+      tinggi: tinggi,
+      berat: berat,
+      spo2: spo2,
+      gcs: gcs,
+      kesadaran: kesadaran,
+      keluhan: subjektif,
+      pemeriksaan: '',
+      alergi: alergi,
+      lingkarPerut: '',
+      rtl: '',
+      penilaian: '',
+      instruksi: '',
+      evaluasi: '',
+      nip: nip,
+    }
+
+    try {
+      const response = await api.post('/api/v1/postPemeriksaanRalan', JSON.stringify(data), {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      console.log('POST response:', response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className='w-full mt-4'>
       <div>
         <p className=' font-bold text-xl text-[#121713]'>Pemeriksaan</p>
         <div className='text-base text-[#121713] font-sans flex'>
           <div className='w-full'>
+            <div className='flex'>
+              <div className='form-control mt-6'>
+                <label className='label'>
+                  <span>No. Rawat</span>
+                </label>
+                <input
+                  type='Text'
+                  placeholder='2023/10/11/000001'
+                  className='input input-bordered text-sm rounded-2xl border-disabled w-[200px]'
+                  value={noRawat}
+                  onChange={(e) => setNoRawat(e.target.value)}
+                />
+              </div>
+              <div className='form-control mt-6 ml-4'>
+                <label className='label'>
+                  <span>NIP</span>
+                </label>
+                <input
+                  type='Text'
+                  placeholder='2023/10/11/000001'
+                  className='input input-bordered text-sm rounded-2xl border-disabled w-[150px]'
+                  value={nip}
+                  onChange={(e) => setNip(e.target.value)}
+                />
+              </div>
+            </div>
             <div className='flex'>
               <div className='form-control w-full'>
                 <label className='label'>
@@ -324,7 +387,10 @@ const InsertSoapRalan: React.FC = () => {
             Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam
             pengisian data dapat berdampak pada perawatan pasien.
           </p>
-          <button className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'>
+          <button
+            className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'
+            onClick={handlePostSoap}
+          >
             <ArchiveBoxArrowDownIcon width={20} height={20} />
             <p className='ml-1'>Selesai</p>
           </button>

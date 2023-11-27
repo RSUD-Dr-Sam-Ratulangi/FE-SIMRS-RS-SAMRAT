@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { api } from '../../services/api/config.api'
 import RalanEditHeader from '../../components/RalanEdit/RalanEditHeader'
-import TabelDiagnosaPenyakit from '../../components/Table/tableDiagnosaPenyakit'
-import RenderDataPemeriksaan from '../../components/RalanEdit/pemeriksaanComponent'
-import TindakanPerawatan from '../../components/RalanEdit/tindakanPerawatanComponent'
+// import TabelDiagnosaPenyakit from '../../components/Table/tableDiagnosaPenyakit'
+// import RenderDataPemeriksaan from '../../components/RalanEdit/pemeriksaanComponent'
+// import TindakanPerawatan from '../../components/RalanEdit/tindakanPerawatanComponent'
 import { ArchiveBoxArrowDownIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/solid'
+import RenderDataRiwayatRalan from './renderDataRiwayatRalan'
 
 type userData = {
   no_rkm_medis: string
@@ -58,35 +59,155 @@ type userData = {
 type ApiData = userData[]
 
 const PageRalanRME: React.FC = () => {
-  // const [idPasien, setIdPasien] = useState(null)
-
-  // console.log(window.location.pathname)
-  // console.log(id)
-
-  // useEffect(() => {
-  //   if (id) {
-  //     const parsedNumber = parseInt(id, 10)
-  //     setIdPasien(parsedNumber)
-  //   }
-  //   // setIdPasien(id)
-  // }, [id])
-
-  // const data: DataItem = location.state.data
-
-  // console.log('rme ralan', data)
-
-  const [pemeriksaanRawatJalanState, setPemeriksaanRawatJalanState] = useState([])
   const [riwayatPerawatan, setRiwayatPerawatan] = useState<userData>()
-  const [riwayatPerawatanData, setRiwayatPerawatanData] = useState([])
-  const [dataRiwayat, setDataRiwayat] = useState([])
+  const [diagnosa, setDiagnosa] = useState([])
+  const [soap, setSoap] = useState([])
+  const [mergedData, setMergedData] = useState([])
 
   const { id } = useParams()
   useEffect(() => {
+    const mergedArray = [...diagnosa, ...soap].sort((a, b) => {
+      const dateA = a.tgl_perawatan || a.tgl_registrasi
+      const dateB = b.tgl_perawatan || b.tgl_registrasi
+      return dateA.localeCompare(dateB)
+    })
+    console.log('log b') // Log here
+    const groupedArray = mergedArray.reduce((acc, item) => {
+      const existingItem = acc.find((group) => {
+        const groupDate = group.Date || group.date || group.tgl_registrasi
+        const itemDate = item.tgl_perawatan || item.tgl_registrasi
+        return groupDate === itemDate
+      })
+
+      if (existingItem) {
+        if (item.no_rawat !== undefined) {
+          existingItem.noRawat = item.no_rawat
+          existingItem.tglRegistrasi = item.tgl_registrasi
+          existingItem.nmDokter = item.nm_dokter
+          existingItem.status = item.status
+          existingItem.noRegis = '-'
+          existingItem.penjamin = '-'
+          existingItem.unitPoli = '-'
+          existingItem.pemeriksaan = '-'
+        }
+        if (item.no_rawat !== undefined) {
+          existingItem.icd10.push({
+            kdPenyakit: item.kd_penyakit,
+            nmPenyakit: item.nm_penyakit,
+            prioritas: item.prioritas,
+          })
+        }
+        if (item.tgl_registrasi !== undefined) {
+          // const existingDiagnosa = existingItem.diagnosa.find(
+          //   (diagnosaItem) => diagnosaItem.tgl_perawatan === item.tgl_perawatan,
+          // )
+          existingItem.diagnosa.push({
+            tglRegistrasi: item.tgl_registrasi,
+            kdPenyakit: item.kd_penyakit,
+            pemeriksaan: item.pemeriksaan,
+            nmDokter: item.nm_dokter,
+          })
+        }
+        if (item.jam_rawat !== undefined) {
+          // const existingPemeriksaanRalan = existingItem.pRalan.find(
+          //   (pRalanItem) => pRalanItem.tgl_perawatan === item.tgl_perawatan,
+          // )
+          existingItem.pemeriksaanRawatJalan.push({
+            tglPerawatan: item.tgl_perawatan,
+            jamRawat: item.jam_rawat,
+            suhuTubuh: item.suhu_tubuh,
+            tensi: item.tensi,
+            nadi: item.tensi,
+            respirasi: item.tensi,
+            tinggi: item.tensi,
+            gcs: item.gcs,
+            spo2: item.spo2,
+            kesadaran: item.kesadaran,
+            berat: item.berat,
+            rtl: item.rtl,
+            subjek: '-',
+            objek: '-',
+            asesmen: '-',
+          })
+        }
+      } else {
+        const newItem = {
+          Date: item.tgl_registrasi || item.tgl_perawatan,
+          noRawat: item.no_rawat !== undefined ? item.no_rawat : '-',
+          tglRegistrasi: item.tgl_registrasi !== undefined ? item.tgl_registrasi : '-',
+          nmDokter: item.nm_dokter !== undefined ? item.nm_dokter : '-',
+          status: item.status !== undefined ? item.status : '-',
+          noRegis: '-',
+          penjamin: '-',
+          unitPoli: '-',
+          pemeriksaan: '-',
+          diagnosa: [],
+          pemeriksaanRawatJalan: [],
+          icd10: [],
+        }
+
+        if (item.tgl_registrasi !== undefined) {
+          newItem.diagnosa.push({
+            tglRegistrasi: item.status !== undefined ? item.tgl_registrasi : '-',
+            kdPenyakit: item.kd_penyakit !== undefined ? item.kd_penyakit : '-',
+            pemeriksaan: item.pemeriksaan !== undefined ? item.pemeriksaan : '-',
+            nmDokter: item.nm_dokter !== undefined ? item.nm_dokter : '-',
+          })
+        }
+        if (item.no_rawat !== undefined) {
+          newItem.icd10.push({
+            kdPenyakit: item.kd_penyakit !== undefined ? item.kd_penyakit : '-',
+            nmPenyakit: item.nm_penyakit !== undefined ? item.nm_penyakit : '-',
+            prioritas: item.prioritas !== undefined ? item.prioritas : '-',
+          })
+        }
+        if (item.jam_rawat !== undefined) {
+          newItem.pemeriksaanRawatJalan.push({
+            tglPerawatan: item.tgl_perawatan !== undefined ? item.tgl_perawatan : '-',
+            jamRawat: item.jam_rawat !== undefined ? item.jam_rawat : '-',
+            suhuTubuh: item.suhu_tubuh !== undefined ? item.suhu_tubuh : '-',
+            tensi: item.tensi !== undefined ? item.tensi : '-',
+            nadi: item.nadi !== undefined ? item.nadi : '-',
+            respirasi: item.respirasi !== undefined ? item.respirasi : '-',
+            tinggi: item.tinggi !== undefined ? item.tinggi : '-',
+            gcs: item.gcs !== undefined ? item.gcs : '-',
+            spo2: item.spo2 !== undefined ? item.spo2 : '-',
+            kesadaran: item.kesadaran !== undefined ? item.kesadaran : '-',
+            berat: item.berat !== undefined ? item.berat : '-',
+            rtl: item.rtl !== undefined ? item.rtl : '-',
+            subjek: '-',
+            objek: '-',
+            asesmen: '-',
+          })
+        }
+
+        acc.push(newItem)
+      }
+      console.log('finish')
+      return acc
+    }, [])
+    console.log('log c')
+
+    setMergedData(groupedArray)
+  }, [diagnosa, soap])
+
+  useEffect(() => {
+    const fetchSoap = async () => {
+      try {
+        const response = await api.get(`/api/v1/riwayatsoap?noRkmMedis=${id}`)
+        const data: ApiData = await response.data
+        setSoap(data)
+        // perlu data soap -> subjek, objek, asesmen
+      } catch (err) {
+        console.log(err)
+      }
+    }
     const fetchPersonalData = async () => {
       try {
         const response = await api.get(`/api/v1/getPatientData?noRkmMedis=${id}`)
         const data: userData = await response.data
         setRiwayatPerawatan(data)
+        console.log('finish riwayat')
       } catch (error) {
         console.log(error)
       }
@@ -95,328 +216,29 @@ const PageRalanRME: React.FC = () => {
       try {
         const response = await api.get(`/api/v1/getDiagnosaPasien/${id}`)
         const data: ApiData = await response.data
-        console.log(data)
+        setDiagnosa(data)
+
         // perlu data diagnosa-> no.registrasi, penjamin, tanggal registrasi, unit/poliklinik, pemeriksaan, tindakan/perawatan
       } catch (err) {
         console.log(err)
       }
     }
-    fetchPersonalData()
-    fetchDiagnosa()
-    console.log(riwayatPerawatanData)
+    // fetchPersonalData()
+    // fetchDiagnosa()
+    // fetchSoap()
 
-    const apiData = [
-      {
-        noRm: '165647',
-        namaPasien: 'Ranomerut',
-        alamat: 'Ranomerut',
-        umur: '19 Th 10 Bl 18 Hr Tahun',
-        jenisKelamin: 'Perempuan',
-        tanggalLahir: '2003-11-15',
-        golonganDarah: '-',
-        ibuKandung: '-',
-        statusMenikah: 'Menikah',
-        agama: 'Kristen',
-        pendidikanTerakhir: '-',
-        pertamaMendaftar: '2023-10-23',
-        dataRiwayat: [
-          {
-            noRawat: '2023/10/03/000374',
-            noRegis: '020',
-            tanggalRegis: '2023-10-23',
-            unitPoliklinik: '2023-10-23',
-            dokter: 'DR. JANE DOE',
-            penjamin: 'BPJS',
-            status: 'RAWAT INAP',
-            pemeriksaan: '-',
-            diagnosaPenyakit: [
-              { kode: 'Z36.9', nPenyakit: 'Antenatal Screening, unspecified', prioritas: '1' },
-              { kode: 'Z36.9', nPenyakit: 'Antenatal Screening, unspecified', prioritas: '1' },
-              { kode: 'Z36.9', nPenyakit: 'Antenatal Screening, unspecified', prioritas: '1' },
-            ],
-            pemeriksaanRawatJalan: [
-              {
-                tanggal: '2023-11-10',
-                jam: '020',
-                suhu: '36',
-                tensi: '121///78',
-                nadi: '69',
-                rr: '-',
-                tinggi: '-',
-                berat: '-',
-                gcs: '3, 5, 6',
-                spo2: '90',
-                alergi: '-',
-                kesadaran: 'Compos Mentis',
-                subjek: 'Nyeri +',
-                objek: '-',
-                assessment: 'Post Herpetika',
-                plan: 'Ibuprofen 3x400 mg Omeprazole 2x20 mg ac Lapibal 1x500 ug Gabapentin 3x300 Resep : Ibuprofen 400 mg Jumlah 21 Aturan Pakai 3x1 tab Omeprazole 20 mg tab Jumlah 14 Aturan Pakai 2x1 kaps Lapibal 500 mg Kapsul* Jumlah 7 Aturan Pakai 1x1 kaps GABAPENTIN 300 MG Jumlah 21 Aturan Pakai',
-              },
-            ],
-            tindakanRalanDokter: [
-              {
-                id: 1,
+    const fetchData = async () => {
+      try {
+        await Promise.all([fetchPersonalData(), fetchDiagnosa(), fetchSoap()])
+        // const data = await processData(diagnosa, soap)
 
-                date: '2023-10-10',
-                kode: 'jj009192',
-                namaTindakan: 'Anemia',
-                pemeriksa: 'Dr. Aglesia Aguiero Gonzales',
-              },
-            ],
-            tindakanRalanPerawat: [
-              {
-                id: 1,
-
-                date: '2023-10-10',
-                kode: 'jj009192',
-                namaTindakan: 'Anemia',
-                pemeriksa: 'Dr. Aglesia Aguiero Gonzales',
-              },
-            ],
-            dataObat: [
-              {
-                id: 1,
-                date: '2023-10-10',
-                detailObat: [
-                  { namaObat: 'Ibuprofen 400 mg', jumlahObat: '21' },
-                  { namaObat: 'Dextamine 200 mg', jumlahObat: '31' },
-                  { namaObat: 'Dextamine 200 mg', jumlahObat: '31' },
-                  { namaObat: 'Dextamine 200 mg', jumlahObat: '31' },
-                ],
-              },
-              {
-                id: 2,
-                date: '2023-09-10',
-                detailObat: [
-                  { namaObat: 'Ibuprofen 400 mg', jumlahObat: '21' },
-                  { namaObat: 'Dextamine 200 mg', jumlahObat: '31' },
-                  { namaObat: 'Ibuprofen 400 mg', jumlahObat: '21' },
-                ],
-              },
-            ],
-          },
-          {
-            noRawat: '2023/10/03/000374',
-            noRegis: '020',
-            tanggalRegis: '2023-10-23',
-            unitPoliklinik: '2023-10-23',
-            dokter: 'DR. JANE DOE',
-            penjamin: 'BPJS',
-            status: 'RAWAT INAP',
-            pemeriksaan: '-',
-            diagnosaPenyakit: [
-              { kode: 'Z36.9', nPenyakit: 'Antenatal Screening, unspecified', prioritas: '1' },
-              { kode: 'Z36.9', nPenyakit: 'Antenatal Screening, unspecified', prioritas: '1' },
-              { kode: 'Z36.9', nPenyakit: 'Antenatal Screening, unspecified', prioritas: '1' },
-            ],
-            pemeriksaanRawatJalan: [
-              {
-                tanggal: '2023-11-10',
-                jam: '020',
-                suhu: '36',
-                tensi: '121///78',
-                nadi: '69',
-                rr: '-',
-                tinggi: '-',
-                berat: '-',
-                gcs: '3, 5, 6',
-                spo2: '90',
-                alergi: '-',
-                kesadaran: 'Compos Mentis',
-                subjek: 'Nyeri +',
-                objek: '-',
-                assessment: 'Post Herpetika',
-                plan: 'Ibuprofen 3x400 mg Omeprazole 2x20 mg ac Lapibal 1x500 ug Gabapentin 3x300 Resep : Ibuprofen 400 mg Jumlah 21 Aturan Pakai 3x1 tab Omeprazole 20 mg tab Jumlah 14 Aturan Pakai 2x1 kaps Lapibal 500 mg Kapsul* Jumlah 7 Aturan Pakai 1x1 kaps GABAPENTIN 300 MG Jumlah 21 Aturan Pakai',
-              },
-              {
-                tanggal: '2023-11-10',
-                jam: '020',
-                suhu: '36',
-                tensi: '121///78',
-                nadi: '69',
-                rr: '-',
-                tinggi: '-',
-                berat: '-',
-                gcs: '3, 5, 6',
-                spo2: '90',
-                alergi: '-',
-                kesadaran: 'Compos Mentis',
-                subjek: 'Nyeri +',
-                objek: '-',
-                assessment: 'Post Herpetika',
-                plan: 'Ibuprofen 3x400 mg Omeprazole 2x20 mg ac Lapibal 1x500 ug Gabapentin 3x300 Resep : Ibuprofen 400 mg Jumlah 21 Aturan Pakai 3x1 tab Omeprazole 20 mg tab Jumlah 14 Aturan Pakai 2x1 kaps Lapibal 500 mg Kapsul* Jumlah 7 Aturan Pakai 1x1 kaps GABAPENTIN 300 MG Jumlah 21 Aturan Pakai',
-              },
-              {
-                tanggal: '2023-11-10',
-                jam: '020',
-                suhu: '36',
-                tensi: '121///78',
-                nadi: '69',
-                rr: '-',
-                tinggi: '-',
-                berat: '-',
-                gcs: '3, 5, 6',
-                spo2: '90',
-                alergi: '-',
-                kesadaran: 'Compos Mentis',
-                subjek: 'Nyeri +',
-                objek: '-',
-                assessment: 'Post Herpetika',
-                plan: 'Ibuprofen 3x400 mg Omeprazole 2x20 mg ac Lapibal 1x500 ug Gabapentin 3x300 Resep : Ibuprofen 400 mg Jumlah 21 Aturan Pakai 3x1 tab Omeprazole 20 mg tab Jumlah 14 Aturan Pakai 2x1 kaps Lapibal 500 mg Kapsul* Jumlah 7 Aturan Pakai 1x1 kaps GABAPENTIN 300 MG Jumlah 21 Aturan Pakai',
-              },
-            ],
-            tindakanRalanDokter: [
-              {
-                id: 1,
-
-                date: '2023-10-10',
-                kode: 'jj009192',
-                namaTindakan: 'Anemia',
-                pemeriksa: 'Dr. Aglesia Aguiero Gonzales',
-              },
-            ],
-            tindakanRalanPerawat: [
-              {
-                id: 1,
-
-                date: '2023-10-10',
-                kode: 'jj009192',
-                namaTindakan: 'Anemia',
-                pemeriksa: 'Dr. Aglesia Aguiero Gonzales',
-              },
-            ],
-            dataObat: [
-              {
-                id: 1,
-                date: '2023-10-10',
-                detailObat: [
-                  { namaObat: 'Ibuprofen 400 mg', jumlahObat: '21' },
-                  { namaObat: 'Dextamine 200 mg', jumlahObat: '31' },
-                  { namaObat: 'Dextamine 200 mg', jumlahObat: '31' },
-                  { namaObat: 'Dextamine 200 mg', jumlahObat: '31' },
-                ],
-              },
-              {
-                id: 2,
-                date: '2023-09-10',
-                detailObat: [
-                  { namaObat: 'Ibuprofen 400 mg', jumlahObat: '21' },
-                  { namaObat: 'Dextamine 200 mg', jumlahObat: '31' },
-                  { namaObat: 'Ibuprofen 400 mg', jumlahObat: '21' },
-                  { namaObat: 'Dextamine 200 mg', jumlahObat: '31' },
-                  { namaObat: 'Ibuprofen 400 mg', jumlahObat: '21' },
-                  { namaObat: 'Dextamine 200 mg', jumlahObat: '31' },
-                  { namaObat: 'Ibuprofen 400 mg', jumlahObat: '21' },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ]
-
-    const { dataRiwayat } = apiData[0]
-    const dataRiwayatArray = dataRiwayat
-    setDataRiwayat(apiData[0].dataRiwayat)
-
-    // const extractedDataRiwayatPerawatanPasien = apiData.map(({ dataRiwayat, ...otherData }) => {
-    //   return { dataRiwayat, ...otherData }
-    // })
-    // const values = extractedDataRiwayatPerawatanPasien.map((item) => [
-    //   item.noRm,
-    //   item.namaPasien,
-    //   item.alamat,
-    //   item.umur,
-    //   item.jenisKelamin,
-    //   item.tanggalLahir,
-    //   item.golonganDarah,
-    //   item.ibuKandung,
-    //   item.statusMenikah,
-    //   item.agama,
-    //   item.pendidikanTerakhir,
-    //   item.pertamaMendaftar,
-    // ])
-    const values2 = apiData[0].dataRiwayat
-    const extractedValues = values2.map((item) => ({
-      noRawat: item.noRawat,
-      noRegis: item.noRegis,
-      tanggalRegis: item.tanggalRegis,
-      unitPoliklinik: item.unitPoliklinik,
-      dokter: item.dokter,
-      penjamin: item.penjamin,
-      status: item.status,
-      pemeriksaan: item.pemeriksaan,
-    }))
-
-    setRiwayatPerawatanData(extractedValues)
-    const newArray = dataRiwayatArray.map((item) => {
-      return item.pemeriksaanRawatJalan.map((pemeriksaan) => {
-        return { ...pemeriksaan } // You can modify this if you need to transform the data
-      })
-    })
-    // const pemeriksaanRawatJalanArray = [].concat(
-    //   ...dataRiwayatArray.map((riwayat) => riwayat.pemeriksaanRawatJalan),
-    // )
-    setPemeriksaanRawatJalanState(newArray)
+        console.log(diagnosa, soap)
+      } catch (error) {
+        console.error('Error fetching dat:', error)
+      }
+    }
+    fetchData()
   }, [])
-  type DataItem = {
-    kode: string
-    nPenyakit: string
-    prioritas: string
-  }
-
-  // const labelRiwayatPerawatan = [
-  //   'NO.RM',
-  //   'NAMA PASIEN',
-  //   'ALAMAT',
-  //   'UMUR',
-  //   'JENIS KELAMIN',
-  //   'TANGGAL LAHIR',
-  //   'GOLONGAN DARAH',
-  //   'IBU KANDUNG',
-  //   'STATUS MENIKAH',
-  //   'AGAMA',
-  //   'PENDIDIKAN TERAKHIR',
-  //   'PERTAMA DAFTAR',
-  // ]
-
-  const columnDiagnosa = [
-    { name: 'Kode', selector: (row: DataItem) => row.kode, sortable: true, width: '5%' },
-    {
-      name: 'Nama Penyakit',
-      selector: (row: DataItem) => row.nPenyakit,
-      sortable: true,
-      right: false,
-    },
-    { name: 'Prioritas', selector: (row: DataItem) => row.prioritas, sortable: true, right: true },
-  ]
-
-  const pemeriksaanValues = pemeriksaanRawatJalanState
-  // const infoBlocks = []
-  console.log(pemeriksaanValues)
-
-  // const rowCount = 3
-
-  //  split the number labels and values in each object based on rowCount
-
-  // for (let i = 0; i < labelRiwayatPerawatan.length; i += rowCount) {
-  //   const labelsSlice = labelRiwayatPerawatan.slice(i, i + rowCount)
-  //   const valuesSlice = riwayatPerawatan.slice(i, i + rowCount)
-
-  //   const infoObject = labelsSlice.map((label, index) => ({
-  //     label,
-  //     value: valuesSlice[index],
-  //   }))
-
-  //   infoBlocks.push(infoObject)
-  // }
-  // console.log(
-  //   'this is riwayat perawatan',
-  //   riwayatPerawatan,
-  //   'this is riwayat perawatan raw',
-  //   riwayatPerawatanData,
-  // )
 
   return (
     <div>
@@ -503,86 +325,8 @@ const PageRalanRME: React.FC = () => {
               )}
             </div>
           </div>
-          <div className=' mb-4'>
-            <div className='flex gap-4 flex-col'>
-              {dataRiwayat.map((data, index) => (
-                <div key={index} className='bg-white p-3 rounded-xl'>
-                  <p className='text text-lg font-bold'>Riwayat Perawatan</p>
-                  <div className='flex gap-16'>
-                    <div>
-                      <label className='label-text-alt text-[12px] font-bold text-disabled'>
-                        NO RAWAT
-                      </label>
-                      <p className='text'>{data.noRawat}</p>
-                    </div>
-                    <div>
-                      <label className='label-text-alt text-[12px] font-bold text-disabled'>
-                        NO REGISTRASI
-                      </label>
-                      <p className='text'>{data.noRegis}</p>
-                    </div>
-                    <div>
-                      <label className='label-text-alt text-[12px] font-bold text-disabled'>
-                        TANGGAL REGISTRASI
-                      </label>
-                      <p className='text'>{data.tanggalRegis}</p>
-                    </div>
-                    <div>
-                      <label className='label-text-alt text-[12px] font-bold text-disabled'>
-                        UNIT POLIKLINIK
-                      </label>
-                      <p className='text'>{data.unitPoliklinik}</p>
-                    </div>
-                    <div>
-                      <label className='label-text-alt text-[12px] font-bold text-disabled'>
-                        DOKTER
-                      </label>
-                      <p className='text'>{data.dokter}</p>
-                    </div>
-                    <div>
-                      <label className='label-text-alt text-[12px] text-disabled font-bold'>
-                        PENJAMIN
-                      </label>
-                      <p className='text'>{data.penjamin}</p>
-                    </div>
-                    <div>
-                      <label className='label-text-alt text-[12px]  text-disabled font-bold'>
-                        STATUS
-                      </label>
-                      <p className='text'>{data.status}</p>
-                    </div>
-                    <div>
-                      <label className='label-text-alt text-[12px] text-disabled font-bold'>
-                        PEMERIKSAAN
-                      </label>
-                      <p className='text'>{data.pemeriksaan}</p>
-                    </div>
-                  </div>
-                  <div className='pt-3'>
-                    <label className='label-text text-[12px] font-bold text-disabled'>
-                      DIAGNOSA/PENYAKIT/ICD 10
-                    </label>
-                  </div>
-                  <div className='w-full  outline outline-1 rounded-xl outline-disabled'>
-                    <TabelDiagnosaPenyakit columns={columnDiagnosa} data={data.diagnosaPenyakit} />
-                  </div>
-                  <div>
-                    <label className='label-text text-[12px] font-bold text-disabled'>
-                      PEMERIKSAAN
-                    </label>
-                  </div>
-
-                  <div className='flex flex-col'>
-                    <RenderDataPemeriksaan values={pemeriksaanValues[index]} />
-                  </div>
-                  <TindakanPerawatan
-                    dataDokter={data.tindakanRalanDokter}
-                    dataPerawat={data.tindakanRalanPerawat}
-                    dataTindakan={data.dataObat}
-                  />
-                </div>
-              ))}
-            </div>
+          <div className='mb-4'>
+            {mergedData ? <RenderDataRiwayatRalan mergedData={mergedData} /> : <>Loading . . .</>}
           </div>
           <div className='flex text-white justify-end'>
             <button className='flex justify-center items-center font-semibold text-base w-[360px] h-auto py-2 bg-primary rounded-xl hover:opacity-80'>
