@@ -49,9 +49,9 @@ type userData = {
   tgl_registrasi: string
   kd_dokter: string
   nm_dokter: string
-};
+}
 
-type ApiData = userData[];
+type ApiData = userData[]
 
 const RanapRme: React.FC = () => {
   const { id } = useParams()
@@ -63,7 +63,7 @@ const RanapRme: React.FC = () => {
     const fetchSoap = async () => {
       try {
         const response = await api.get(`/api/v1/riwayatsoap?noRkmMedis=${id}`)
-        const data: ApiData = await response.data;
+        const data: ApiData = await response.data
         setSoap(data)
         // perlu data soap -> subjek, objek, asesmen
       } catch (err) {
@@ -74,18 +74,18 @@ const RanapRme: React.FC = () => {
     const fetchDiagnosa = async () => {
       try {
         const response = await api.get(`/api/v1/getDiagnosaPasien/${id}`)
-        const data: ApiData = await response.data;
+        const data: ApiData = await response.data
         setDiagnosa(data)
         // perlu data diagnosa-> no.registrasi, penjamin, tanggal registrasi, unit/poliklinik, pemeriksaan, tindakan/perawatan
       } catch (err) {
-        console.log(err);
+        console.log(err)
       }
     }
 
-    const fetchPersonalData =async () => {
+    const fetchPersonalData = async () => {
       try {
         const response = await api.get(`/api/v1/getPatientData?noRkmMedis=${id}`)
-        const data: userData = await response.data;
+        const data: userData = await response.data
         setPersonalData(data)
       } catch (error) {
         console.log(error)
@@ -98,132 +98,132 @@ const RanapRme: React.FC = () => {
   }, [])
 
   const handleButton = () => {
-    console.log('display personal data:', personalData);
-    console.log('display soap data:', soap);
+    console.log('display personal data:', personalData)
+    console.log('display soap data:', soap)
     console.log('display diagnosadata:', diagnosa)
   }
 
-  const data = [
-    {
-        NO_RM: '16547',
-        NAMA_PASIEN: 'ESTHERA JACKSON',
-        ALAMAT: 'RANOMERUT',
-        UMUR: '19 Th 10 Bl 18 Hr THN',
-        JENIS_KELAMIN: 'Perempuan',
-        TANGGAL_LAHIR: '2003-11-15',
-        GOLONGAN_DARAH: '-',
-        IBU_KANDUNG: '-',
-        STATUS_MENIKAH: 'MENIKAH',
-        AGAMA: 'KRISTEN',
-        PENDIDIKAN_TERAKHIR: '-',
-        PERTAMA_DAFTAR: '2023-10-03',
-        DATA_RIWAYAT: [
-            {
-                NO_RAWAT: '2023/10/03/000374',
-                NO_REGISTRASI: '020',
-                TANGGAL_REGISTRASI: '2023-10-03',
-                UNIT_POLIKLINIK: 'Instalasi IGD (Siang)',
-                DOKTER: 'dr. Andre Imbar',
-                PENJAMIN: 'BPJS',
-                STATUS: 'Rawat Inap',
-                PEMERIKSAAN: '-',
-                KODE: 'Z36.9',
-                NAMA_PENYAKIT: 'Antenatal Screening, unspecified',
-                PRIORITAS: '1'
-            },
-            {
-                NO_RAWAT: '2023/10/05/000849',
-                NO_REGISTRASI: '052',
-                TANGGAL_REGISTRASI: '2023-10-05',
-                UNIT_POLIKLINIK: 'Instalasi IGD (Siang)',
-                DOKTER: 'dr. Andre Imbar',
-                PENJAMIN: 'BPJS',
-                STATUS: 'Rawat Inap',
-                PEMERIKSAAN: '-',
-                KODE: 'Z36.9',
-                NAMA_PENYAKIT: 'Antenatal Screening, unspecified',
-                PRIORITAS: '1'
-            },
-            {
-                NO_RAWAT: '2023/10/12/001023',
-                NO_REGISTRASI: '120',
-                TANGGAL_REGISTRASI: '2023-10-12',
-                UNIT_POLIKLINIK: 'Instalasi IGD (Siang)',
-                DOKTER: 'dr. Andre Imbar',
-                PENJAMIN: 'BPJS',
-                STATUS: 'Rawat Inap',
-                PEMERIKSAAN: '-',
-                KODE: 'Z36.9',
-                NAMA_PENYAKIT: 'Antenatal Screening, unspecified',
-                PRIORITAS: '1'
-            },
-        ]
-    }
-]
+  //   const data = [
+  //     {
+  //       NO_RM: '16547',
+  //       NAMA_PASIEN: 'ESTHERA JACKSON',
+  //       ALAMAT: 'RANOMERUT',
+  //       UMUR: '19 Th 10 Bl 18 Hr THN',
+  //       JENIS_KELAMIN: 'Perempuan',
+  //       TANGGAL_LAHIR: '2003-11-15',
+  //       GOLONGAN_DARAH: '-',
+  //       IBU_KANDUNG: '-',
+  //       STATUS_MENIKAH: 'MENIKAH',
+  //       AGAMA: 'KRISTEN',
+  //       PENDIDIKAN_TERAKHIR: '-',
+  //       PERTAMA_DAFTAR: '2023-10-03',
+  //       DATA_RIWAYAT: [
+  //         {
+  //           NO_RAWAT: '2023/10/03/000374',
+  //           NO_REGISTRASI: '020',
+  //           TANGGAL_REGISTRASI: '2023-10-03',
+  //           UNIT_POLIKLINIK: 'Instalasi IGD (Siang)',
+  //           DOKTER: 'dr. Andre Imbar',
+  //           PENJAMIN: 'BPJS',
+  //           STATUS: 'Rawat Inap',
+  //           PEMERIKSAAN: '-',
+  //           KODE: 'Z36.9',
+  //           NAMA_PENYAKIT: 'Antenatal Screening, unspecified',
+  //           PRIORITAS: '1',
+  //         },
+  //         {
+  //           NO_RAWAT: '2023/10/05/000849',
+  //           NO_REGISTRASI: '052',
+  //           TANGGAL_REGISTRASI: '2023-10-05',
+  //           UNIT_POLIKLINIK: 'Instalasi IGD (Siang)',
+  //           DOKTER: 'dr. Andre Imbar',
+  //           PENJAMIN: 'BPJS',
+  //           STATUS: 'Rawat Inap',
+  //           PEMERIKSAAN: '-',
+  //           KODE: 'Z36.9',
+  //           NAMA_PENYAKIT: 'Antenatal Screening, unspecified',
+  //           PRIORITAS: '1',
+  //         },
+  //         {
+  //           NO_RAWAT: '2023/10/12/001023',
+  //           NO_REGISTRASI: '120',
+  //           TANGGAL_REGISTRASI: '2023-10-12',
+  //           UNIT_POLIKLINIK: 'Instalasi IGD (Siang)',
+  //           DOKTER: 'dr. Andre Imbar',
+  //           PENJAMIN: 'BPJS',
+  //           STATUS: 'Rawat Inap',
+  //           PEMERIKSAAN: '-',
+  //           KODE: 'Z36.9',
+  //           NAMA_PENYAKIT: 'Antenatal Screening, unspecified',
+  //           PRIORITAS: '1',
+  //         },
+  //       ],
+  //     },
+  //   ]
 
   return (
     <div>
       <div className='bg-white h-auto w-full p-4 mt-4 rounded-xl'>
         <p className='font-sans text-xl font-bold text-[#2D3748] mb-2'>Data Pasien</p>
         <div>
-          {personalData? (
+          {personalData ? (
             <div className=' flex font-sans text-base font-normal text-[#121713] leading-6 mt-2'>
+              <div>
                 <div>
-                    <div>
-                        <p className=' font-bold text-gray-400 text-xs'>NO. RM</p>
-                        <p>{personalData.no_rkm_medis}</p>
-                    </div>
-                    <div className=' my-2'>
-                        <p className=' font-bold text-gray-400 text-xs'>NAMA PASIEN</p>
-                        <p>{personalData.nm_pasien}</p>
-                    </div>
-                    <div>
-                        <p className=' font-bold text-gray-400 text-xs'>ALAMAT</p>
-                        <p>{personalData.alamat}</p>
-                    </div>
+                  <p className=' font-bold text-gray-400 text-xs'>NO. RM</p>
+                  <p>{personalData.no_rkm_medis}</p>
                 </div>
-                <div className=' ml-32'>
-                    <div>
-                        <p className=' font-bold text-gray-400 text-xs'>UMUR</p>
-                        <p>{personalData.umur}</p>
-                    </div>
-                    <div className=' my-2'>
-                        <p className=' font-bold text-gray-400 text-xs'>JENIS KELAMIN</p>
-                        <p>{personalData.jk}</p>
-                    </div>
-                    <div>
-                        <p className=' font-bold text-gray-400 text-xs'>TANGGAL LAHIR</p>
-                        <p>{personalData.tgl_lahir}</p>
-                    </div>
+                <div className=' my-2'>
+                  <p className=' font-bold text-gray-400 text-xs'>NAMA PASIEN</p>
+                  <p>{personalData.nm_pasien}</p>
                 </div>
-                <div className=' ml-32'>
-                    <div>
-                        <p className=' font-bold text-gray-400 text-xs'>GOLONGAN DARAH</p>
-                        <p>{personalData.gol_darah}</p>
-                    </div>
-                    <div className=' my-2'>
-                        <p className=' font-bold text-gray-400 text-xs'>IBU KANDUNG</p>
-                        <p>{personalData.nm_ibu}</p>
-                    </div>
-                    <div>
-                        <p className=' font-bold text-gray-400 text-xs'>STATUS MENIKAH</p>
-                        <p>{personalData.stts_nikah}</p>
-                    </div>
+                <div>
+                  <p className=' font-bold text-gray-400 text-xs'>ALAMAT</p>
+                  <p>{personalData.alamat}</p>
                 </div>
-                <div className=' ml-32'>
-                    <div>
-                        <p className=' font-bold text-gray-400 text-xs'>AGAMA</p>
-                        <p>{personalData.agama}</p>
-                    </div>
-                    <div className=' my-2'>
-                        <p className=' font-bold text-gray-400 text-xs'>PENDIDIKAN TERAKHIR</p>
-                        <p>{personalData.pnd}</p>
-                    </div>
-                    <div>
-                        <p className=' font-bold text-gray-400 text-xs'>PERTAMA DAFTAR</p>
-                        <p>{personalData.tgl_daftar}</p>
-                    </div>
+              </div>
+              <div className=' ml-32'>
+                <div>
+                  <p className=' font-bold text-gray-400 text-xs'>UMUR</p>
+                  <p>{personalData.umur}</p>
                 </div>
+                <div className=' my-2'>
+                  <p className=' font-bold text-gray-400 text-xs'>JENIS KELAMIN</p>
+                  <p>{personalData.jk}</p>
+                </div>
+                <div>
+                  <p className=' font-bold text-gray-400 text-xs'>TANGGAL LAHIR</p>
+                  <p>{personalData.tgl_lahir}</p>
+                </div>
+              </div>
+              <div className=' ml-32'>
+                <div>
+                  <p className=' font-bold text-gray-400 text-xs'>GOLONGAN DARAH</p>
+                  <p>{personalData.gol_darah}</p>
+                </div>
+                <div className=' my-2'>
+                  <p className=' font-bold text-gray-400 text-xs'>IBU KANDUNG</p>
+                  <p>{personalData.nm_ibu}</p>
+                </div>
+                <div>
+                  <p className=' font-bold text-gray-400 text-xs'>STATUS MENIKAH</p>
+                  <p>{personalData.stts_nikah}</p>
+                </div>
+              </div>
+              <div className=' ml-32'>
+                <div>
+                  <p className=' font-bold text-gray-400 text-xs'>AGAMA</p>
+                  <p>{personalData.agama}</p>
+                </div>
+                <div className=' my-2'>
+                  <p className=' font-bold text-gray-400 text-xs'>PENDIDIKAN TERAKHIR</p>
+                  <p>{personalData.pnd}</p>
+                </div>
+                <div>
+                  <p className=' font-bold text-gray-400 text-xs'>PERTAMA DAFTAR</p>
+                  <p>{personalData.tgl_daftar}</p>
+                </div>
+              </div>
             </div>
           ) : (
             <>Loading . . .</>
@@ -232,84 +232,91 @@ const RanapRme: React.FC = () => {
       </div>
       <div className='bg-white h-auto w-full p-4 mt-4 rounded-xl'>
         <div className='mt-4'>
-          <p className='font-sans text-xl font-bold text-[#2D3748] mb-2'>Data Riwayat Perawatan Pasien</p>
-            {data[0].DATA_RIWAYAT.map((riwayat, index) => (
-                <div key={index} className=' overflow-x-auto'>
-                    <div className='flex font-sans text-base font-normal text-[#121713] leading-6 mt-2 whitespace-nowrap'>
-                        <div>
-                            <p className=' font-bold text-gray-400 text-xs'>NO. RAWAT</p>
-                            <p>{riwayat.NO_RAWAT}</p>
-                        </div>
-                        <div className='ml-16'>
-                            <p className=' font-bold text-gray-400 text-xs'>NO. REGISTRASI</p>
-                            <p>{riwayat.NO_REGISTRASI}</p>
-                        </div>
-                        <div className='ml-16'>
-                            <p className=' font-bold text-gray-400 text-xs'>TANGGAL REGISTRASI</p>
-                            <p>{riwayat.TANGGAL_REGISTRASI}</p>
-                        </div>
-                        <div className='ml-16'>
-                            <p className=' font-bold text-gray-400 text-xs'>UNIT/POLIKLINIK</p>
-                            <p>{riwayat.UNIT_POLIKLINIK}</p>
-                        </div>
-                        <div className='ml-16'>
-                            <p className=' font-bold text-gray-400 text-xs'>DOKTER</p>
-                            <p>{riwayat.DOKTER}</p>
-                        </div>
-                        <div className='ml-16'>
-                            <p className=' font-bold text-gray-400 text-xs'>PENJAMIN</p>
-                            <p>{riwayat.PENJAMIN}</p>
-                        </div>
-                        <div className='ml-16'>
-                            <p className=' font-bold text-gray-400 text-xs'>STATUS</p>
-                            <p>{riwayat.STATUS}</p>
-                        </div>
-                        <div className='ml-16'>
-                            <p className=' font-bold text-gray-400 text-xs'>PEMERIKSAAN</p>
-                            <p>{riwayat.PEMERIKSAAN}</p>
-                        </div>
-                    </div>
-                    <div key={index} className={`border-b pb-12 ${index === data[0].DATA_RIWAYAT.length - 1 ? 'pb-0 mb-4 border-b-0' : 'mb-12'}`}>
-                        <p className=' font-bold text-gray-400 text-xs my-2'>DIAGNOSA/PENYAKIT/ICD 10</p>
-                        <div className=' text-gray-400 whitespace-nowrap font-sans font-bold text-[10px] h-auto w-auto p-2 border border-disabled rounded-xl'>
-                            <div className='flex border-b pb-2 mb-2'>
-                                <p>KODE</p>
-                                <p className='ml-[51px]'>NAMA PENYAKIT</p>
-                                <div className='flex justify-end w-full'>
-                                    <p>PIORITAS</p>
-                                </div>
-                            </div>
-                            <div className=' text-[#121713] text-base font-normal '>
-                                <div className='flex mb-2'>
-                                    <p>{riwayat.KODE}</p>
-                                    <p className='ml-[35px]'>{riwayat.NAMA_PENYAKIT}</p>
-                                    <div className='flex justify-end w-full'>
-                                        <p>{riwayat.PRIORITAS}</p>
-                                    </div>
-                                </div>
-                                <div className='flex'>
-                                    <p>{riwayat.KODE}</p>
-                                    <p className='ml-[35px]'>{riwayat.NAMA_PENYAKIT}</p>
-                                    <div className='flex justify-end w-full'>
-                                        <p>{riwayat.PRIORITAS}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+          <p className='font-sans text-xl font-bold text-[#2D3748] mb-2'>
+            Data Riwayat Perawatan Pasien
+          </p>
+          {diagnosa.map((riwayat, index) => (
+            <div key={index} className=' overflow-x-auto'>
+              <div className='flex font-sans text-base font-normal text-[#121713] leading-6 mt-2 whitespace-nowrap'>
+                <div>
+                  <p className=' font-bold text-gray-400 text-xs'>NO. RAWAT</p>
+                  <p>{riwayat.no_rawat}</p>
                 </div>
-            ))}
+                <div className='ml-16'>
+                  <p className=' font-bold text-gray-400 text-xs'>NO. REGISTRASI</p>
+                  <p>??</p>
+                </div>
+                <div className='ml-16'>
+                  <p className=' font-bold text-gray-400 text-xs'>TANGGAL REGISTRASI</p>
+                  <p>{riwayat.tgl_registrasi}</p>
+                </div>
+                <div className='ml-16'>
+                  <p className=' font-bold text-gray-400 text-xs'>UNIT/POLIKLINIK</p>
+                  <p>??</p>
+                </div>
+                <div className='ml-16'>
+                  <p className=' font-bold text-gray-400 text-xs'>DOKTER</p>
+                  <p>{riwayat.nm_dokter}</p>
+                </div>
+                <div className='ml-16'>
+                  <p className=' font-bold text-gray-400 text-xs'>PENJAMIN</p>
+                  <p>??</p>
+                </div>
+                <div className='ml-16'>
+                  <p className=' font-bold text-gray-400 text-xs'>STATUS</p>
+                  <p>{riwayat.status}</p>
+                </div>
+                <div className='ml-16'>
+                  <p className=' font-bold text-gray-400 text-xs'>PEMERIKSAAN</p>
+                  <p>??</p>
+                </div>
+              </div>
+              <div
+                key={index}
+                className={`border-b pb-12 ${
+                  index === diagnosa.length - 1 ? 'pb-0 mb-4 border-b-0' : 'mb-12'
+                }`}
+              >
+                <p className=' font-bold text-gray-400 text-xs my-2'>DIAGNOSA/PENYAKIT/ICD 10</p>
+                <div className=' text-gray-400 whitespace-nowrap font-sans font-bold text-[10px] h-auto w-auto p-2 border border-disabled rounded-xl'>
+                  <div className='flex border-b pb-2 mb-2'>
+                    <p>KODE</p>
+                    <p className='ml-[51px]'>NAMA PENYAKIT</p>
+                    <div className='flex justify-end w-full'>
+                      <p>{riwayat.nm_penyakit}</p>
+                    </div>
+                  </div>
+                  <div className=' text-[#121713] text-base font-normal '>
+                    <div className='flex mb-2'>
+                      <p>{riwayat.kd_penyakit}</p>
+                      <p className='ml-[35px]'>{riwayat.nm_penyakit}</p>
+                      <div className='flex justify-end w-full'>
+                        <p>{riwayat.prioritas}</p>
+                      </div>
+                    </div>
+                    {/* <div className='flex'>
+                      <p>{riwayat.KODE}</p>
+                      <p className='ml-[35px]'>{riwayat.NAMA_PENYAKIT}</p>
+                      <div className='flex justify-end w-full'>
+                        <p>{riwayat.PRIORITAS}</p>
+                      </div>
+                    </div> */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       <div className='flex text-white justify-end mt-4'>
-          <button className='flex justify-center items-center font-semibold text-base w-[360px] h-auto py-2 bg-primary rounded-xl hover:opacity-80'>
-              <ArchiveBoxArrowDownIcon width={20} height={20} />
-              <p className='ml-1'>Cetak</p>
-          </button>
-          <button className='flex justify-center items-center font-semibold text-base text-[#8B8B8B] w-[360px] h-auto py-2 ml-4 border-2 border-[#8B8B8B] rounded-xl hover:opacity-80'>
-              <ArrowLeftOnRectangleIcon width={20} height={20} />
-              <p className='ml-1'>Tutup</p>
-          </button>
+        <button className='flex justify-center items-center font-semibold text-base w-[360px] h-auto py-2 bg-primary rounded-xl hover:opacity-80'>
+          <ArchiveBoxArrowDownIcon width={20} height={20} />
+          <p className='ml-1'>Cetak</p>
+        </button>
+        <button className='flex justify-center items-center font-semibold text-base text-[#8B8B8B] w-[360px] h-auto py-2 ml-4 border-2 border-[#8B8B8B] rounded-xl hover:opacity-80'>
+          <ArrowLeftOnRectangleIcon width={20} height={20} />
+          <p className='ml-1'>Tutup</p>
+        </button>
       </div>
     </div>
     // <div className='bg-white h-auto w-[860px] p-4 mt-4 rounded-xl'>

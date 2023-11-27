@@ -421,7 +421,7 @@ const PageRalanRME: React.FC = () => {
   return (
     <div>
       <RalanEditHeader />
-      <div className='flex gap-4'>
+      <div className='flex gap-4 min-w-fit'>
         <div className='h-full rounded-xl shadow-soft mt-4'>
           <div className='mb-4 bg-white p-3'>
             <p className='text text-lg font-bold pb-3'>Riwayat Perawatan</p>

@@ -27,7 +27,7 @@ const InsertSoapRalan: React.FC = () => {
   useEffect(() => {
     const fetchPenyakitOptions = async () => {
       try {
-        const response = await api.get('/api/v1/getAllPenyakit')
+        const response = await api.get('/api/v1/getAllPenyakitt')
         const penyakitData = response.data.map((penyakit: any) => ({
           value: penyakit.kd_penyakit,
           label: penyakit.nm_penyakit,

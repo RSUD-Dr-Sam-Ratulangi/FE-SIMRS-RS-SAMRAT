@@ -82,10 +82,10 @@ const RanapSoapPemeriksaan: React.FC = () => {
   return (
     <div className='flex-1 w-auto min-w-fit overflow-x-auto p-4'>
       <RalanEditHeader />
-      <div className='flex mt-4'>
+      <div className='flex mt-4 min-w-fit'>
         <div>
           <p className='font-inter font-bold text-2xl text-[#121713]'>Riwayat</p>
-          <div className='w-auto max-w-[890px] bg-white rounded-xl mt-4 p-4'>
+          <div className='w-auto max-w-fit bg-white rounded-xl mt-4 p-4'>
             <p className=' font-bold text-xl text-[#121713]'>Data Pasien</p>
             {personalData ? (
               <div className=' flex font-sans justify-between text-base font-normal text-[#121713] leading-6 mt-2'>
@@ -202,7 +202,7 @@ const RanapSoapPemeriksaan: React.FC = () => {
             <p className='ml-1'>Cetak</p>
           </button>
         </div>
-        <div className='w-[870px] ml-4'>
+        <div className='max-w-5xl ml-4'>
           <p className='font-inter font-bold text-2xl text-[#121713] mb-4'>SOAP & Pemeriksaan</p>
           <div className=' bg-white rounded-xl mt-4 p-4'>
             <p className=' font-bold text-xl text-[#121713]'>SOAP</p>
