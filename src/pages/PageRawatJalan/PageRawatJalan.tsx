@@ -87,10 +87,17 @@ export default function PageRawatJalan() {
     const fetchData = async () => {
       const tokenPoliString = localStorage.getItem('kd_poli')
       const tokenPoli = JSON.parse(tokenPoliString)
+      let kdPol = null
+      if (tokenPoliString) {
+        kdPol = tokenPoli[0].kd_poli
+      } else if (tokenPoliString === null) {
+        kdPol = ''
+        console.log(kdPol)
+      }
 
       try {
         const response = await api.get(
-          `/api/v1/getalllpasienmendaftar?kd_poli=${tokenPoli[0].kd_poli}&tglKunjungan=2023-08-01&tglKunjunganAkhir=${tglSkrng}`,
+          `/api/v1/getalllpasienmendaftar?kd_poli=${kdPol}&tglKunjungan=${tglSkrng}&tglKunjunganAkhir=${tglSkrng}`,
         )
         console.log('this is the table data', response)
         setData(response.data)
@@ -104,6 +111,7 @@ export default function PageRawatJalan() {
   const columns = [
     { name: 'NO.RM', selector: (row: DataItem) => row.no_rkm_medis, sortable: true },
     { name: 'NAMA PASIEN', selector: (row: DataItem) => row.nm_pasien, sortable: true },
+    { name: 'NO RAWAT', selector: (row: DataItem) => row.no_rawat, sortable: true },
     {
       name: 'ANTRIAN',
       selector: (row: DataItem) => (
@@ -125,7 +133,7 @@ export default function PageRawatJalan() {
     },
     { name: 'PENJAMIN', selector: (row: DataItem) => row.png_jawab, sortable: true },
     { name: 'NO ASURANSI', selector: (row: DataItem) => row.no_peserta, sortable: true },
-    { name: 'TANGGAL KUNJUNGAN', selector: (row: DataItem) => row.tgl_daftar, sortable: true },
+    { name: 'TANGGAL KUNJUNGAN', selector: (row: DataItem) => row.tgl_registrasi, sortable: true },
     {
       name: 'STATUS BAYAR',
       selector: (row: DataItem) => row.status_bayar,
@@ -146,7 +154,11 @@ export default function PageRawatJalan() {
       selector: (row: DataItem) => (
         <button
           className='btn btn-xs btn-ghost'
-          onClick={() => navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })}
+          onClick={() => {
+            localStorage.setItem('no_rawat', row.no_rawat)
+
+            navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })
+          }}
         >
           Edit
         </button>

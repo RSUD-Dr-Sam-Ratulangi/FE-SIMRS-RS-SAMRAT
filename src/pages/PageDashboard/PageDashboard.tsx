@@ -4,6 +4,20 @@ import { ArrowLeftOnRectangleIcon, ClockIcon, UserIcon } from '@heroicons/react/
 import Chart from 'react-apexcharts'
 
 export default function PageDashboard() {
+  const tokenValue = localStorage.getItem('token')
+  const credentialsInfo = JSON.parse(tokenValue)
+  const keys = Object.keys(credentialsInfo)
+  console.log(credentialsInfo)
+  let name = null
+
+  if (keys[0] === 'dokter') {
+    keys
+    name = credentialsInfo.dokter.nm_dokter
+  } else {
+    keys
+    name = credentialsInfo.petugas.nama
+  }
+
   const data = {
     series: [
       {
@@ -84,8 +98,8 @@ export default function PageDashboard() {
         <div className='flex items-center'>
           <img src='/assets/images/profile.png' alt='' className='w-20 h-20 rounded-xl' />
           <div className='flex flex-col ml-4'>
-            <span className='font-bold text-lg'>Esthera Jackson</span>
-            <span className='text-sm'>Admin</span>
+            <span className='font-bold text-lg'>{name}</span>
+            <span className='text-sm'>{keys}</span>
           </div>
         </div>
         <div className='flex justify-center items-center gap-1'>

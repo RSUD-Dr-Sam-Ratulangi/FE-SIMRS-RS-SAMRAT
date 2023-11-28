@@ -3,8 +3,6 @@ import { api } from '../../services/api/config.api'
 import { ArchiveBoxArrowDownIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
 
 const InsertSoapRalan: React.FC = () => {
-  const [noRawat, setNoRawat] = useState('')
-  const [nip, setNip] = useState('')
   const [tanggal, setTanggal] = useState('')
   const [jam, setJam] = useState('')
   const [suhu, setSuhu] = useState('')
@@ -26,6 +24,17 @@ const InsertSoapRalan: React.FC = () => {
   const [listPenyakit, setListPenyakit] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
 
+  const nmrRawat = localStorage.getItem('no_rawat')
+  const tokenValue = localStorage.getItem('token')
+  const Kd = JSON.parse(tokenValue)
+  let nipCredentials = ''
+  const role = Object.keys(Kd)[0]
+
+  if (role === 'dokter') {
+    nipCredentials = Kd.dokter.kd_dokter
+  } else if (role === 'petugas') {
+    nipCredentials = Kd.petugas.nip
+  }
   useEffect(() => {
     const fetchPenyakitOptions = async () => {
       try {
@@ -73,7 +82,7 @@ const InsertSoapRalan: React.FC = () => {
 
   const handlePostSoap = async () => {
     const data = {
-      noRawat: noRawat,
+      noRawat: nmrRawat,
       suhuTubuh: suhu,
       tensi: tensi,
       nadi: nadi,
@@ -91,7 +100,7 @@ const InsertSoapRalan: React.FC = () => {
       penilaian: '',
       instruksi: '',
       evaluasi: '',
-      nip: nip,
+      nip: nipCredentials,
     }
 
     try {
@@ -120,9 +129,8 @@ const InsertSoapRalan: React.FC = () => {
                 <input
                   type='Text'
                   placeholder='2023/10/11/000001'
-                  className='input input-bordered text-sm rounded-2xl border-disabled w-[200px]'
-                  value={noRawat}
-                  onChange={(e) => setNoRawat(e.target.value)}
+                  className='input input-bordered text-sm rounded-2xl border-disabled w-[200px] disabled'
+                  value={nmrRawat}
                 />
               </div>
               <div className='form-control mt-6 ml-4'>
@@ -132,9 +140,8 @@ const InsertSoapRalan: React.FC = () => {
                 <input
                   type='Text'
                   placeholder='2023/10/11/000001'
-                  className='input input-bordered text-sm rounded-2xl border-disabled w-[150px]'
-                  value={nip}
-                  onChange={(e) => setNip(e.target.value)}
+                  className='input input-bordered text-sm rounded-2xl border-disabled w-[150px] disabled'
+                  value={nipCredentials}
                 />
               </div>
             </div>
@@ -174,6 +181,7 @@ const InsertSoapRalan: React.FC = () => {
                   className='input input-bordered text-sm rounded-2xl border-disabled w-[150px]'
                   value={suhu}
                   onChange={(e) => setSuhu(e.target.value)}
+                  // disabled={role.includes('dokter')}
                 />
               </div>
               <div className='form-control mt-6'>
@@ -335,9 +343,12 @@ const InsertSoapRalan: React.FC = () => {
           </div>
         </div>
         <div className='form-control'>
-          <label className='label'>
-            <span>Asesmen</span>
-          </label>
+          <div className='flex justify-between p-2'>
+            <label className='label'>
+              <span>Asesmen</span>
+            </label>
+            <button className='btn'>Asesmen</button>
+          </div>
           <textarea
             placeholder='-'
             className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
