@@ -3,7 +3,7 @@ import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
 import { useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
-import { dateNow } from '../../utils/DateNow'
+// import { dateNow } from '../../utils/DateNow'
 
 type DataItem = {
   no_reg: string
@@ -80,7 +80,8 @@ export default function PageRawatJalan() {
   // const [kdPoli, setKdPoli] = useState()
 
   const navigate = useNavigate()
-  const tglSkrng = dateNow()
+  // const tglSkrng = dateNow()
+  const tglSkrng = '2023-10-25'
   console.log(tglSkrng)
 
   useEffect(() => {

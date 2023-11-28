@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../../services/api/config.api'
-import { ArchiveBoxArrowDownIcon, InformationCircleIcon } from '@heroicons/react/24/solid'
+import { ArchiveBoxArrowDownIcon, InformationCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
+
+type DataItem = {
+  kd_penyakit: string
+  nm_penyakit: string
+  ciri_ciri: string
+  keterangan: string
+  kd_ktg: string
+  status: string
+}
 
 const InsertSoapRalan: React.FC = () => {
   const [tanggal, setTanggal] = useState('')
@@ -16,12 +25,12 @@ const InsertSoapRalan: React.FC = () => {
   const [alergi, setAlergi] = useState('')
   const [kesadaran, setKesadaran] = useState('')
   const [subjektif, setSubjektif] = useState('')
-  const [diagnosa, setDiagnosa] = useState('')
+  // const [diagnosa, setDiagnosa] = useState('')
   const [asesmen, setAsesmen] = useState('')
   const [plan, setPlan] = useState('')
   const [instruksi, setInstruksi] = useState('')
   const [evaluasi, setEvaluasi] = useState('')
-  const [listPenyakit, setListPenyakit] = useState([])
+  const [listPenyakit, setListPenyakit] = useState<DataItem[]>([])
   const [searchTerm, setSearchTerm] = useState('')
 
   const nmrRawat = localStorage.getItem('no_rawat')
@@ -36,21 +45,6 @@ const InsertSoapRalan: React.FC = () => {
     nipCredentials = Kd.petugas.nip
   }
   useEffect(() => {
-    const fetchPenyakitOptions = async () => {
-      try {
-        const response = await api.get('/api/v1/getAllPenyakitt')
-        const penyakitData = response.data.map((penyakit: any) => ({
-          value: penyakit.kd_penyakit,
-          label: penyakit.nm_penyakit,
-        }))
-        setListPenyakit(penyakitData)
-        console.log('data penyakit: ', penyakitData)
-      } catch (error) {
-        console.error('Error fetching all penyakit:', error)
-      }
-    }
-
-    fetchPenyakitOptions()
     setTimeAndDate()
   }, [])
 
@@ -68,17 +62,19 @@ const InsertSoapRalan: React.FC = () => {
     setTanggal(formattedDate)
   }
 
-  const handlePenyakitChange = (selectedOption) => {
-    setDiagnosa(selectedOption)
+  const handleGetPenyakit = async () => {
+    try {
+      const response = api.get(`/api/v1/getAllPenyakit?searchString=${searchTerm}`)
+      setListPenyakit((await response).data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleSearchTermChange = (event) => {
     setSearchTerm(event.target.value)
   }
 
-  const filteredOptions = listPenyakit.filter((option) =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
 
   const handlePostSoap = async () => {
     const data = {
@@ -114,6 +110,30 @@ const InsertSoapRalan: React.FC = () => {
       console.log(error)
     }
   }
+
+  const handlePilihPenyakit = async (kode) => {
+    const confirmation = window.confirm('Apakah Anda yakin ingin memilih?');
+    const data = {
+      'noRawat': nmrRawat,
+      'status': 'Ralan',
+      'kdPenyakit': kode,
+      'prioritas': '1',
+      'statusPenyakit': 'Baru'
+    }
+
+    if (confirmation) {
+      try {
+        const response = api.post('/api/v1/insertDiagnosaPasien', data)
+        if((await response).status === 200){
+          const kode = (await response).data.kd_penyakit
+          const namaPenyakit = (await response).data.nm_penyakit
+          setAsesmen(kode+' '+namaPenyakit)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  };
 
   return (
     <div className='w-full mt-4'>
@@ -312,34 +332,51 @@ const InsertSoapRalan: React.FC = () => {
           />
         </div>
         <div className='mt-4'>
-          <label>Pilih Penyakit</label>
-          <div className='relative mt-1'>
+          <label>Cari Penyakit</label>
+          <div className='flex relative mt-1'>
             <input
               type='text'
               value={searchTerm}
               onChange={handleSearchTermChange}
-              className='w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500'
-              placeholder='Cari penyakit...'
+              className='w-full px-3 py-2 border rounded-2xl focus:outline-none focus:border-blue-500'
+              placeholder='Kanker'
             />
+            <button
+            className=' flex justify-center items-center w-24 p-2 rounded-xl bg-primary text-white font-semibold ml-4'
+            onClick={handleGetPenyakit}>
+              <MagnifyingGlassIcon width={20} height={20} className=' mr-1' />
+              Cari
+            </button>
           </div>
-          <div className='mt-2'>
-            <label className='block text-sm font-medium text-gray-700'>Penyakit</label>
-            <select
-              className='mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:border-blue-500'
-              value={diagnosa}
-              onChange={(e) =>
-                handlePenyakitChange({
-                  value: e.target.value,
-                  label: e.target.options[e.target.selectedIndex].text,
-                })
-              }
-            >
-              {filteredOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
+          <div className='mt-4 pt-4'>
+            <div className='flex justify-between text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 pb-[10px]'>
+              <div className='flex'>
+                <p className='w-[100px]'>NO</p>
+                <p className='w-[200px]'>KODE PENYAKIT</p>
+                <p className='w-[400px]'>NAMA PENYAKIT</p>
+              </div>
+              <div className=' w-32 '>
+                <p>AKSI</p>
+              </div>
+            </div>
+            <div className='max-h-[200px] overflow-y-auto'>
+              {listPenyakit.map((data, index)=>(
+                <div 
+                key={index}
+                className='flex justify-between text-sm text-gray-700 font-bold border-b-[1px] border-gray-200 py-[10px]'>
+                  <div className='flex'>
+                    <p className='w-[100px]'>{index+1}</p>
+                    <p className='w-[200px]'>{listPenyakit.length > 0 ? data.kd_penyakit || '-' : '-'}</p>
+                    <p className='w-[400px]'>{listPenyakit.length > 0 ? data.nm_penyakit || '-' : '-'}</p>
+                  </div>
+                  <button className=' underline w-32 '
+                  onClick={() => handlePilihPenyakit(data.kd_penyakit)}
+                  >
+                    <p className=' text-start'>Pilih</p>
+                  </button>
+                </div>
               ))}
-            </select>
+            </div>
           </div>
         </div>
         <div className='form-control'>
@@ -347,7 +384,6 @@ const InsertSoapRalan: React.FC = () => {
             <label className='label'>
               <span>Asesmen</span>
             </label>
-            <button className='btn'>Asesmen</button>
           </div>
           <textarea
             placeholder='-'
