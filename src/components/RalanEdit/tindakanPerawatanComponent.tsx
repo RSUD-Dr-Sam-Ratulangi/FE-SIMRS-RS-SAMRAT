@@ -122,18 +122,12 @@ const columnsPemeriksaan = [
   },
   {
     name: '                      ',
-    width: '25rem',
+    width: '40%',
   },
   {
     name: 'Pemeriksa',
     selector: (row) => row.nmDokter,
-    // conditionalCellStyles: [
-    //   {
-    //     when: (row) => row.nmDokter.length > 0,
-    //     style: (row) => ({ marginRight: `${0.5 / row.nmDokter.length}px` }),
-    //   },
-    // ],
-    // style: { marginRight: '10rem' },
+
     width: '15rem',
   },
 ]

@@ -48,6 +48,11 @@ type DataItem = {
   nip: string
 }
 
+interface Medicine {
+  nama: string
+  quantity: number
+}
+
 const InsertSoapRalan: React.FC = () => {
   const [tanggal, setTanggal] = useState('')
   const [jam, setJam] = useState('')
@@ -69,8 +74,12 @@ const InsertSoapRalan: React.FC = () => {
   const [instruksi, setInstruksi] = useState('')
   const [evaluasi, setEvaluasi] = useState('')
   const [listPenyakit, setListPenyakit] = useState<DataItem[]>([])
+  const [listObat, setListObat] = useState([])
+  const [aturanPakai, setAturanPakai] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [searchTermObat, setSearchTermObat] = useState('')
   const [dataSoap, setDataSoap] = useState<DataItem[]>([])
+  const [selectedMedicines, setSelectedMedicines] = useState<{ [kode: string]: Medicine }>({})
 
   const nmrRawat = localStorage.getItem('no_rawat')
   const tokenValue = localStorage.getItem('token')
@@ -102,6 +111,15 @@ const InsertSoapRalan: React.FC = () => {
     setTanggal(formattedDate)
   }
 
+  const handleHapusObat = (kode: string) => {
+    // Update selectedMedicines state to remove the selected medicine
+    setSelectedMedicines((prev) => {
+      const newSelectedMedicines = { ...prev }
+      delete newSelectedMedicines[kode]
+      return newSelectedMedicines
+    })
+  }
+
   useEffect(() => {
     const fetchDataSoap = async () => {
       try {
@@ -126,8 +144,21 @@ const InsertSoapRalan: React.FC = () => {
     }
   }
 
+  const handleGetObat = async () => {
+    try {
+      const response = api.get(`/api/v1/searchDatabarang?searchString=${searchTermObat}`)
+      setListObat((await response).data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleSearchTermChange = (event) => {
     setSearchTerm(event.target.value)
+  }
+
+  const handleSearchTermObatChange = (event) => {
+    setSearchTermObat(event.target.value)
   }
 
   const handlePostSoap = async () => {
@@ -213,6 +244,25 @@ const InsertSoapRalan: React.FC = () => {
     }
   }
 
+  const handlePilihObat = (kode: string, nama: string) => {
+    setSelectedMedicines((prev) => {
+      const newSelectedMedicines = { ...prev }
+
+      if (newSelectedMedicines[kode]) {
+        // If medicine is already selected, increase the quantity
+        newSelectedMedicines[kode] = {
+          ...newSelectedMedicines[kode],
+          quantity: newSelectedMedicines[kode].quantity + 1,
+        }
+        console.log(newSelectedMedicines[kode].quantity)
+      } else {
+        // If medicine is selected for the first time, add it to the state
+        newSelectedMedicines[kode] = { nama, quantity: 1 }
+      }
+
+      return newSelectedMedicines
+    })
+  }
   return (
     <div className='w-full mt-4'>
       <div>
@@ -492,6 +542,117 @@ const InsertSoapRalan: React.FC = () => {
             onChange={(e) => setPlan(e.target.value)}
           />
         </div>
+        <div className='mt-4'>
+          <label>Cari Obat</label>
+          <div className='flex relative mt-1'>
+            <input
+              type='text'
+              value={searchTerm}
+              onChange={handleSearchTermObatChange}
+              className='w-full px-3 py-2 border rounded-2xl focus:outline-none focus:border-blue-500'
+              placeholder='Paracetamol'
+            />
+            <button
+              className=' flex justify-center items-center w-24 p-2 rounded-xl bg-primary text-white font-semibold ml-4'
+              onClick={handleGetObat}
+            >
+              <MagnifyingGlassIcon width={20} height={20} className=' mr-1' />
+              Cari
+            </button>
+          </div>
+          <div className='mt-4 pt-4'>
+            <div className='flex justify-between text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 pb-[10px]'>
+              <div className='flex'>
+                <p className='w-[100px]'>NO</p>
+                <p className='w-[200px]'>KODE OBAT</p>
+                <p className='w-[400px]'>NAMA OBAT</p>
+              </div>
+              <div className=' w-32 '>
+                <p>AKSI</p>
+              </div>
+            </div>
+            <div className='max-h-[200px] overflow-y-auto'>
+              {listObat.map((data, index) => (
+                <div
+                  key={index}
+                  className='flex justify-between text-sm text-gray-700 font-bold border-b-[1px] border-gray-200 py-[10px]'
+                >
+                  <div className='flex'>
+                    <p className='w-[100px]'>{index + 1}</p>
+                    <p className='w-[200px]'>{listObat.length > 0 ? data.kode_brng || '-' : '-'}</p>
+                    <p className='w-[400px]'>{listObat.length > 0 ? data.nama_brng || '-' : '-'}</p>
+                  </div>
+                  <button
+                    className=' underline w-32 '
+                    onClick={() => handlePilihObat(data.kode_brng, data.nama_brng)}
+                  >
+                    <p className=' text-start'>Pilih</p>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className='mt-4'>
+          <label>
+            <span>Daftar Obat yang ditambahkan</span>
+          </label>
+          <div className=' pt-4'>
+            <div className='flex justify-between text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 pb-[10px]'>
+              <div className='flex'>
+                <p className='w-[100px]'>NO</p>
+                <p className='w-[200px]'>KODE OBAT</p>
+                <p className='w-[350px]'>NAMA OBAT</p>
+                <p className='w-[100px]'>JUMLAH</p>
+              </div>
+              <div className=' w-32 '>
+                <p>AKSI</p>
+              </div>
+            </div>
+            <div className='max-h-[200px] overflow-y-auto'>
+              {Object.entries(selectedMedicines).map(([kode, data], index) => (
+                <div
+                  key={index}
+                  className='flex justify-between text-sm text-gray-700 font-bold border-b-[1px] border-gray-200 py-[10px]'
+                >
+                  <div className='flex'>
+                    <p className='w-[100px]'>{index + 1}</p>
+                    <p className='w-[200px]'>{kode}</p>
+                    <p className='w-[350px]'>{data.nama}</p>
+
+                    <div className=' border-[#E2E8F0] border-2 w-[40px] rounded flex justify-center'>
+                      {data.quantity}
+                      <p className=' text-disabled'>x</p>
+                    </div>
+                    <button className='w-32' onClick={() => handleHapusObat(kode)}>
+                      <p className=' text-red-500'>Hapus</p>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className='flex justify-baseline items-end'>
+          <div className='form-control'>
+            <label className='label'>
+              <span>Aturan Pakai</span>
+            </label>
+            <input
+              type='Text'
+              placeholder='3x3'
+              className='input input-bordered text-sm rounded-2xl border-disabled w-[540px]'
+              value={aturanPakai}
+              onChange={(e) => setAturanPakai(e.target.value)}
+            />
+          </div>
+          <div className=''>
+            <button className=' flex justify-center items-center w-24 p-3 rounded-xl bg-primary text-white font-semibold ml-4'>
+              Submit
+            </button>
+          </div>
+        </div>
+
         <div className='form-control'>
           <label className='label'>
             <span>Instruksi</span>
