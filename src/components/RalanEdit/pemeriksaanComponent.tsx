@@ -51,7 +51,7 @@ const RenderDataPemeriksaan: React.FC<RenderDataProps> = ({ values }) => {
       'Suhu(C)': 'suhuTubuh',
       'Tensi(mmHg)': 'tensi',
       'Nadi(/menit)': 'nadi',
-      'RR(/menit)': 'rr',
+      'RR(/menit)': 'respirasi',
       'Tinggi(Cm)': 'tinggi',
       'Berat(/Kg)': 'berat',
       'GCS(E,V,M)': 'gcs',
@@ -59,7 +59,7 @@ const RenderDataPemeriksaan: React.FC<RenderDataProps> = ({ values }) => {
       Alergi: 'alergi',
       Kesadaran: 'kesadaran',
       Subjek: 'subjek',
-      Objek: 'Objek',
+      Objek: 'objek',
       Assessment: 'asesmen',
       Plan: 'rtl',
     }

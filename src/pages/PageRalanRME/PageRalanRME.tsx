@@ -112,18 +112,19 @@ const PageRalanRME: React.FC = () => {
           //   (pRalanItem) => pRalanItem.tgl_perawatan === item.tgl_perawatan,
           // )
           existingItem.pemeriksaanRawatJalan.push({
-            tglPerawatan: item.tgl_perawatan,
-            jamRawat: item.jam_rawat,
-            suhuTubuh: item.suhu_tubuh,
-            tensi: item.tensi,
-            nadi: item.tensi,
-            respirasi: item.tensi,
-            tinggi: item.tensi,
-            gcs: item.gcs,
-            spo2: item.spo2,
-            kesadaran: item.kesadaran,
-            berat: item.berat,
-            rtl: item.rtl,
+            tglPerawatan: item.tgl_perawatan.length > 1 ? item.tgl_perawatan : '-',
+            jamRawat: item.jam_rawat.length > 1 ? item.jam_rawat : '-',
+            suhuTubuh: item.suhu_tubuh.length > 1 ? item.suhu_tubuh : '-',
+            tensi: item.tensi.length > 1 ? item.tensi : '-',
+            nadi: item.nadi.length > 1 ? item.nadi : '-',
+            respirasi: item.respirasi.length > 1 ? item.respirasi : '-',
+            tinggi: item.tinggi.length > 1 ? item.tinggi : '-',
+            gcs: item.gcs.length > 1 ? item.gcs : '-',
+            spo2: item.spo2.length > 1 ? item.spo2 : '-',
+            kesadaran: item.kesadaran.length > 1 ? item.kesadaran : '-',
+            berat: item.berat.length > 1 ? item.berat : '-',
+            rtl: item.rtl.length > 1 ? item.rtl : '-',
+            alergi: item.alergi.length > 1 ? item.alergi : '-',
             subjek: '-',
             objek: '-',
             asesmen: '-',
@@ -162,18 +163,19 @@ const PageRalanRME: React.FC = () => {
         }
         if (item.jam_rawat !== undefined) {
           newItem.pemeriksaanRawatJalan.push({
-            tglPerawatan: item.tgl_perawatan !== undefined ? item.tgl_perawatan : '-',
-            jamRawat: item.jam_rawat !== undefined ? item.jam_rawat : '-',
-            suhuTubuh: item.suhu_tubuh !== undefined ? item.suhu_tubuh : '-',
-            tensi: item.tensi !== undefined ? item.tensi : '-',
-            nadi: item.nadi !== undefined ? item.nadi : '-',
-            respirasi: item.respirasi !== undefined ? item.respirasi : '-',
-            tinggi: item.tinggi !== undefined ? item.tinggi : '-',
-            gcs: item.gcs !== undefined ? item.gcs : '-',
-            spo2: item.spo2 !== undefined ? item.spo2 : '-',
-            kesadaran: item.kesadaran !== undefined ? item.kesadaran : '-',
-            berat: item.berat !== undefined ? item.berat : '-',
-            rtl: item.rtl !== undefined ? item.rtl : '-',
+            tglPerawatan: item.tgl_perawatan.length > 1 ? item.tgl_perawatan : '-',
+            jamRawat: item.jam_rawat.length > 1 ? item.jam_rawat : '-',
+            suhuTubuh: item.suhu_tubuh.length > 1 ? item.suhu_tubuh : '-',
+            tensi: item.tensi.length > 1 ? item.tensi : '-',
+            nadi: item.nadi.length > 1 ? item.nadi : '-',
+            respirasi: item.respirasi.length > 1 ? item.respirasi : '-',
+            tinggi: item.tinggi.length > 1 ? item.tinggi : '-',
+            gcs: item.gcs.length > 1 ? item.gcs : '-',
+            spo2: item.spo2.length > 1 ? item.spo2 : '-',
+            kesadaran: item.kesadaran.length > 1 ? item.kesadaran : '-',
+            berat: item.berat.length > 1 ? item.berat : '-',
+            rtl: item.rtl.length > 1 ? item.rtl : '-',
+            alergi: item.alergi.length > 1 ? item.alergi : '-',
             subjek: '-',
             objek: '-',
             asesmen: '-',
@@ -235,6 +237,8 @@ const PageRalanRME: React.FC = () => {
     }
     fetchData()
   }, [])
+
+  console.log('ralanpage', soap)
 
   return (
     <div>
