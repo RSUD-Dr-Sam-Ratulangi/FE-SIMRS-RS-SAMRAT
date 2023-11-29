@@ -525,8 +525,8 @@ const InsertSoapRalan: React.FC = () => {
             <div className='flex justify-between text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 pb-[10px]'>
               <div className='flex'>
                 <p className='w-[100px]'>NO</p>
-                <p className='w-[200px]'>KODE PENYAKIT</p>
-                <p className='w-[400px]'>NAMA PENYAKIT</p>
+                <p className='w-[200px]'>KODE OBAT</p>
+                <p className='w-[400px]'>NAMA OBAT</p>
               </div>
               <div className=' w-32 '>
                 <p>AKSI</p>
@@ -562,8 +562,8 @@ const InsertSoapRalan: React.FC = () => {
             <div className='flex justify-between text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 pb-[10px]'>
               <div className='flex'>
                 <p className='w-[100px]'>NO</p>
-                <p className='w-[200px]'>KODE PENYAKIT</p>
-                <p className='w-[350px]'>NAMA PENYAKIT</p>
+                <p className='w-[200px]'>KODE OBAT</p>
+                <p className='w-[350px]'>NAMA OBAT</p>
                 <p className='w-[100px]'>JUMLAH</p>
               </div>
               <div className=' w-32 '>
