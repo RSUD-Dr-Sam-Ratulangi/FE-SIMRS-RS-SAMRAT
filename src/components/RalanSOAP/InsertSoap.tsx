@@ -7,6 +7,18 @@ import {
 } from '@heroicons/react/24/solid'
 import { useParams } from 'react-router-dom'
 
+enum KesadaranOptions {
+  ComposMentis = 'Compos Mentis',
+  Somnolence = 'Somnolence',
+  Sopor = 'Sopor',
+  Coma = 'Coma',
+  Alert = 'Alert',
+  Confusion = 'Confusion',
+  Voice = 'Voice',
+  Pain = 'Pain',
+  Unresponsive = 'Unresponsive',
+}
+
 type DataItem = {
   kd_penyakit: string
   nm_penyakit: string
@@ -48,10 +60,11 @@ const InsertSoapRalan: React.FC = () => {
   const [spo2, setSpo2] = useState('')
   const [gcs, setGcs] = useState('')
   const [alergi, setAlergi] = useState('')
-  const [kesadaran, setKesadaran] = useState('')
+  const [kesadaran, setSelectedKesadaran] = useState('')
   const [subjektif, setSubjektif] = useState('')
   // const [diagnosa, setDiagnosa] = useState('')
-  const [asesmen, setAsesmen] = useState('')
+  // const [asesmen, setAsesmen] = useState('')
+  const [penilaian, setPenilaian] = useState('')
   const [plan, setPlan] = useState('')
   const [instruksi, setInstruksi] = useState('')
   const [evaluasi, setEvaluasi] = useState('')
@@ -139,18 +152,40 @@ const InsertSoapRalan: React.FC = () => {
       evaluasi: '',
       nip: nipCredentials,
     }
+    const dataPetugas = {
+      noRawat: nmrRawat,
+      penilaian: penilaian,
+      nip: nipCredentials,
+    }
 
     console.log('data yang akan dikirim', data)
 
-    try {
-      const response = await api.post('/api/v1/postPemeriksaanRalan', JSON.stringify(data), {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      console.log('POST response:', response.data)
-    } catch (error) {
-      console.log(error)
+    if (role.includes('petugas')) {
+      try {
+        const response = await api.post('/api/v1/postPemeriksaanRalan', JSON.stringify(data), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        console.log('POST response:', response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    } else if (role.includes('dokter')) {
+      try {
+        const response = await api.put(
+          '/api/v1/updatePemeriksaanRalan',
+          JSON.stringify(dataPetugas),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+        console.log(response)
+      } catch (err) {
+        console.log('err dokter put', err)
+      }
     }
   }
 
@@ -168,9 +203,9 @@ const InsertSoapRalan: React.FC = () => {
       try {
         const response = api.post('/api/v1/insertDiagnosaPasien', data)
         if ((await response).status === 200) {
-          const kode = (await response).data.kd_penyakit
-          const namaPenyakit = (await response).data.nm_penyakit
-          setAsesmen(kode + ' ' + namaPenyakit)
+          // const kode = (await response).data.kd_penyakit
+          // const namaPenyakit = (await response).data.nm_penyakit
+          // setAsesmen(kode + ' ' + namaPenyakit)
         }
       } catch (error) {
         console.log(error)
@@ -350,13 +385,17 @@ const InsertSoapRalan: React.FC = () => {
               <label className='label'>
                 <span>Kesadaran</span>
               </label>
-              <input
-                type='Text'
-                placeholder='Compos Mentis'
+              <select
                 className='input input-bordered text-sm rounded-2xl border-disabled w-[540px]'
-                value={dataSoap ? dataSoap[0]?.kesadaran : 'Loading'}
-                onChange={(e) => setKesadaran(e.target.value)}
-              />
+                value={kesadaran || ''}
+                onChange={(e) => setSelectedKesadaran(e.target.value)}
+              >
+                {Object.values(KesadaranOptions).map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
@@ -370,7 +409,7 @@ const InsertSoapRalan: React.FC = () => {
           <textarea
             placeholder='-'
             className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-            value={subjektif}
+            value={dataSoap ? dataSoap[0]?.keluhan : 'Loading'}
             onChange={(e) => setSubjektif(e.target.value)}
           />
         </div>
@@ -438,8 +477,8 @@ const InsertSoapRalan: React.FC = () => {
           <textarea
             placeholder='-'
             className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-            value={asesmen}
-            onChange={(e) => setAsesmen(e.target.value)}
+            value={dataSoap ? dataSoap[0]?.penilaian : 'Loading'}
+            onChange={(e) => setPenilaian(e.target.value)}
           />
         </div>
         <div className='form-control'>
@@ -489,7 +528,7 @@ const InsertSoapRalan: React.FC = () => {
             onClick={handlePostSoap}
           >
             <ArchiveBoxArrowDownIcon width={20} height={20} />
-            <p className='ml-1'>Selesai</p>
+            <p className='ml-1'>Selesai {role}</p>
           </button>
         </div>
       </div>
