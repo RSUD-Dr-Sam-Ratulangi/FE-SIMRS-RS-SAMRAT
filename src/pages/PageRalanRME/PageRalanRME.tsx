@@ -240,22 +240,11 @@ const PageRalanRME: React.FC = () => {
     <div>
       <RalanEditHeader />
       <div className='flex gap-4 min-w-fit'>
-        <div className='h-full rounded-xl shadow-soft mt-4'>
+        <div className='h-full rounded-xl shadow-soft mt-4 w-full'>
           <div className='mb-4 bg-white p-3'>
             <p className='text text-lg font-bold pb-3'>Riwayat Perawatan</p>
             <p className=' font-bold text-disabled'>Data Riwayat Perawatan Pasien</p>
-            {/* <div className='flex font-sans text-base font-normal text-[#121713] leading-6 mt-2'>
-              {infoBlocks.map((block, rowIndex) => (
-                <div key={rowIndex} className={rowIndex !== 0 ? 'ml-32' : ''}>
-                  {block.map(({ label, value }, index) => (
-                    <div key={index} className={index % 2 === 0 ? 'my-2' : ''}>
-                      <p className='font-bold text-gray-400 text-xs $'>{label}</p>
-                      <p>{value}</p>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div> */}
+
             <div>
               {riwayatPerawatan ? (
                 <div className=' flex font-sans text-base font-normal text-[#121713] leading-6 mt-2'>
