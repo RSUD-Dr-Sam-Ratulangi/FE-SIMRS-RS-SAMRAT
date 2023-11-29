@@ -218,9 +218,11 @@ const NewRalanRME: React.FC = () => {
 
   return (
     <div className='bg-white h-auto w-[860px] p-4 mt-4 rounded-xl'>
-      <p className='font-sans text-xl font-bold text-[#2D3748] mb-4'>Riwayat Perawatan</p>
+      <p className='font-sans text-xl font-bold text-[#2D3748] mb-4'>Riwayat Perawatannnnnnnn</p>
       <div>
-        <p className='font-sans text-lg text-disabled font-normal'>Data Riwayat Perawatan Pasien</p>
+        <p className='font-sans text-lg text-disabled font-normal'>
+          Data Riwayat Perawatan Pasiennnnnnnnn
+        </p>
         {personalData ? (
           <div className=' flex font-sans justify-between text-base font-normal text-[#121713] leading-6 mt-2'>
             <div>

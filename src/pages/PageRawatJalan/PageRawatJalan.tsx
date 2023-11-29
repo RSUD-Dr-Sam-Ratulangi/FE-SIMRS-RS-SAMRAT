@@ -3,7 +3,7 @@ import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
 import { useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
-// import { dateNow } from '../../utils/DateNow'
+import { dateNow } from '../../utils/DateNow'
 
 type DataItem = {
   no_reg: string
@@ -77,12 +77,9 @@ type DataItem = {
 
 export default function PageRawatJalan() {
   const [data, setData] = useState()
-  // const [kdPoli, setKdPoli] = useState()
 
   const navigate = useNavigate()
-  // const tglSkrng = dateNow()
-  const tglSkrng = '2023-10-25'
-  console.log(tglSkrng)
+  const tglSkrng = dateNow()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,14 +90,13 @@ export default function PageRawatJalan() {
         kdPol = tokenPoli[0].kd_poli
       } else if (tokenPoliString === null) {
         kdPol = ''
-        console.log(kdPol)
       }
 
       try {
         const response = await api.get(
           `/api/v1/getalllpasienmendaftar?kd_poli=${kdPol}&tglKunjungan=${tglSkrng}&tglKunjunganAkhir=${tglSkrng}`,
         )
-        console.log('this is the table data', response)
+
         setData(response.data)
       } catch (err) {
         console.log(err)

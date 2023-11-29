@@ -71,7 +71,6 @@ const PageRalanRME: React.FC = () => {
       const dateB = b.tgl_perawatan || b.tgl_registrasi
       return dateA.localeCompare(dateB)
     })
-    console.log('log b') // Log here
     const groupedArray = mergedArray.reduce((acc, item) => {
       const existingItem = acc.find((group) => {
         const groupDate = group.Date || group.date || group.tgl_registrasi
@@ -207,7 +206,6 @@ const PageRalanRME: React.FC = () => {
         const response = await api.get(`/api/v1/getPatientData?noRkmMedis=${id}`)
         const data: userData = await response.data
         setRiwayatPerawatan(data)
-        console.log('finish riwayat')
       } catch (error) {
         console.log(error)
       }
@@ -231,8 +229,6 @@ const PageRalanRME: React.FC = () => {
       try {
         await Promise.all([fetchPersonalData(), fetchDiagnosa(), fetchSoap()])
         // const data = await processData(diagnosa, soap)
-
-        console.log(diagnosa, soap)
       } catch (error) {
         console.error('Error fetching dat:', error)
       }
