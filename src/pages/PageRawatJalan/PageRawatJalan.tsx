@@ -151,9 +151,8 @@ export default function PageRawatJalan() {
       selector: (row: DataItem) => (
         <button
           className='btn btn-xs btn-ghost'
-          onClick={() => {
+          onClick={async () => {
             localStorage.setItem('no_rawat', row.no_rawat)
-
             navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })
           }}
         >

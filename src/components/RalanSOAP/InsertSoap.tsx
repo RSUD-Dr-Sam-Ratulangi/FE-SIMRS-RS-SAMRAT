@@ -51,6 +51,8 @@ type DataItem = {
 interface Medicine {
   nama: string
   quantity: number
+  aturanPakai: any
+  kode: string
 }
 
 const InsertSoapRalan: React.FC = () => {
@@ -68,7 +70,6 @@ const InsertSoapRalan: React.FC = () => {
   const [kesadaran, setSelectedKesadaran] = useState('')
   const [subjektif, setSubjektif] = useState('')
   // const [diagnosa, setDiagnosa] = useState('')
-  // const [asesmen, setAsesmen] = useState('')
   const [penilaian, setPenilaian] = useState('')
   const [plan, setPlan] = useState('')
   const [instruksi, setInstruksi] = useState('')
@@ -119,7 +120,6 @@ const InsertSoapRalan: React.FC = () => {
       return newSelectedMedicines
     })
   }
-
   useEffect(() => {
     const fetchDataSoap = async () => {
       try {
@@ -134,6 +134,41 @@ const InsertSoapRalan: React.FC = () => {
     }
     fetchDataSoap()
   }, [id, nmrRawat])
+
+  // const postResep = async () => {
+  //   const data = {
+  //     noRawat: nmrRawat,
+  //     kdDokter: nipCredentials,
+  //   }
+  //   try {
+  //     const response = await api.post('/api/v1/postResepObat', data, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     })
+
+  //     console.log('post resep response', response.data.no_resep)
+  //     // add obat to resep
+  //     const resepDokterData = Object.entries(selectedMedicines).map(([kode, medicine]) => ({
+  //       noResep: response.data.no_resep,
+  //       kodeBrng: kode,
+  //       aturanPakai: medicine.aturanPakai,
+  //     }))
+  //     console.log('resepDokterData', resepDokterData)
+  //     try {
+  //       const res = await api.post('/api/v1/postResepDokter', resepDokterData, {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       })
+  //       console.log(res.data)
+  //     } catch (err) {
+  //       console.log(err)
+  //     }
+  //   } catch (err) {
+  //     console.log('post resep error', err)
+  //   }
+  // }
 
   const handleGetPenyakit = async () => {
     try {
@@ -178,15 +213,17 @@ const InsertSoapRalan: React.FC = () => {
       alergi: alergi,
       lingkarPerut: '',
       rtl: '',
-      penilaian: '',
-      instruksi: '',
+      penilaian: penilaian,
+      instruksi: instruksi,
       evaluasi: '',
       nip: nipCredentials,
     }
     const dataPetugas = {
       noRawat: nmrRawat,
-      penilaian: penilaian,
       nip: nipCredentials,
+      penilaian: penilaian,
+      rtl: plan,
+      instruksi: instruksi,
     }
 
     console.log('data yang akan dikirim', data)
@@ -199,6 +236,7 @@ const InsertSoapRalan: React.FC = () => {
           },
         })
         console.log('POST response:', response.data)
+        window.location.reload()
       } catch (error) {
         console.log(error)
       }
@@ -213,6 +251,7 @@ const InsertSoapRalan: React.FC = () => {
             },
           },
         )
+        // postResep()
         console.log(response)
       } catch (err) {
         console.log('err dokter put', err)
@@ -234,9 +273,9 @@ const InsertSoapRalan: React.FC = () => {
       try {
         const response = api.post('/api/v1/insertDiagnosaPasien', data)
         if ((await response).status === 200) {
-          // const kode = (await response).data.kd_penyakit
-          // const namaPenyakit = (await response).data.nm_penyakit
-          // setAsesmen(kode + ' ' + namaPenyakit)
+          const kode = (await response).data.kd_penyakit
+          const namaPenyakit = (await response).data.nm_penyakit
+          setPenilaian(kode + ' ' + namaPenyakit)
         }
       } catch (error) {
         console.log(error)
@@ -244,7 +283,7 @@ const InsertSoapRalan: React.FC = () => {
     }
   }
 
-  const handlePilihObat = (kode: string, nama: string) => {
+  const handlePilihObat = (kode: string, nama: string, aturanPakai: string) => {
     setSelectedMedicines((prev) => {
       const newSelectedMedicines = { ...prev }
 
@@ -253,16 +292,39 @@ const InsertSoapRalan: React.FC = () => {
         newSelectedMedicines[kode] = {
           ...newSelectedMedicines[kode],
           quantity: newSelectedMedicines[kode].quantity + 1,
+          aturanPakai: aturanPakai,
+          kode: kode,
         }
-        console.log(newSelectedMedicines[kode].quantity)
       } else {
         // If medicine is selected for the first time, add it to the state
-        newSelectedMedicines[kode] = { nama, quantity: 1 }
+        newSelectedMedicines[kode] = { nama, aturanPakai, quantity: 1, kode }
       }
 
       return newSelectedMedicines
     })
   }
+
+  const generatePlanString = (selectedMedicines: any) => {
+    const planArray = []
+
+    for (const kode in selectedMedicines) {
+      const { nama, quantity, aturanPakai } = selectedMedicines[kode]
+      const planItem = `${nama} ${kode} - Quantity: ${quantity}, Aturan Pakai: ${aturanPakai}.`
+      planArray.push(planItem)
+    }
+
+    // Join the array into a single string
+    return planArray.join('\n')
+  }
+
+  const testSimpan = async () => {
+    const planString = generatePlanString(selectedMedicines)
+    setPlan(planString)
+    setAturanPakai('')
+    console.log(planString)
+    console.log(selectedMedicines)
+  }
+
   return (
     <div className='w-full mt-4'>
       <div>
@@ -437,7 +499,7 @@ const InsertSoapRalan: React.FC = () => {
               </label>
               <select
                 className='input input-bordered text-sm rounded-2xl border-disabled w-[540px]'
-                value={kesadaran || ''}
+                value={dataSoap ? dataSoap[0]?.kesadaran : 'Loading'}
                 onChange={(e) => setSelectedKesadaran(e.target.value)}
               >
                 {Object.values(KesadaranOptions).map((option) => (
@@ -527,19 +589,8 @@ const InsertSoapRalan: React.FC = () => {
           <textarea
             placeholder='-'
             className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-            value={dataSoap ? dataSoap[0]?.penilaian : 'Loading'}
+            value={penilaian}
             onChange={(e) => setPenilaian(e.target.value)}
-          />
-        </div>
-        <div className='form-control'>
-          <label className='label'>
-            <span>Plan</span>
-          </label>
-          <textarea
-            placeholder='-'
-            className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-            value={plan}
-            onChange={(e) => setPlan(e.target.value)}
           />
         </div>
         <div className='mt-4'>
@@ -547,7 +598,6 @@ const InsertSoapRalan: React.FC = () => {
           <div className='flex relative mt-1'>
             <input
               type='text'
-              value={searchTerm}
               onChange={handleSearchTermObatChange}
               className='w-full px-3 py-2 border rounded-2xl focus:outline-none focus:border-blue-500'
               placeholder='Paracetamol'
@@ -560,99 +610,116 @@ const InsertSoapRalan: React.FC = () => {
               Cari
             </button>
           </div>
-          <div className='mt-4 pt-4'>
-            <div className='flex justify-between text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 pb-[10px]'>
-              <div className='flex'>
-                <p className='w-[100px]'>NO</p>
-                <p className='w-[200px]'>KODE OBAT</p>
-                <p className='w-[400px]'>NAMA OBAT</p>
-              </div>
-              <div className=' w-32 '>
-                <p>AKSI</p>
-              </div>
-            </div>
-            <div className='max-h-[200px] overflow-y-auto'>
-              {listObat.map((data, index) => (
-                <div
-                  key={index}
-                  className='flex justify-between text-sm text-gray-700 font-bold border-b-[1px] border-gray-200 py-[10px]'
-                >
-                  <div className='flex'>
-                    <p className='w-[100px]'>{index + 1}</p>
-                    <p className='w-[200px]'>{listObat.length > 0 ? data.kode_brng || '-' : '-'}</p>
-                    <p className='w-[400px]'>{listObat.length > 0 ? data.nama_brng || '-' : '-'}</p>
-                  </div>
-                  <button
-                    className=' underline w-32 '
-                    onClick={() => handlePilihObat(data.kode_brng, data.nama_brng)}
+          <div className='mt-4 pt-4 h-32 overflow-auto'>
+            <table className='w-full'>
+              <thead>
+                <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 '>
+                  <th className='text-start'>NO</th>
+                  <th className='text-start'>KODE OBAT</th>
+                  <th className='text-start'>NAMA OBAT</th>
+                  <th className='text-start'>ATURAN PAKAI</th>
+                  <th className='text-start'>AKSI</th>
+                </tr>
+              </thead>
+              <tbody className='overflow-auto'>
+                {listObat.map((data, index) => (
+                  <tr
+                    key={index}
+                    className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px]'
                   >
-                    <p className=' text-start'>Pilih</p>
-                  </button>
-                </div>
-              ))}
-            </div>
+                    <td className='text-start'>{index + 1}</td>
+                    <td className='text-start'>
+                      {listObat.length > 0 ? data.kode_brng || '-' : '-'}
+                    </td>
+                    <td className='text-start'>
+                      {listObat.length > 0 ? data.nama_brng || '-' : '-'}
+                    </td>
+                    <td>
+                      <input
+                        onChange={(e) => setAturanPakai(e.target.value)}
+                        className='text-center w-20 input input-bordered'
+                      />
+                    </td>
+                    <td>
+                      <button
+                        className='underline'
+                        onClick={() => handlePilihObat(data.kode_brng, data.nama_brng, aturanPakai)}
+                      >
+                        <p className='text-start'>Simpan</p>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
         <div className='mt-4'>
           <label>
             <span>Daftar Obat yang ditambahkan</span>
           </label>
-          <div className=' pt-4'>
-            <div className='flex justify-between text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 pb-[10px]'>
-              <div className='flex'>
-                <p className='w-[100px]'>NO</p>
-                <p className='w-[200px]'>KODE OBAT</p>
-                <p className='w-[350px]'>NAMA OBAT</p>
-                <p className='w-[100px]'>JUMLAH</p>
-              </div>
-              <div className=' w-32 '>
-                <p>AKSI</p>
-              </div>
-            </div>
-            <div className='max-h-[200px] overflow-y-auto'>
-              {Object.entries(selectedMedicines).map(([kode, data], index) => (
-                <div
-                  key={index}
-                  className='flex justify-between text-sm text-gray-700 font-bold border-b-[1px] border-gray-200 py-[10px]'
-                >
-                  <div className='flex'>
-                    <p className='w-[100px]'>{index + 1}</p>
-                    <p className='w-[200px]'>{kode}</p>
-                    <p className='w-[350px]'>{data.nama}</p>
-
-                    <div className=' border-[#E2E8F0] border-2 w-[40px] rounded flex justify-center'>
-                      {data.quantity}
-                      <p className=' text-disabled'>x</p>
-                    </div>
-                    <button className='w-32' onClick={() => handleHapusObat(kode)}>
-                      <p className=' text-red-500'>Hapus</p>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className='pt-4'>
+            <table className='w-full'>
+              <thead className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 pb-[10px]'>
+                <tr>
+                  <th>NO</th>
+                  <th>KODE OBAT</th>
+                  <th>NAMA OBAT</th>
+                  <th>JUMLAH</th>
+                  <th>ATURAN PAKAI</th>
+                  <th>AKSI</th>
+                </tr>
+              </thead>
+              <tbody className='overflow-y-auto '>
+                {Object.entries(selectedMedicines).map(([kode, data], index) => (
+                  <tr
+                    key={index}
+                    className='text-sm text-gray-700 font-bold border-b-[1px] border-gray-200'
+                  >
+                    <td className='text-center'>{index + 1}</td>
+                    <td className='text-center'>{kode}</td>
+                    <td className='text-center'>{data.nama}</td>
+                    <td>
+                      <div className='border-[#E2E8F0] border-2 rounded flex justify-center'>
+                        {data.quantity}
+                        <p className='text-disabled'>x</p>
+                      </div>
+                    </td>
+                    <td className='text-center'>{data.aturanPakai}</td>
+                    <td className='mx-auto'>
+                      <button onClick={() => handleHapusObat(kode)}>
+                        <p className='text-red-500'>Hapus</p>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-        <div className='flex justify-baseline items-end'>
-          <div className='form-control'>
-            <label className='label'>
-              <span>Aturan Pakai</span>
-            </label>
-            <input
-              type='Text'
-              placeholder='3x3'
-              className='input input-bordered text-sm rounded-2xl border-disabled w-[540px]'
-              value={aturanPakai}
-              onChange={(e) => setAturanPakai(e.target.value)}
-            />
-          </div>
-          <div className=''>
-            <button className=' flex justify-center items-center w-24 p-3 rounded-xl bg-primary text-white font-semibold ml-4'>
-              Submit
+        {selectedMedicines ? (
+          <div className='mt-3 flex justify-end'>
+            <button
+              onClick={testSimpan}
+              className='w-24 p-3 rounded-xl bg-primary text-white font-semibold ml-4'
+            >
+              Simpan
             </button>
           </div>
+        ) : (
+          <p>Pilih Obat</p>
+        )}
+        <div className='form-control'>
+          <label className='label'>
+            <span>Plan</span>
+          </label>
+          <textarea
+            placeholder='-'
+            className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+            value={plan}
+            onChange={(e) => setPlan(e.target.value)}
+          />
         </div>
-
         <div className='form-control'>
           <label className='label'>
             <span>Instruksi</span>
