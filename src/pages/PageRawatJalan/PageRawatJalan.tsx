@@ -21,7 +21,7 @@ type DataItem = {
   stts_daftar: string
   status_lanjut: string
   kd_pj: string
-  umurdaftar: number
+  umurdaftar: string
   sttsumur: string
   status_bayar: string
   status_poli: string
@@ -96,8 +96,9 @@ export default function PageRawatJalan() {
         const response = await api.get(
           `/api/v1/getalllpasienmendaftar?kd_poli=${kdPol}&tglKunjungan=2023-10-25&tglKunjunganAkhir=${tglSkrng}`,
         )
-
-        setData(response.data)
+        const data = response.data
+        const reverseData = data.reverse()
+        setData(reverseData)
       } catch (err) {
         console.log(err)
       }
@@ -153,6 +154,7 @@ export default function PageRawatJalan() {
           className='btn btn-xs btn-ghost'
           onClick={async () => {
             localStorage.setItem('no_rawat', row.no_rawat)
+            localStorage.setItem('no_antrian', row.umurdaftar)
             navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })
           }}
         >

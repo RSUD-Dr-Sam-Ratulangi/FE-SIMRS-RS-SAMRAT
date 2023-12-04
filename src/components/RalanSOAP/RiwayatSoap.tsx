@@ -53,7 +53,11 @@ type userData = {
 
 type ApiData = userData[]
 
-const RiwayatSoapRalan: React.FC = () => {
+interface RiwayatSoapRalanProps {
+  onRiwayatObatChange: (riwayatObatData: any) => void
+}
+
+const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange }) => {
   const [riwayatSoap, setRiwayatSoap] = useState<ApiData>([])
   const { id } = useParams()
 
@@ -65,12 +69,34 @@ const RiwayatSoapRalan: React.FC = () => {
         setRiwayatSoap(data)
         // perlu data diagnosa-> no.registrasi, penjamin, tanggal registrasi, unit/poliklinik, pemeriksaan, tindakan/perawatan
       } catch (err) {
-        console.log(err)
+        ;-console.log(err)
       }
     }
 
     fetchRiwayatSoap()
   }, [])
+
+  console.log('riwayat soap', riwayatSoap)
+
+  const testCopyResep = async (noRawat: any) => {
+    try {
+      const response = await api.get(
+        `http://rsudsamrat.site:8901/api/v1/getPrescriptionNumbers?noRkmMedis=${id}&noRawat=${noRawat}`,
+      )
+      // ambil data obat
+      try {
+        const res = await api.get(
+          `http://rsudsamrat.site:8901/api/v1/getResepDokterDetails?noResep=${response.data[0]}`,
+        )
+        console.log('Data Obat :', res.data)
+        onRiwayatObatChange(res.data)
+      } catch (err) {
+        console.log('Data obat gagal diambil', err)
+      }
+    } catch (err) {
+      console.log('Gagal ambil resep', err)
+    }
+  }
 
   return (
     <div className='h-[1000px] overflow-y-auto mt-4'>
@@ -89,71 +115,83 @@ const RiwayatSoapRalan: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className='mt-2'>
-            <div className='flex w-full justify-between'>
-              <div>
-                <div>
-                  <p className=' font-bold text-gray-400 text-xs'>NADI(/menit)</p>
-                  <p className=''>{riwayat.nadi || '-'}</p>
-                </div>
-                <div className=' my-2'>
-                  <p className=' font-bold text-gray-400 text-xs'>GCS(E,V,M)</p>
-                  <p>{riwayat.gcs || '-'}</p>
-                </div>
-                <div className=''>
-                  <p className=' font-bold text-gray-400 text-xs'>KESADARAN</p>
-                  <p>{riwayat.kesadaran || '-'}</p>
-                </div>
-              </div>
-              <div>
-                <div>
-                  <p className=' font-bold text-gray-400 text-xs'>RR(/menit)</p>
-                  <p className=''>{riwayat.respirasi || '-'}</p>
-                </div>
-                <div className=' my-2'>
-                  <p className=' font-bold text-gray-400 text-xs'>SPO2</p>
-                  <p className=' whitespace-nowrap'>{riwayat.spo2 || '-'}</p>
-                </div>
-              </div>
-              <div>
-                <div>
-                  <p className=' font-bold text-gray-400 text-xs'>SUHU(C))</p>
-                  <p className=''>{riwayat.suhu_tubuh || '-'}</p>
-                </div>
-                <div className=' my-2'>
-                  <p className=' font-bold text-gray-400 text-xs'>TINGGI(cm)</p>
-                  <p>{riwayat.tinggi || '-'}</p>
-                </div>
-              </div>
-              <div className=' mr-24'>
-                <div>
-                  <p className=' font-bold text-gray-400 text-xs'>TENSI(mmHg)</p>
-                  <p className=''>{riwayat.tensi || '-'}</p>
-                </div>
-                <div className=' my-2'>
-                  <p className=' font-bold text-gray-400 text-xs'>BERAT(kg)</p>
-                  <p>{riwayat.berat || '-'}</p>
-                </div>
-              </div>
-            </div>
-            <div className='mt-2'>
-              <p className=' font-bold text-gray-400 text-xs'>ASESMEN</p>
-              <p>{riwayat.penilaian || '-'}</p>
-            </div>
-            <div className='mt-2'>
-              <p className=' font-bold text-gray-400 text-xs'>SUBJEK</p>
+          <div className='mt-5'>
+            <div className='mt-5 mb-3 p-2'>
+              <label className=' font-semibold text-slate-700 text-sm'>SUBJEK</label>
               <p>{riwayat.keluhan || '-'}</p>
             </div>
-            <div className='mt-2'>
-              <p className=' font-bold text-gray-400 text-xs'>PLAN</p>
+            <div className='border border-slate-400 p-2 rounded-lg'>
+              <label className=' font-semibold text-slate-700 text-md'>OBJECT</label>
+              <div className='flex w-full justify-between mt-3'>
+                <div>
+                  <div>
+                    <label className=' font-semibold text-slate-700 text-sm'>NADI(/menit)</label>
+                    <p className=''>{riwayat.nadi || '-'}</p>
+                  </div>
+                  <div className=' my-2'>
+                    <label className=' font-semibold text-slate-700 text-sm'>GCS(E,V,M)</label>
+                    <p>{riwayat.gcs || '-'}</p>
+                  </div>
+                  <div className=''>
+                    <label className=' font-semibold text-slate-700 text-sm'>KESADARAN</label>
+                    <p>{riwayat.kesadaran || '-'}</p>
+                  </div>
+                </div>
+                <div>
+                  <div>
+                    <label className=' font-semibold text-slate-700 text-sm'>RR(/menit)</label>
+                    <p className=''>{riwayat.respirasi || '-'}</p>
+                  </div>
+                  <div className=' my-2'>
+                    <label className=' font-semibold text-slate-700 text-sm'>SlabelO2</label>
+                    <p className=' whitespace-nowrap'>{riwayat.spo2 || '-'}</p>
+                  </div>
+                </div>
+                <div>
+                  <div>
+                    <label className=' font-semibold text-slate-700 text-sm'>SUHU(C))</label>
+                    <p className=''>{riwayat.suhu_tubuh || '-'}</p>
+                  </div>
+                  <div className=' my-2'>
+                    <label className=' font-semibold text-slate-700 text-sm'>TINGGI(cm)</label>
+                    <p>{riwayat.tinggi || '-'}</p>
+                  </div>
+                </div>
+                <div className=' mr-24'>
+                  <div>
+                    <label className=' font-semibold text-slate-700 text-sm'>TENSI(mmHg)</label>
+                    <p className=''>{riwayat.tensi || '-'}</p>
+                  </div>
+                  <div className=' my-2'>
+                    <label className=' font-semibold text-slate-700 text-sm'>BERAT(kg)</label>
+                    <p>{riwayat.berat || '-'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='mt-2 p-2'>
+              <label className=' font-semibold text-slate-700 text-sm'>ASESMEN</label>
+              <p>{riwayat.penilaian || '-'}</p>
+            </div>
+            <div className='mt-2 p-2'>
+              <div className='flex justify-between items-center'>
+                <label className=' font-semibold text-slate-700 text-sm'>PLAN</label>
+                <button
+                  className='btn btn-ghost hover:bg-white'
+                  onClick={() => testCopyResep(riwayat.no_rawat)}
+                >
+                  Copy Resep
+                </button>
+              </div>
+
               <p>{riwayat.rtl || '-'}</p>
             </div>
-            <div className='mt-2'>
-              <p className=' font-bold text-gray-400 text-xs'>INSTRUKSI</p>
+            <div className='mt-2 p-2'>
+              <label className=' font-semibold text-slate-700 text-sm'>INSTRUKSI</label>
               <p>{riwayat.instruksi || '-'}</p>
             </div>
-            <div className='mt-2'>
-              <p className=' font-bold text-gray-400 text-xs'>EVALUASI</p>
+            <div className='mt-2 p-2'>
+              <label className=' font-semibold text-slate-700 text-sm'>EVALUASI</label>
               <p>{riwayat.evaluasi || '-'}</p>
             </div>
           </div>

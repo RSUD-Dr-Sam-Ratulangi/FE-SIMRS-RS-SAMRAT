@@ -35,8 +35,8 @@ const Navbar: React.FC = () => {
       icon: <BuildingOfficeIcon className='w-6' />,
     },
     {
-      to: ROUTES.PAGE_PASIEN,
-      text: ROUTES_NAME[ROUTES.PAGE_PASIEN],
+      to: ROUTES.PAGE_PASIEN_IGD,
+      text: ROUTES_NAME[ROUTES.PAGE_PASIEN_IGD],
       icon: <UsersIcon className='w-6' />,
     },
   ]
@@ -46,7 +46,7 @@ const Navbar: React.FC = () => {
       {/* Sidebar Logo */}
       <div className='flex items-center justify-center p-4'>
         <img src='/assets/images/logo.png' alt='Logo' className='w-10 h-10' />
-        <span className='text-3xl font-bold text-dark'>SIMRS</span>
+        <span className='text-3xl font-bold text-dark'>SI</span>
       </div>
       <hr className='stroke-[rgba(224, 225, 226, 0.00)]' />
       <div className='flex flex-col gap-4 flex-2 text-slate-600'>

@@ -3,7 +3,7 @@ import PageError from './pages/PageError'
 import PageDashboard from './pages/PageDashboard/PageDashboard'
 import PageRawatInap from './pages/PageRawatInap/PageRawatInap'
 import PageRawatJalan from './pages/PageRawatJalan/PageRawatJalan'
-import PagePasien from './pages/PagePasien/PagePasien'
+import PagePasienIGD from './pages/PagePasienIGD/PagePasienIGD'
 import AuthLayout from './utils/AuthLayout'
 import PageLogin from './pages/PageLogin/PageLogin'
 import PageRanapRME from './pages/PageRanapRME/PageRanapRME'
@@ -23,7 +23,7 @@ export const ROUTES = {
   PAGE_DASHBOARD: '/dashboard',
   PAGE_RAWAT_INAP: '/rawat-inap',
   PAGE_RAWAT_JALAN: '/rawat-jalan',
-  PAGE_PASIEN: '/pasien',
+  PAGE_PASIEN_IGD: '/pasien-igd',
   PAGE_RANAP_RME: '/rawat-inap/rme/:id',
   PAGE_RANAP_SOAP_PEMERIKSAAN: '/rawat-inap/soap-pemeriksaan/:id',
   PAGE_RANAP_LAYANAN_OBAT: '/rawat-inap/layanan-obat/:id',
@@ -41,7 +41,7 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_DASHBOARD]: 'Dashboard',
   [ROUTES.PAGE_RAWAT_INAP]: 'Rawat Inap',
   [ROUTES.PAGE_RAWAT_JALAN]: 'Rawat Jalan',
-  [ROUTES.PAGE_PASIEN]: 'Pasien',
+  [ROUTES.PAGE_PASIEN_IGD]: 'Pasien IGD',
   [ROUTES.PAGE_RANAP_RME]: 'Ranap RME',
   [ROUTES.PAGE_RANAP_SOAP_PEMERIKSAAN]: 'Ranap SOAP & Pemeriksaan',
   [ROUTES.PAGE_RANAP_LAYANAN_OBAT]: 'Ranap Layanan & Obat',
@@ -134,8 +134,8 @@ export const routerList = [
         element: <PageRalanRME />,
       },
       {
-        path: ROUTES.PAGE_PASIEN,
-        element: <PagePasien />,
+        path: ROUTES.PAGE_PASIEN_IGD,
+        element: <PagePasienIGD />,
       },
       {
         path: ROUTES.PAGE_SOAP_RALAN,
