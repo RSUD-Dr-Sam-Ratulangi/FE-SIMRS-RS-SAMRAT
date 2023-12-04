@@ -94,7 +94,7 @@ export default function PageRawatJalan() {
       console.log(kdPol)
       try {
         const response = await api.get(
-          `/api/v1/getalllpasienmendaftar?kd_poli=${kdPol}&tglKunjungan=2023-10-25&tglKunjunganAkhir=${tglSkrng}`,
+          `/api/v1/getalllpasienmendaftar?kd_poli=${kdPol}&tglKunjungan=${tglSkrng}&tglKunjunganAkhir=${tglSkrng}`,
         )
         const data = response.data
         const reverseData = data.reverse()
