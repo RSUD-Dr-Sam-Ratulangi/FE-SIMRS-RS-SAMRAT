@@ -89,13 +89,6 @@ const RanapSoapPemeriksaan: React.FC = () => {
   return (
     <div className='flex-1 w-auto min-w-fit overflow-x-auto p-4'>
       <RalanEditHeader />
-      {riwayatObat.map((obat) => (
-        <div key={obat.id}>
-          <p>Nama Obat: {obat.nama_brng}</p>
-          <p>Kode Obat: {obat.kode_brng}</p>
-          {/* Render other properties as needed */}
-        </div>
-      ))}
       <div className='flex mt-4 min-w-fit'>
         <div>
           <p className='font-inter font-bold text-2xl text-[#121713]'>Riwayat</p>

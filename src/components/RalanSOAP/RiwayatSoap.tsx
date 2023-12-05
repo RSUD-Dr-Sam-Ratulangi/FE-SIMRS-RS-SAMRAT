@@ -69,7 +69,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
         setRiwayatSoap(data)
         // perlu data diagnosa-> no.registrasi, penjamin, tanggal registrasi, unit/poliklinik, pemeriksaan, tindakan/perawatan
       } catch (err) {
-        ;-console.log(err)
+        console.log(err)
       }
     }
 
@@ -99,7 +99,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
   }
 
   return (
-    <div className='h-[1000px] overflow-y-auto mt-4'>
+    <div className='h-[2089px] overflow-y-auto mt-4'>
       {riwayatSoap.map((riwayat, index) => (
         <div key={index} className='w-auto max-w-[890px] bg-white rounded-xl mt-4 p-4'>
           <div className='flex justify-between'>

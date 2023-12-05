@@ -94,7 +94,7 @@ export default function PageRawatJalan() {
       console.log(kdPol)
       try {
         const response = await api.get(
-          `/api/v1/getalllpasienmendaftar?kd_poli=${kdPol}&tglKunjungan=${tglSkrng}&tglKunjunganAkhir=${tglSkrng}`,
+          `/api/v1/getalllpasienmendaftar?kd_poli=${kdPol}&tglKunjungan=2023-10-25&tglKunjunganAkhir=${tglSkrng}`,
         )
         const data = response.data
         const reverseData = data.reverse()
@@ -154,7 +154,7 @@ export default function PageRawatJalan() {
           className='btn btn-xs btn-ghost'
           onClick={async () => {
             localStorage.setItem('no_rawat', row.no_rawat)
-            localStorage.setItem('no_antrian', row.umurdaftar)
+            localStorage.setItem('no_antrian', row.no_reg)
             navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })
           }}
         >
