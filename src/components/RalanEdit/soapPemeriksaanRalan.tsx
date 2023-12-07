@@ -92,7 +92,7 @@ const RanapSoapPemeriksaan: React.FC = () => {
       <div className='flex mt-4 min-w-fit'>
         <div>
           <p className='font-inter font-bold text-2xl text-[#121713]'>Riwayat</p>
-          <div className='w-auto  bg-white rounded-xl mt-4 p-4'>
+          <div className='w-auto bg-slate-100 rounded-xl mt-4 p-4 border border-slate-300  '>
             <p className=' font-bold text-xl text-[#121713]'>Data Pasien</p>
             {personalData ? (
               <div className=' flex font-sans justify-between text-base font-normal text-[#121713] leading-6 mt-2 gap-10'>

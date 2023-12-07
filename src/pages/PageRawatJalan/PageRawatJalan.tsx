@@ -94,7 +94,7 @@ export default function PageRawatJalan() {
       console.log(kdPol)
       try {
         const response = await api.get(
-          `/api/v1/getalllpasienmendaftar?kd_poli=${kdPol}&tglKunjungan=2023-10-25&tglKunjunganAkhir=${tglSkrng}`,
+          `/api/v1/getalllpasienmendaftar?kd_poli=${kdPol}&tglKunjungan=${tglSkrng}&tglKunjunganAkhir=${tglSkrng}`,
         )
         const data = response.data
         const reverseData = data.reverse()
@@ -107,15 +107,14 @@ export default function PageRawatJalan() {
   }, [])
 
   const columns = [
+    { name: 'NO.REG', selector: (row: DataItem) => row.no_reg, sortable: true },
     { name: 'NO.RM', selector: (row: DataItem) => row.no_rkm_medis, sortable: true },
     { name: 'NAMA PASIEN', selector: (row: DataItem) => row.nm_pasien, sortable: true },
     { name: 'NO RAWAT', selector: (row: DataItem) => row.no_rawat, sortable: true },
     {
-      name: 'ANTRIAN',
+      name: 'UMUR',
       selector: (row: DataItem) => (
-        <p className='text-white btn btn-xs text-center text-[10px] bg-[#48BB78] rounded-xl'>
-          {row.umurdaftar}
-        </p>
+        <p className='text-black mx-auto text-center text-[10px]'>{row.umurdaftar}</p>
       ),
       sortable: true,
     },

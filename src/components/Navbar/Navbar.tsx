@@ -42,11 +42,11 @@ const Navbar: React.FC = () => {
   ]
 
   return (
-    <div className='flex flex-col justify-start gap-4 items-stretch h-full w-[288px] bg-primary-1 text-white p-4'>
+    <div className='flex flex-col justify-start gap-4 items-stretch h-full w-[288px] bg-primary-1 text-white p-4 border border-r-2'>
       {/* Sidebar Logo */}
-      <div className='flex items-center justify-center p-4'>
-        <img src='/assets/images/logo.png' alt='Logo' className='w-10 h-10' />
-        <span className='text-3xl font-bold text-dark'>SI</span>
+      <div className='grid items-center justify-center p-4'>
+        <img src='/assets/images/LOGORSREVISI4.png' alt='Logo' className='w-56 h-40' />
+        <span className='text-3xl font-bold text-dark text-center'>SIMRS</span>
       </div>
       <hr className='stroke-[rgba(224, 225, 226, 0.00)]' />
       <div className='flex flex-col gap-4 flex-2 text-slate-600'>
@@ -68,7 +68,10 @@ const Navbar: React.FC = () => {
         ))}
       </div>
       <div className='p-4 mt-auto'>
-        <button className='flex items-center gap-3 text-lg text-red-500' onClick={handleExitClick}>
+        <button
+          className='btn bg-gray-50 border border-none flex items-center gap-3 text-lg text-red-500 w-full'
+          onClick={handleExitClick}
+        >
           <ArrowLeftOnRectangleIcon className='w-6' />
           <span className='font-bold'>Keluar</span>
         </button>

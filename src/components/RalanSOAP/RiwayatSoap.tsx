@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../../services/api/config.api'
+import { errorCopyResep } from '../../utils/ToastInfo'
 import { useParams } from 'react-router-dom'
 import { ClockIcon, CalendarDaysIcon } from '@heroicons/react/24/solid'
+import { ToastContainer } from 'react-toastify'
 
 type userData = {
   no_rkm_medis: string
@@ -48,6 +50,8 @@ type userData = {
   nm_penyakit: string
   tgl_registrasi: string
   kd_dokter: string
+  kd_poli: string
+  nm_poli: string
   nm_dokter: string
 }
 
@@ -66,8 +70,20 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
       try {
         const response = await api.get(`/api/v1/riwayatsoap?noRkmMedis=${id}`)
         const data: ApiData = await response.data
-        setRiwayatSoap(data)
-        // perlu data diagnosa-> no.registrasi, penjamin, tanggal registrasi, unit/poliklinik, pemeriksaan, tindakan/perawatan
+
+        // Now, for each entry in the data, fetch the nm_poli
+        const newData = await Promise.all(
+          data.map(async (riwayat) => {
+            const nmPoliResponse = await api.get(`/api/v1/poli?kode=${riwayat.kd_poli}`)
+            const nmPoliData = nmPoliResponse.data[0].nm_poli
+            console.log('nama poli', nmPoliData)
+            // eslint-disable-next-line camelcase
+            return { ...riwayat, nm_poli: nmPoliData }
+          }),
+        )
+
+        setRiwayatSoap(newData)
+        console.log('data baru', newData)
       } catch (err) {
         console.log(err)
       }
@@ -91,9 +107,11 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
         console.log('Data Obat :', res.data)
         onRiwayatObatChange(res.data)
       } catch (err) {
+        errorCopyResep()
         console.log('Data obat gagal diambil', err)
       }
     } catch (err) {
+      errorCopyResep()
       console.log('Gagal ambil resep', err)
     }
   }
@@ -101,7 +119,10 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
   return (
     <div className='h-[2089px] overflow-y-auto mt-4'>
       {riwayatSoap.map((riwayat, index) => (
-        <div key={index} className='w-auto max-w-[890px] bg-white rounded-xl mt-4 p-4'>
+        <div
+          key={index}
+          className='w-auto max-w-[890px] bg-slate-100 rounded-xl mt-4 p-4 border border-slate-300'
+        >
           <div className='flex justify-between'>
             <p className=' font-bold text-xl text-[#121713] mb-2'>Rawat Jalan</p>
             <div className='flex w-auto p-1 pr-[6px] items-center rounded-3xl bg-primary text-white text-base font-bold'>
@@ -115,6 +136,9 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
               </div>
             </div>
           </div>
+          <p className='text text-sm border border-slate-500 rounded-lg p-2 font-bold w-fit'>
+            {riwayat.nm_poli} - {riwayat.kd_poli}
+          </p>
           <div className='mt-5'>
             <div className='mt-5 mb-3 p-2'>
               <label className=' font-semibold text-slate-700 text-sm'>SUBJEK</label>
@@ -197,6 +221,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
           </div>
         </div>
       ))}
+      <ToastContainer />
     </div>
   )
 }
