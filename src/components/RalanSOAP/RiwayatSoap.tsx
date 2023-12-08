@@ -144,13 +144,17 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
               <label className=' font-semibold text-slate-700 text-sm'>SUBJEK</label>
               <p>{riwayat.keluhan || '-'}</p>
             </div>
+            <div className='mt-5 mb-3 p-2'>
+              <label className=' font-semibold text-slate-700 text-sm'>OBJECT</label>
+              <p>{riwayat.pemeriksaan || '-'}</p>
+            </div>
             <div className='border border-slate-400 p-2 rounded-lg'>
-              <label className=' font-semibold text-slate-700 text-md'>OBJECT</label>
+              <label className=' font-semibold text-slate-700 text-md'>VITALITY SIGN</label>
               <div className='flex w-full justify-between mt-3'>
                 <div>
                   <div>
-                    <label className=' font-semibold text-slate-700 text-sm'>NADI(/menit)</label>
-                    <p className=''>{riwayat.nadi || '-'}</p>
+                    <label className=' font-semibold text-slate-700 text-sm'>SUHU(C))</label>
+                    <p className=''>{riwayat.suhu_tubuh || '-'}</p>
                   </div>
                   <div className=' my-2'>
                     <label className=' font-semibold text-slate-700 text-sm'>GCS(E,V,M)</label>
@@ -163,8 +167,8 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
                 </div>
                 <div>
                   <div>
-                    <label className=' font-semibold text-slate-700 text-sm'>RR(/menit)</label>
-                    <p className=''>{riwayat.respirasi || '-'}</p>
+                    <label className=' font-semibold text-slate-700 text-sm'>TENSI(mmHg)</label>
+                    <p className=''>{riwayat.tensi || '-'}</p>
                   </div>
                   <div className=' my-2'>
                     <label className=' font-semibold text-slate-700 text-sm'>SlabelO2</label>
@@ -173,8 +177,8 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
                 </div>
                 <div>
                   <div>
-                    <label className=' font-semibold text-slate-700 text-sm'>SUHU(C))</label>
-                    <p className=''>{riwayat.suhu_tubuh || '-'}</p>
+                    <label className=' font-semibold text-slate-700 text-sm'>NADI(/menit)</label>
+                    <p className=''>{riwayat.nadi || '-'}</p>
                   </div>
                   <div className=' my-2'>
                     <label className=' font-semibold text-slate-700 text-sm'>TINGGI(cm)</label>
@@ -183,12 +187,16 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
                 </div>
                 <div className=' mr-24'>
                   <div>
-                    <label className=' font-semibold text-slate-700 text-sm'>TENSI(mmHg)</label>
-                    <p className=''>{riwayat.tensi || '-'}</p>
+                    <label className=' font-semibold text-slate-700 text-sm'>RR(/menit)</label>
+                    <p className=''>{riwayat.respirasi || '-'}</p>
                   </div>
                   <div className=' my-2'>
                     <label className=' font-semibold text-slate-700 text-sm'>BERAT(kg)</label>
                     <p>{riwayat.berat || '-'}</p>
+                  </div>
+                  <div className=' my-2'>
+                    <label className=' font-semibold text-slate-700 text-sm'>ALERGI</label>
+                    <p>{riwayat.alergi || '-'}</p>
                   </div>
                 </div>
               </div>

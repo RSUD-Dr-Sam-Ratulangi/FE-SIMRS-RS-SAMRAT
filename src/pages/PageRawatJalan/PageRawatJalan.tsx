@@ -80,31 +80,40 @@ export default function PageRawatJalan() {
 
   const navigate = useNavigate()
   const tglSkrng = dateNow()
+  const tokenValue = localStorage.getItem('token')
 
   useEffect(() => {
     const fetchData = async () => {
-      const tokenPoliString = localStorage.getItem('kd_poli')
-      const tokenPoli = JSON.parse(tokenPoliString)
-      let kdPol = null
-      if (tokenPoliString) {
-        kdPol = tokenPoli[0].kd_poli
-      } else if (tokenPoliString === null) {
-        kdPol = ''
-      }
-      console.log(kdPol)
+      const Kd = JSON.parse(tokenValue)
+      const kdDokter = Kd.dokter?.kd_dokter
+      const role = Object.keys(Kd)[0]
+
       try {
         const response = await api.get(
-          `/api/v1/getalllpasienmendaftar?kd_poli=${kdPol}&tglKunjungan=${tglSkrng}&tglKunjunganAkhir=${tglSkrng}`,
+          `/api/v1/getalllpasienmendaftar?kd_poli=&tglKunjungan=${tglSkrng}&tglKunjunganAkhir=${tglSkrng}`,
         )
-        const data = response.data
-        const reverseData = data.reverse()
-        setData(reverseData)
+        const responseData = response.data
+
+        let sortedData = responseData
+
+        if (role === 'dokter') {
+          sortedData = responseData.sort((a, b) => {
+            if (a.kd_dokter === kdDokter) return -1
+            if (b.kd_dokter === kdDokter) return 1
+            return a.kd_dokter.localeCompare(b.kd_dokter)
+          })
+
+          sortedData = sortedData.filter((item) => item.kd_dokter === kdDokter)
+        }
+
+        setData(sortedData)
       } catch (err) {
         console.log(err)
       }
     }
+
     fetchData()
-  }, [])
+  }, [tokenValue, tglSkrng])
 
   const columns = [
     { name: 'NO.REG', selector: (row: DataItem) => row.no_reg, sortable: true },
@@ -154,6 +163,7 @@ export default function PageRawatJalan() {
           onClick={async () => {
             localStorage.setItem('no_rawat', row.no_rawat)
             localStorage.setItem('no_antrian', row.no_reg)
+            localStorage.setItem('status_rawat', row.stts)
             navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })
           }}
         >
@@ -164,9 +174,11 @@ export default function PageRawatJalan() {
   ]
 
   return (
-    <div>
+    <div className='mt-3'>
       <Breadcrumb />
-      <TableData data={data} columns={columns} />
+      <div className='mt-5'>
+        <TableData data={data} columns={columns} />
+      </div>
     </div>
   )
 }

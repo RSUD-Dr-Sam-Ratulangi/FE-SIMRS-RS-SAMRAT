@@ -211,7 +211,7 @@ const RanapSoapPemeriksaan: React.FC = () => {
         </div>
         <div className='max-w-5xl ml-4'>
           <p className='font-inter font-bold text-2xl text-[#121713] mb-4'>SOAP & Pemeriksaan</p>
-          <div className=' bg-white rounded-xl mt-4 p-4'>
+          <div className='rounded-xl mt-4 p-4 bg-slate-100'>
             <p className=' font-bold text-xl text-[#121713]'>SOAP</p>
             <p className='text-disabled whitespace-nowrap'>
               Isi semua data dibawah ini untuk menambahkan SOAP baru kedalam daftar

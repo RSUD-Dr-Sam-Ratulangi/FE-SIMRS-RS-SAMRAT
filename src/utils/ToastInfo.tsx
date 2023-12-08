@@ -9,9 +9,9 @@ export const errorToast = () =>
     theme: 'light',
     progressStyle: { background: 'red' },
     style: {
-      fontSize: '20px', // Adjust the font size
-      padding: '16px', // Add more padding
-      minWidth: '300px', // Set a minimum width
+      fontSize: '20px',
+      padding: '16px',
+      minWidth: '300px',
     },
   })
 
@@ -24,9 +24,9 @@ export const errorSearchToast = () =>
     theme: 'light',
     progressStyle: { background: 'red' },
     style: {
-      fontSize: '20px', // Adjust the font size
-      padding: '16px', // Add more padding
-      minWidth: '300px', // Set a minimum width
+      fontSize: '20px',
+      padding: '16px',
+      minWidth: '300px',
       fontWeight: 'bold',
     },
   })
@@ -40,9 +40,9 @@ export const errorCopyResep = () =>
     theme: 'light',
     progressStyle: { background: 'red' },
     style: {
-      fontSize: '20px', // Adjust the font size
-      padding: '16px', // Add more padding
-      minWidth: '300px', // Set a minimum width
+      fontSize: '20px',
+      padding: '16px',
+      minWidth: '300px',
       fontWeight: 'bold',
     },
   })
@@ -56,9 +56,9 @@ export const errorPostSoap = () =>
     theme: 'light',
     progressStyle: { background: 'red' },
     style: {
-      fontSize: '20px', // Adjust the font size
-      padding: '16px', // Add more padding
-      minWidth: '300px', // Set a minimum width
+      fontSize: '20px',
+      padding: '16px',
+      minWidth: '300px',
       fontWeight: 'bold',
     },
   })
@@ -75,11 +75,32 @@ export const spesificError = ({ errMessage }) =>
     style: {
       textAlign: 'center',
       color: 'black',
-      fontSize: '18px', // Adjust the font size
-      padding: '16px', // Add more padding
-      minWidth: '300px', // Set a minimum width
+      fontSize: '18px',
+      padding: '16px',
+      minWidth: '300px',
       fontWeight: 'bold',
-      borderRadius: '10px', // Add border radius for rounded corners
-      background: '#FFFFFF', // Set the background color,
+      borderRadius: '10px',
+      background: '#FFFFFF',
+    },
+  })
+
+export const spesificSuccess = ({ doneMessage }) =>
+  toast.info(doneMessage, {
+    position: 'top-right',
+    closeButton: false,
+    autoClose: 3500,
+    hideProgressBar: false,
+    closeOnClick: true,
+    theme: 'light',
+    progressStyle: { background: 'green' },
+    style: {
+      textAlign: 'center',
+      color: 'black',
+      fontSize: '18px',
+      padding: '16px',
+      minWidth: '300px',
+      fontWeight: 'bold',
+      borderRadius: '10px',
+      background: '#FFFFFF',
     },
   })

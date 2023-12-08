@@ -8,7 +8,7 @@ import {
   MagnifyingGlassIcon,
   ChevronDownIcon,
   FunnelIcon,
-  ArrowRightIcon,
+  ArrowPathIcon,
 } from '@heroicons/react/24/solid'
 
 type templateObject = {
@@ -25,6 +25,7 @@ const TableData = ({ data, columns }: Props) => {
   const [rowsPerPage, setRowsPerPage] = useState(15)
   const [searchQuery, setSearchQuery] = useState('')
   const [filteredData, setFilteredData] = useState(data)
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     const newFilteredData = data
@@ -63,9 +64,11 @@ const TableData = ({ data, columns }: Props) => {
     <div>
       <div className='flex items-center w-full pb-4'>
         <div className='w-full'>
-          <span className='text-[10px] flex'>
-            <p className='font-bold'>Cari</p>{' '}
-            <p className='ml-1'>berdasarkan No. RM, Nama, atau Nomor Rawat</p>
+          <span className='text-[10px] flex items-center gap-5 mb-3'>
+            <p className='font-bold'>Cari berdasarkan No. RM, Nama, atau Nomor Rawat</p>{' '}
+            <button onClick={() => window.location.reload()}>
+              <ArrowPathIcon className='w-5 h-5' />
+            </button>
           </span>
           <div className='flex gap-2 '>
             <div className='relative w-full'>
@@ -79,61 +82,158 @@ const TableData = ({ data, columns }: Props) => {
               />
             </div>
             <div className='relative dropdown  dropdown-bottom dropdown-end'>
-              <button tabIndex={0} className='flex btn w-72 text-white bg-[#55A46B]'>
+              <button
+                onClick={() => setIsOpen(true)}
+                className='flex btn w-72 text-white bg-[#55A46B]'
+              >
                 <FunnelIcon className='font-bold text-white h-[17px] w-[17px]' />
                 Filter
               </button>
               <ChevronDownIcon className='absolute bottom-4 right-5 font-bold text-white h-[17px] w-[17px]' />
-              <div
-                tabIndex={0}
-                className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg shadow-2xl'
-              >
-                <div>
-                  <div>
-                    <p className='font-bold'>Filter Pasien</p>
-                  </div>
-                  <div className='w-full mt-3 p-3'>
-                    <p className='pb-2'>Tanggal</p>
-                    <div className='flex items-center justify-center gap-3'>
-                      <div className='w-fit'>
-                        <div className='flex items-center justify-center gap-2'>
-                          <input type='date' className='input input-bordered' />
-                        </div>
+              {isOpen && (
+                <>
+                  <div
+                    tabIndex={0}
+                    className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[450px] shadow-2xl'
+                  >
+                    <div className='w-full mt-3 p-3'>
+                      <div className='flex justify-between items-center mb-5'>
+                        <p className='pb-2 font-bold text-md mt-3'>POLI </p>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('')
+                            setIsOpen(false)
+                          }}
+                        >
+                          <ArrowPathIcon className='mr-3 w-7 h-7 hover:text-green-400' />
+                        </button>{' '}
                       </div>
-                      <span className='flex items-center'>
-                        <ArrowRightIcon className='w-5' />
-                      </span>
-                      <div className='w-fit'>
-                        <div className='flex items-center justify-center gap-2'>
-                          <input type='date' className='input input-bordered' />
+                      <div>
+                        <div className='grid grid-cols-3 gap-3'>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK GERIATRI')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK GERIATRI
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK SYARAF')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK SYARAF
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK PENYAKIT DALAM')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK PENYAKIT DALAM
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK JANTUNG')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK JANTUNG
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK GIGI')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK GIGI & MULUT
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK KANDUNGAN')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK KANDUNGAN
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK ANAK')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK ANAK
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK MATA')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK MATA
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK JIWA')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK JIWA
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK KULIT & KELAMIN')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK KULIT & KELAMIN
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK FISIOTERAPI')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK FISIOTERAPI
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('KLINIK BEDAH')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            KLINIK BEDAH
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSearchQuery('IGD')
+                              setIsOpen(false)
+                            }}
+                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                          >
+                            IGD
+                          </button>
                         </div>
                       </div>
                     </div>
+                    {/* <button className='btn bg-[#55A46B]'>Terapkan Filter</button> */}
                   </div>
-                </div>
-                <div className='w-full mt-3 p-3'>
-                  <div>
-                    <p className='pb-2'>Status</p>
-                  </div>
-                  <div>
-                    <div className='grid grid-cols-3 gap-3'>
-                      <button className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'>
-                        Semua
-                      </button>
-                      <button className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'>
-                        Masuk
-                      </button>
-                      <button className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'>
-                        Pulang
-                      </button>
-                      <button className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'>
-                        Sudah Bayar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <button className='btn bg-[#55A46B]'>Terapkan Filter</button>
-              </div>
+                </>
+              )}
             </div>
           </div>
         </div>
