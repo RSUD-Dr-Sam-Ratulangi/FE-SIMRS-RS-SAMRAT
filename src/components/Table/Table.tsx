@@ -1,10 +1,10 @@
 import DataTable from 'react-data-table-component'
 import { useState, useEffect } from 'react'
 import {
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
+  // ChevronDoubleLeftIcon,
+  // ChevronDoubleRightIcon,
+  // ChevronLeftIcon,
+  // ChevronRightIcon,
   MagnifyingGlassIcon,
   ChevronDownIcon,
   FunnelIcon,
@@ -21,8 +21,8 @@ type Props = {
 }
 
 const TableData = ({ data, columns }: Props) => {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [rowsPerPage, setRowsPerPage] = useState(15)
+  // const [currentPage, setCurrentPage] = useState(1)
+  // const [rowsPerPage, setRowsPerPage] = useState(15)
   const [searchQuery, setSearchQuery] = useState('')
   const [filteredData, setFilteredData] = useState(data)
   const [isOpen, setIsOpen] = useState(false)
@@ -47,18 +47,16 @@ const TableData = ({ data, columns }: Props) => {
     setFilteredData(newFilteredData)
   }, [searchQuery, data, columns])
 
-  const handlePageChange = (newPage: any) => {
-    setCurrentPage(newPage)
-  }
+  // const handlePageChange = (newPage: any) => {
+  //   setCurrentPage(newPage)
+  // }
 
-  const handleRowsPerPageChange = (newRowsPerPage: any) => {
-    setRowsPerPage(newRowsPerPage)
-    setCurrentPage(1)
-  }
+  // const handleRowsPerPageChange = (newRowsPerPage: any) => {
+  //   setRowsPerPage(newRowsPerPage)
+  //   setCurrentPage(1)
+  // }
 
-  const paginatedData = filteredData
-    ? filteredData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
-    : []
+  const paginatedData = filteredData ? filteredData : []
 
   return (
     <div>
@@ -94,7 +92,7 @@ const TableData = ({ data, columns }: Props) => {
                 <>
                   <div
                     tabIndex={0}
-                    className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[450px] shadow-2xl'
+                    className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg shadow-2xl '
                   >
                     <div className='w-full mt-3 p-3'>
                       <div className='flex justify-between items-center mb-5'>
@@ -105,7 +103,7 @@ const TableData = ({ data, columns }: Props) => {
                             setIsOpen(false)
                           }}
                         >
-                          <ArrowPathIcon className='mr-3 w-7 h-7 hover:text-green-400' />
+                          <ArrowPathIcon className='mr-3 w-7 h-7' />
                         </button>{' '}
                       </div>
                       <div>
@@ -239,7 +237,7 @@ const TableData = ({ data, columns }: Props) => {
         </div>
       </div>
       <DataTable columns={columns} data={paginatedData} pagination={false} />
-      {searchQuery === '' ? (
+      {/* {searchQuery === '' ? (
         <div className='flex justify-between p-2'>
           <div>
             <p>
@@ -330,7 +328,7 @@ const TableData = ({ data, columns }: Props) => {
         </div>
       ) : (
         <p className='font-bold text-lg text-center pt-5'>Cari Data ?</p>
-      )}
+      )} */}
     </div>
   )
 }
