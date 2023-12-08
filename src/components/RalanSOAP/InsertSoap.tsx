@@ -712,7 +712,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
           try {
             const response = await api.post(
               '/api/v1/postPemeriksaanRalan',
-              JSON.stringify(dataBelumPeriksa),
+              JSON.stringify(dataBerkasDiterima),
               {
                 headers: {
                   'Content-Type': 'application/json',
@@ -1045,7 +1045,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 {dataSoap[0]?.keluhan || tindakan ? (
                   <>
                     <p className='p-3 bg-slate-600 w-fit h-fit rounded-xl mt-3 ml-1 text-xs text-gray-100'>
-                      {penilaian}
+                      {tindakan}
                     </p>
                   </>
                 ) : null}
@@ -1149,6 +1149,11 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               disabled={role.includes('petugas')}
             />
           </div>
+          {penilaian ? (
+            <p className='p-2 bg-slate-600 w-fit h-fit rounded-xl mt-3 ml-1 text-xs text-gray-100'>
+              {penilaian}
+            </p>
+          ) : null}
           <div className='mt-4'>
             <label>Cari Penyakit</label>
             <div className='flex relative mt-1'>
