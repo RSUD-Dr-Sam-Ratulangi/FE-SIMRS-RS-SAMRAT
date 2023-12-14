@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { api } from '../../services/api/config.api'
-import RalanEditHeader from '../../components/RalanEdit/RalanEditHeader'
-// import TabelDiagnosaPenyakit from '../../components/Table/tableDiagnosaPenyakit'
-// import RenderDataPemeriksaan from '../../components/RalanEdit/pemeriksaanComponent'
-// import TindakanPerawatan from '../../components/RalanEdit/tindakanPerawatanComponent'
 import { ArchiveBoxArrowDownIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/solid'
 import RenderDataRiwayatRalan from './renderDataRiwayatRalan'
+import HeaderRalan from '../../components/Navbar/HeaderDetailRalan'
 
 type userData = {
   no_rkm_medis: string
@@ -217,20 +214,14 @@ const PageRalanRME: React.FC = () => {
         const response = await api.get(`/api/v1/getDiagnosaPasien/${id}`)
         const data: ApiData = await response.data
         setDiagnosa(data)
-
-        // perlu data diagnosa-> no.registrasi, penjamin, tanggal registrasi, unit/poliklinik, pemeriksaan, tindakan/perawatan
       } catch (err) {
         console.log(err)
       }
     }
-    // fetchPersonalData()
-    // fetchDiagnosa()
-    // fetchSoap()
 
     const fetchData = async () => {
       try {
         await Promise.all([fetchPersonalData(), fetchDiagnosa(), fetchSoap()])
-        // const data = await processData(diagnosa, soap)
       } catch (error) {
         console.error('Error fetching dat:', error)
       }
@@ -242,7 +233,7 @@ const PageRalanRME: React.FC = () => {
 
   return (
     <div>
-      <RalanEditHeader />
+      <HeaderRalan />
       <div className='flex gap-4 min-w-fit'>
         <div className='h-full rounded-xl shadow-soft mt-4 w-full'>
           <div className='mb-4 bg-white p-3'>

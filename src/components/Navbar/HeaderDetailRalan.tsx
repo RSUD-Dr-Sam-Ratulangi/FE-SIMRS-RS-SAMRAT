@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate, useParams, Link } from 'react-router
 import Breadcrumb from '../BreadCrumb/Breadcrumb'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 
-const RalanEditHeader: React.FC = () => {
+const HeaderRalan: React.FC = () => {
   const id = useParams().id
   const location = useLocation()
   const navigate = useNavigate()
@@ -61,4 +61,4 @@ const RalanEditHeader: React.FC = () => {
   )
 }
 
-export default RalanEditHeader
+export default HeaderRalan

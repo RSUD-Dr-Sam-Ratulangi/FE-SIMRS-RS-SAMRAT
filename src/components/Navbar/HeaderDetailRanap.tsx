@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate, useParams, Link } from 'react-router
 import Breadcrumb from '../BreadCrumb/Breadcrumb'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 
-const RalanEditHeader: React.FC = () => {
+const HeaderRanap: React.FC = () => {
   const id = useParams().id
   const location = useLocation()
   const navigate = useNavigate()
@@ -11,11 +11,11 @@ const RalanEditHeader: React.FC = () => {
   const links = [
     {
       name: 'Elektronik Rekam Medis',
-      link: `/rawat-jalan/rme/${id}`,
+      link: `/rawat-inap/rme/${id}`,
     },
     {
       name: 'SOAP & Pemeriksaan',
-      link: `/rawat-jalan/soap-pemeriksaan/${id}`,
+      link: `/rawat-inap/soap-pemeriksaan/${id}`,
     },
   ]
 
@@ -41,7 +41,7 @@ const RalanEditHeader: React.FC = () => {
       </div>
       <div className='flex text-disabled mt-4'>
         <ArrowLeftIcon className='w-4 mr-1' />
-        <a className=' font-sans cursor-pointer' onClick={() => navigate('/rawat-jalan')}>
+        <a className=' font-sans cursor-pointer' onClick={() => navigate('/rawat-inap')}>
           Kembali
         </a>
       </div>
@@ -61,4 +61,4 @@ const RalanEditHeader: React.FC = () => {
   )
 }
 
-export default RalanEditHeader
+export default HeaderRanap

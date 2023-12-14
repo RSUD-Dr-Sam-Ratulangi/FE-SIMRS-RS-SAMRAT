@@ -8,13 +8,8 @@ import AuthLayout from './utils/AuthLayout'
 import PageLogin from './pages/PageLogin/PageLogin'
 import PageRanapRME from './pages/PageRanapRME/PageRanapRME'
 import PageRalanRME from './pages/PageRalanRME/PageRalanRME'
-import SoapRalan from './components/RalanEdit/soapPemeriksaanRalan'
-import RanapSoapPemeriksaan from './components/RanapSoapPemeriksaan/RanapSoapPemeriksaan'
-import RanapLayananObat from './components/RanapLayananObat/RanapLayananObat'
-import RanapBerkasDigital from './components/RanapBerkasDigital/RanapBerkasDigital'
-import LayananObatRalan from './components/RalanEdit/layananObatRalan'
-import BerkasDigitalRalan from './components/RalanEdit/berkasDigital'
-// import NewPageRalanRME from './components/RalanEdit/newPageRalanRME'
+import PageSoapRalanPemeriksaan from './components/RawatJalan/RalanSOAP/RalanSoapPemeriksaan'
+import PageSoapRanapPemeriksaan from './components/RawatInap/RanapSoap/RanapSoapPemeriksaan'
 
 export const ROUTES = {
   HOME: '/',
@@ -52,41 +47,6 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_RALAN_LAYANAN_OBAT]: 'Ralan Layanan & Obat',
 }
 
-const columnsSOAPRalan = [
-  {
-    name: 'Tanggal',
-    selector: 'tanggal',
-    width: '15%',
-  },
-  {
-    name: 'Nama Item',
-    selector: 'namaItem',
-    width: '15%',
-  },
-  {
-    name: 'Provider',
-    selector: 'provider',
-    width: '35%',
-    right: true,
-    // center: true,
-    style: { paddingRight: '0.5rem' },
-  },
-  {
-    name: 'Tarif',
-    selector: 'tarif',
-    width: '15%',
-    right: true,
-    style: { marginLeft: '3rem' },
-  },
-  {
-    name: 'Aksi',
-    selector: () => <button className='btn btn-xs btn-ghost text-[#D3444A] p-0'>Hapus</button>,
-
-    // style: { paddingRight: '2rem' },
-    right: true,
-  },
-]
-
 export const routerList = [
   {
     path: ROUTES.PAGE_LOGIN,
@@ -115,15 +75,7 @@ export const routerList = [
       },
       {
         path: ROUTES.PAGE_RANAP_SOAP_PEMERIKSAAN,
-        element: <RanapSoapPemeriksaan />,
-      },
-      {
-        path: ROUTES.PAGE_RANAP_LAYANAN_OBAT,
-        element: <RanapLayananObat />,
-      },
-      {
-        path: ROUTES.PAGE_RANAP_BERKAS_DIGITAL,
-        element: <RanapBerkasDigital />,
+        element: <PageSoapRanapPemeriksaan />,
       },
       {
         path: ROUTES.PAGE_RAWAT_JALAN,
@@ -139,15 +91,7 @@ export const routerList = [
       },
       {
         path: ROUTES.PAGE_SOAP_RALAN,
-        element: <SoapRalan />,
-      },
-      {
-        path: ROUTES.PAGE_RALAN_LAYANAN_OBAT,
-        element: <LayananObatRalan columns={columnsSOAPRalan} />,
-      },
-      {
-        path: ROUTES.PAGE_RALAN_BERKAS_DIGITAL,
-        element: <BerkasDigitalRalan />,
+        element: <PageSoapRalanPemeriksaan />,
       },
     ],
   },

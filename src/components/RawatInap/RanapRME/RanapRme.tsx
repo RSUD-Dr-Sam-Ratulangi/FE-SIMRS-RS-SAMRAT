@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ArchiveBoxArrowDownIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/solid'
-import { api } from '../../services/api/config.api'
+import { api } from '../../../services/api/config.api'
 import { useParams } from 'react-router-dom'
 
 type userData = {
@@ -102,64 +102,6 @@ const RanapRme: React.FC = () => {
     console.log('display soap data:', soap)
     console.log('display diagnosadata:', diagnosa)
   }
-
-  //   const data = [
-  //     {
-  //       NO_RM: '16547',
-  //       NAMA_PASIEN: 'ESTHERA JACKSON',
-  //       ALAMAT: 'RANOMERUT',
-  //       UMUR: '19 Th 10 Bl 18 Hr THN',
-  //       JENIS_KELAMIN: 'Perempuan',
-  //       TANGGAL_LAHIR: '2003-11-15',
-  //       GOLONGAN_DARAH: '-',
-  //       IBU_KANDUNG: '-',
-  //       STATUS_MENIKAH: 'MENIKAH',
-  //       AGAMA: 'KRISTEN',
-  //       PENDIDIKAN_TERAKHIR: '-',
-  //       PERTAMA_DAFTAR: '2023-10-03',
-  //       DATA_RIWAYAT: [
-  //         {
-  //           NO_RAWAT: '2023/10/03/000374',
-  //           NO_REGISTRASI: '020',
-  //           TANGGAL_REGISTRASI: '2023-10-03',
-  //           UNIT_POLIKLINIK: 'Instalasi IGD (Siang)',
-  //           DOKTER: 'dr. Andre Imbar',
-  //           PENJAMIN: 'BPJS',
-  //           STATUS: 'Rawat Inap',
-  //           PEMERIKSAAN: '-',
-  //           KODE: 'Z36.9',
-  //           NAMA_PENYAKIT: 'Antenatal Screening, unspecified',
-  //           PRIORITAS: '1',
-  //         },
-  //         {
-  //           NO_RAWAT: '2023/10/05/000849',
-  //           NO_REGISTRASI: '052',
-  //           TANGGAL_REGISTRASI: '2023-10-05',
-  //           UNIT_POLIKLINIK: 'Instalasi IGD (Siang)',
-  //           DOKTER: 'dr. Andre Imbar',
-  //           PENJAMIN: 'BPJS',
-  //           STATUS: 'Rawat Inap',
-  //           PEMERIKSAAN: '-',
-  //           KODE: 'Z36.9',
-  //           NAMA_PENYAKIT: 'Antenatal Screening, unspecified',
-  //           PRIORITAS: '1',
-  //         },
-  //         {
-  //           NO_RAWAT: '2023/10/12/001023',
-  //           NO_REGISTRASI: '120',
-  //           TANGGAL_REGISTRASI: '2023-10-12',
-  //           UNIT_POLIKLINIK: 'Instalasi IGD (Siang)',
-  //           DOKTER: 'dr. Andre Imbar',
-  //           PENJAMIN: 'BPJS',
-  //           STATUS: 'Rawat Inap',
-  //           PEMERIKSAAN: '-',
-  //           KODE: 'Z36.9',
-  //           NAMA_PENYAKIT: 'Antenatal Screening, unspecified',
-  //           PRIORITAS: '1',
-  //         },
-  //       ],
-  //     },
-  //   ]
 
   return (
     <div>

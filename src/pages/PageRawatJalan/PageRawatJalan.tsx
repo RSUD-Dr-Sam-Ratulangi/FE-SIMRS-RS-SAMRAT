@@ -77,6 +77,7 @@ type DataItem = {
 
 export default function PageRawatJalan() {
   const [data, setData] = useState()
+  const [jumlah, setJumlah] = useState('')
 
   const navigate = useNavigate()
   const tglSkrng = dateNow()
@@ -107,6 +108,8 @@ export default function PageRawatJalan() {
         }
 
         setData(sortedData)
+        const jumlah = sortedData.length
+        setJumlah(jumlah)
       } catch (err) {
         console.log(err)
       }
@@ -118,7 +121,24 @@ export default function PageRawatJalan() {
   const columns = [
     { name: 'NO.REG', selector: (row: DataItem) => row.no_reg, sortable: true },
     { name: 'NO.RM', selector: (row: DataItem) => row.no_rkm_medis, sortable: true },
-    { name: 'NAMA PASIEN', selector: (row: DataItem) => row.nm_pasien, sortable: true },
+    {
+      name: 'NAMA PASIEN',
+      selector: (row: DataItem) => (
+        <a
+          className='font-normal hover:cursor-pointer'
+          onClick={async () => {
+            localStorage.setItem('no_rawat', row.no_rawat)
+            localStorage.setItem('no_antrian', row.no_reg)
+            localStorage.setItem('status_rawat', row.stts)
+            navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })
+          }}
+        >
+          {row.nm_pasien}
+        </a>
+      ),
+      sortable: true,
+    },
+
     { name: 'NO RAWAT', selector: (row: DataItem) => row.no_rawat, sortable: true },
     {
       name: 'UMUR',
@@ -177,6 +197,7 @@ export default function PageRawatJalan() {
     <div className='mt-3'>
       <Breadcrumb />
       <div className='mt-5'>
+        <span className='font-bold'>{jumlah} Pasien</span>
         <TableData data={data} columns={columns} />
       </div>
     </div>

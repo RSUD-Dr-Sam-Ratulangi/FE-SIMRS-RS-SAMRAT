@@ -92,7 +92,7 @@ const TableData = ({ data, columns }: Props) => {
                 <>
                   <div
                     tabIndex={0}
-                    className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg shadow-2xl '
+                    className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[482px] shadow-2xl border border-slate-300 '
                   >
                     <div className='w-full mt-3 p-3'>
                       <div className='flex justify-between items-center mb-5'>

@@ -1,38 +1,16 @@
-import {
-  ArrowRightIcon,
-  ExclamationCircleIcon,
-  EyeIcon,
-  EyeSlashIcon,
-} from '@heroicons/react/24/solid'
+import { ArrowRightIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid'
 import React, { useState } from 'react'
+import { spesificError } from '../../utils/ToastInfo'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../services/api/config.api'
-
-// const dataDummyLogin = {
-//   username: 'John doe',
-//   password: '123456',
-// }
+import { ToastContainer } from 'react-toastify'
 
 export default function PageLogin() {
-  const [isChecked, setIsChecked] = useState(false)
+  // const [isChecked, setIsChecked] = useState(false)
   const [isPasswordVisible, setIstPasswordVisible] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [isError, setIsError] = useState(false)
   const navigate = useNavigate()
-
-  // const handleLogin = () => {
-  //   if (username === '' || password === '') {
-  //     console.log('Please fill in both username and password fields.')
-  //   } else {
-  //     if (username != dataDummyLogin.username && password != dataDummyLogin.password) {
-  //       setIsError(true)
-  //       console.log(isError)
-  //     } else {
-  //       navigate('/dashboard')
-  //     }
-  //   }
-  // }
 
   const loginUser = async () => {
     try {
@@ -45,45 +23,41 @@ export default function PageLogin() {
       })
 
       const data = await response.json()
-
-      // Check if the login was successful
       if (response.ok) {
-        // Save the response data to localStorage
-
-        localStorage.setItem('token', JSON.stringify(data))
-        navigate('/dashboard')
-        console.log('Response from backend:', data)
-        const fetchJadwal = async () => {
-          const tokenString = localStorage.getItem('token')
-          const token = JSON.parse(tokenString)
-          const kdDokter = token?.dokter?.kd_dokter
-          try {
-            const response = await api.get(
-              `http://rsudsamrat.site:8901/api/v1/getJadwalDokter?kdDokter=${kdDokter}`,
-            )
-            const kode = response.data
-            localStorage.setItem('kd_poli', JSON.stringify(kode))
-            console.log('data kode dokter', kode)
-          } catch (err) {
-            console.log(err)
+        if (data.message === 'No match found in petugas or dokter.') {
+          spesificError({ errMessage: 'AKUN TIDAK DITEMUKAN' })
+        } else {
+          localStorage.setItem('token', JSON.stringify(data))
+          navigate('/dashboard')
+          console.log('Response from backend:', data)
+          const fetchJadwal = async () => {
+            const tokenString = localStorage.getItem('token')
+            const token = JSON.parse(tokenString)
+            const kdDokter = token?.dokter?.kd_dokter
+            try {
+              const response = await api.get(
+                `http://rsudsamrat.site:8901/api/v1/getJadwalDokter?kdDokter=${kdDokter}`,
+              )
+              const kode = response.data
+              localStorage.setItem('kd_poli', JSON.stringify(kode))
+              console.log('data kode dokter', kode)
+            } catch (err) {
+              console.log('login err', err)
+            }
           }
+          fetchJadwal()
         }
-
-        fetchJadwal()
       } else {
-        // Handle login error
-        console.error('Login failed:', data.error)
-        setIsError(true)
-        console.log(isError)
+        spesificError({ errMessage: 'AKUN TIDAK DITEMUKAN' })
       }
     } catch (error) {
       console.error('Error during login:', error)
     }
   }
 
-  const handleCheck = () => {
-    setIsChecked(!isChecked)
-  }
+  // const handleCheck = () => {
+  //   setIsChecked(!isChecked)
+  // }
 
   const handlePassword = () => {
     setIstPasswordVisible(!isPasswordVisible)
@@ -96,12 +70,18 @@ export default function PageLogin() {
     setUsername(e.target.value)
   }
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      loginUser()
+    }
+  }
+
   return (
     <div className='hero min-h-screen'>
       <div className='hero-content'>
-        <div className='card h-[483px] max-w-xs bg-[#C9C9C95C] border-[3px] border-[#C9C9C95C] backdrop-blur'>
-          <div className='card-body'>
-            <h1 className='mt-4 text-5xl font-bold text-center text-primary '>Hello!</h1>
+        <div className='card h-[500px] max-w-lg bg-slate-100 border-[3px] border-[#C9C9C95C] backdrop-blur'>
+          <div className='card-body max-w-7xl'>
+            <h1 className='mt-4 text-5xl font-bold text-center text-primary '>SIMRS</h1>
             <p className='grow-0 mb-8 text-xs text-center text-[#2D2D2D]'>
               Login menggunakan username dan password yang disediakan
             </p>
@@ -113,6 +93,7 @@ export default function PageLogin() {
                 required
                 value={username}
                 onChange={handleChangeUsername}
+                onKeyPress={handleKeyPress}
               />
               <div className='flex px-0 border-b-[1px] border-b-[#2D2D2D80] items-center'>
                 <input
@@ -122,6 +103,7 @@ export default function PageLogin() {
                   required
                   value={password}
                   onChange={handleChangePassword}
+                  onKeyPress={handleKeyPress}
                 />
                 <button className='p-0 bt border-none text-[#8B8B8B]' onClick={handlePassword}>
                   {isPasswordVisible ? (
@@ -132,42 +114,21 @@ export default function PageLogin() {
                 </button>
               </div>
             </div>
-            <div className='py-2 flex flex-row gap-2 cursor-pointer items-center'>
-              <input
-                type='checkbox'
-                checked={isChecked}
-                onChange={handleCheck}
-                className='checkbox checkbox-xs h-3 w-3 rounded'
-              />
-              <span className='text-[10px]'>Remember Me</span>
-            </div>
             <button
-              className='mb-5 p-0 btn bg-primary text-white h-[50px] w-[50px] rounded-xl border-0 hover:bg-dark'
+              className='mb-5 p-0 btn w-full bg-primary text-white h-[50px] mt-5 rounded-xl border-0 hover:bg-dark'
               onClick={loginUser}
             >
-              <ArrowRightIcon className='w-5' />
+              <span className='flex items-center gap-5'>
+                Login <ArrowRightIcon className='w-5' />
+              </span>
             </button>
-            {isError && (
-              <div className='mb-14 flex self-center text-[#D3444A]'>
-                <ExclamationCircleIcon className='w-4' />
-                <p className='text-xs'>username atau password salah</p>
-              </div>
-            )}
             <p className='grow-0 absolute bottom-5 self-center text-[10px] text-[#16161626]'>
               © 2022 UPTI RSUD Sam Ratulangi
             </p>
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   )
-
-  // return (
-  //   <div>
-  //     PageLogin
-  //     <a href='/dashboard' className='btn btn-primary'>
-  //       Go To Dashboard
-  //     </a>
-  //   </div>
-  // )
 }
