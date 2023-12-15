@@ -3,6 +3,7 @@ import { api } from '../../../../services/api/config.api'
 import { errorPostSoap, spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { AxiosResponse } from 'axios'
 import {
   ArchiveBoxArrowDownIcon,
   InformationCircleIcon,
@@ -64,6 +65,7 @@ interface Medicine {
 // eslint-disable-next-line react/prop-types
 const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   const [loading, setIsLoading] = useState(false)
+  const [obatExist, setObatExist] = useState([])
   const [rtl, setRtl] = useState('')
   const [kdPenyakit, setKdPenyakit] = useState('')
   const [alasan, setAlasan] = useState('')
@@ -101,7 +103,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   const [jumlahObat, setJumlahObat] = useState<number>(0)
   const [dataSoap, setDataSoap] = useState<DataItem[]>([])
   const [selectedMedicines, setSelectedMedicines] = useState<{ [kode: string]: Medicine }>({})
-  const [simpanObatClick, setSimpanObatClick] = useState(false)
 
   const navigate = useNavigate()
   const nmrRawat = localStorage.getItem('no_rawat')
@@ -267,6 +268,42 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     }
   }, [copyResep])
 
+  // Fetch Exist Obat
+  useEffect(() => {
+    const fetchExistObat = async () => {
+      try {
+        const response = await api.get(`/api/v1/getResepDokterDetails?noResep=${nmrResep}`)
+        console.log('Ini obat yang sudah ada', response.data)
+
+        setObatExist(response.data)
+      } catch (err) {
+        console.log('tidak ada obat yang sudah ada', err)
+      }
+    }
+
+    fetchExistObat()
+  }, [nmrResep]) // Add nmrResep to the dependency array
+
+  // Handle Exist Obat
+  useEffect(() => {
+    obatExist.forEach((item) => {
+      const mappedData = {
+        kode: item.kode_brng,
+        nama: item.nama_brng,
+        jumlahObat: item.jml,
+        aturanPakai: item.aturan_pakai,
+      }
+      console.log('mappedDataObat', mappedData)
+
+      handlePilihObat(
+        mappedData.kode,
+        mappedData.nama,
+        mappedData.jumlahObat,
+        mappedData.aturanPakai,
+      )
+    })
+  }, [obatExist])
+
   const checkExistDiagnosa = async () => {
     try {
       const response = await api.get(
@@ -311,6 +348,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
         console.log('tidak ada resep yang perlu ditambahkan.')
         setNmrResep(response.data[0])
         setHaveNoResep(true)
+        console.log()
       }
     } catch (err) {
       console.log('Tidak Ada no resep', err)
@@ -332,19 +370,26 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       kdDokter: nipCredentials,
       status: 'Menunggu',
     }
+    let response: AxiosResponse<any> | undefined
     try {
-      const response = await api.post('/api/v1/insertSkdpBpjs', data, {
+      response = await api.post('/api/v1/insertSkdpBpjs', data, {
         headers: {
           'Content-Type': 'application/json',
         },
       })
       console.log('diagnosa', response.data)
-      setDiagnosa(
-        `Kode: ${response.data.diagnosa}\nAlasan: ${response.data.alasan1}\nrtl: ${response.data.rtl1}\nTanggal Kembali: ${response.data.tanggal_rujukan}\n Tanggal Kembali${response.data.tanggal_datang}`,
-      )
       spesificSuccess({ doneMessage: 'Rencana Kontrol Berhasil Dikirim' })
     } catch (err) {
       errorPostSoap()
+    } finally {
+      if (response) {
+        setDiagnosa(
+          (prevValue) =>
+            `${prevValue}Kode: ${response.data.diagnosa}\nAlasan: ${response.data.alasan1}\nrtl: ${response.data.rtl1}\nTanggal Rujukan: ${response.data.tanggal_rujukan}\n Tanggal Datang${response.data.tanggal_datang}`,
+        )
+      }
+
+      spesificSuccess({ doneMessage: 'Rencana Kontrol Berhasil Dikirim' })
     }
   }
 
@@ -404,9 +449,16 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
         console.log('post resep error', err)
       }
     } else if (haveNoResep === true) {
+      const existingMedicines = obatExist.map((item) => item.kode_brng)
+
       for (const key in selectedMedicines) {
         const medicineData = selectedMedicines[key]
-        console.log(medicineData)
+
+        // Checking Exist Selected Medicine Data,
+        if (existingMedicines.includes(medicineData.kode)) {
+          console.log('Medicine already exists, skipping:', medicineData)
+          continue
+        }
 
         const resepDokterData = {
           noResep: nmrResep,
@@ -806,25 +858,37 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             spesificError({ errMessage: 'Masukan Data SPO2' })
           } else if (!alergi) {
             spesificError({ errMessage: 'Masukan Data alergi.' })
+          } else if (!tindakan && !subjektif) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Subjektif.' })
+          } else if (!objectPemeriksaan) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
           } else {
-            try {
-              const response = await api.post(
-                '/api/v1/postPemeriksaanRalan',
-                JSON.stringify(dataPost),
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+            const isDataCorrect = window.confirm(
+              'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
+            )
+            if (isDataCorrect) {
+              try {
+                const response = await api.post(
+                  '/api/v1/postPemeriksaanRalan',
+                  JSON.stringify(dataPost),
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
                   },
-                },
-              )
-              console.log('BERHASIL MENGIRIM ,POST response:', response.data)
-              await handleChangeStatusFirstSend()
-            } catch (error) {
-              console.log('error petugas post', error)
-              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-            } finally {
-              navigate('/rawat-jalan/')
-              window.location.reload()
+                )
+
+                console.log('BERHASIL MENGIRIM ,POST response:', response.data)
+                await handleChangeStatusFirstSend()
+              } catch (error) {
+                console.log('error petugas post', error)
+                spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
+              } finally {
+                navigate('/rawat-jalan/')
+                window.location.reload()
+              }
+            } else {
+              spesificError({ errMessage: 'Batal Mengirim.' })
             }
           }
         } else if (role.includes('dokter')) {
@@ -841,29 +905,37 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
           } else if (!instruksi) {
             spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
           } else {
-            try {
-              const response = await api.post(
-                '/api/v1/postPemeriksaanRalan',
-                JSON.stringify(dataPost),
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+            const isDataCorrect = window.confirm(
+              'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
+            )
+            if (isDataCorrect) {
+              try {
+                const response = await api.post(
+                  '/api/v1/postPemeriksaanRalan',
+                  JSON.stringify(dataPost),
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
                   },
-                },
-              )
-              setIsLoading(true)
-              console.log('BERHASIL MENGIRIM(dokter) ,POST response:', response.data)
-              await postResep()
-              await postDiagnosa()
-              await handleChangeStatusFirstSend()
-              navigate('/rawat-jalan/')
-              window.location.reload()
-            } catch (error) {
-              console.log('error dokter post', error)
-              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-            } finally {
-              navigate('/rawat-jalan/')
-              window.location.reload()
+                )
+                setIsLoading(true)
+
+                console.log('BERHASIL MENGIRIM(dokter) ,POST response:', response.data)
+                await postResep()
+                await postDiagnosa()
+                await handleChangeStatusFirstSend()
+                navigate('/rawat-jalan/')
+                window.location.reload()
+              } catch (error) {
+                console.log('error dokter post', error)
+                spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
+              } finally {
+                navigate('/rawat-jalan/')
+                window.location.reload()
+              }
+            } else {
+              spesificError({ errMessage: 'Batal Mengirim.' })
             }
           }
         }
@@ -885,67 +957,81 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             spesificError({ errMessage: 'Masukan Data SPO2' })
           } else if (!alergi) {
             spesificError({ errMessage: 'Masukan Data alergi.' })
+          } else if (!dataSoap[0].keluhan && (!subjektif || !tindakan)) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Subjektif..' })
+          } else if (!dataSoap[0]?.pemeriksaan && !objectPemeriksaan) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
           } else {
-            try {
-              const response = await api.put(
-                '/api/v1/updatePemeriksaanRalan',
-                JSON.stringify(dataPut),
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+            const isDataCorrect = window.confirm(
+              'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
+            )
+
+            if (isDataCorrect) {
+              try {
+                const response = await api.put(
+                  '/api/v1/updatePemeriksaanRalan',
+                  JSON.stringify(dataPut),
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
                   },
-                },
-              )
-              setIsLoading(true)
-              await handleChangeStatusSecondSend()
-              console.log(response)
-            } catch (err) {
-              console.log('err petugas put', err)
-              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-            } finally {
-              navigate('/rawat-jalan/')
-              window.location.reload()
+                )
+
+                setIsLoading(true)
+                await handleChangeStatusSecondSend()
+                console.log(response)
+              } catch (err) {
+                console.log('err petugas put', err)
+                spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
+              } finally {
+                navigate('/rawat-jalan/')
+                window.location.reload()
+              }
+            } else {
+              spesificError({ errMessage: 'Batal Mengirim.' })
             }
           }
         } else if (role.includes('dokter')) {
-          if (!subjektif && !tindakan) {
+          if (!dataSoap[0].keluhan && (!subjektif || !tindakan)) {
             spesificError({ errMessage: 'Mohon Memasukan Data Subjektif..' })
           } else if (!dataSoap[0]?.pemeriksaan && !objectPemeriksaan) {
             spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
           } else if (!dataSoap[0]?.penilaian && !penilaian) {
             spesificError({ errMessage: 'Mohon Memasukan Data Assesmen.' })
-          } else if (Object.keys(selectedMedicines).length === 0) {
-            spesificError({
-              errMessage: 'Tidak Ada Obat yang dipilih. Mohon Untuk Memasukan Obat.',
-            })
-          } else if (simpanObatClick === false) {
-            spesificError({
-              errMessage: 'Tidak Ada Obat yang Disimpan. Mohon simpan obat yang dipilih. ',
-            })
           } else if (!dataSoap[0]?.instruksi && !instruksi) {
             spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
           } else {
-            try {
-              const response = await api.put(
-                '/api/v1/updatePemeriksaanRalan',
-                JSON.stringify(dataPut),
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+            const isDataCorrect = window.confirm(
+              'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
+            )
+
+            if (isDataCorrect) {
+              try {
+                const response = await api.put(
+                  '/api/v1/updatePemeriksaanRalan',
+                  JSON.stringify(dataPut),
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
                   },
-                },
-              )
-              setIsLoading(true)
-              console.log('BERHASIL MENGIRIM(dokter):', response.data)
-              await postResep()
-              await postDiagnosa()
-              await handleChangeStatusSecondSend()
-            } catch (error) {
-              console.log('error dokter put', error)
-              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-            } finally {
-              navigate('/rawat-jalan/')
-              window.location.reload()
+                )
+
+                setIsLoading(true)
+                console.log('BERHASIL MENGIRIM(dokter):', response.data)
+                await postResep()
+                await postDiagnosa()
+                await handleChangeStatusSecondSend()
+              } catch (error) {
+                console.log('error dokter put', error)
+                spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
+              } finally {
+                navigate('/rawat-jalan/')
+                window.location.reload()
+              }
+            } else {
+              spesificError({ errMessage: 'Aborted' })
             }
           }
         }
@@ -961,30 +1047,9 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     setPenilaian((prevValue) => `${prevValue}\n${kode}, ${nama}`)
   }
 
-  const handlePilihObat = (kode: string, nama: string, jumlahObat: any, aturanPakai: string) => {
-    setSelectedMedicines((prev) => {
-      const newSelectedMedicines = { ...prev }
-
-      if (newSelectedMedicines[kode] || copyResep) {
-        // If medicine is already selected, increase the quantity
-        newSelectedMedicines[kode] = {
-          ...newSelectedMedicines[kode],
-          nama: nama,
-          jumlahObat: jumlahObat,
-          aturanPakai: aturanPakai,
-          kode: kode,
-        }
-      } else {
-        // If medicine is selected for the first time, add it to the state
-        newSelectedMedicines[kode] = { nama, aturanPakai, jumlahObat, kode }
-      }
-      return newSelectedMedicines
-    })
-  }
-
   const handlePilihTindakan = async (kode, nmPerawatan) => {
-    setSubjektif((prevValue) => `${prevValue}\n${kode}, ${nmPerawatan}`)
-    setTindakan((prevValue) => `${prevValue}\n${kode}, ${nmPerawatan}`)
+    setSubjektif((prevValue) => `${prevValue}${kode}, ${nmPerawatan}\n`)
+    setTindakan((prevValue) => `${prevValue}${kode}, ${nmPerawatan}\n`)
     setListTindakan([])
     const data = {
       noRawat: nmrRawat,
@@ -1016,6 +1081,32 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     }
   }
 
+  const handlePilihObat = (kode: string, nama: string, jumlahObat: any, aturanPakai: string) => {
+    setSelectedMedicines((prev) => {
+      const newSelectedMedicines = { ...prev }
+
+      if (newSelectedMedicines[kode] || copyResep) {
+        // If medicine is already selected, increase the quantity
+        newSelectedMedicines[kode] = {
+          ...newSelectedMedicines[kode],
+          nama: nama,
+          jumlahObat: jumlahObat,
+          aturanPakai: aturanPakai,
+          kode: kode,
+        }
+      } else {
+        // If medicine is selected for the first time, add it to the state
+        newSelectedMedicines[kode] = { nama, aturanPakai, jumlahObat, kode }
+      }
+
+      // Generate plan string here when selecting a new medicine
+      const planString = generatePlanString(newSelectedMedicines)
+      setPlan(planString)
+
+      return newSelectedMedicines
+    })
+  }
+
   const generatePlanString = (selectedMedicines: any) => {
     const planArray = []
 
@@ -1029,15 +1120,14 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     return planArray.join('\n')
   }
 
-  const testSimpan = async () => {
-    const planString = generatePlanString(selectedMedicines)
-    setPlan(planString)
-    setAturanPakai('')
-    setListObat([])
-    console.log(planString)
-    console.log(selectedMedicines)
-    setSimpanObatClick(true)
-  }
+  // const testSimpan = async () => {
+  //   const planString = generatePlanString(selectedMedicines)
+  //   setPlan(planString)
+  //   setAturanPakai('')
+  //   setListObat([])
+  //   console.log(planString)
+  //   console.log(selectedMedicines)
+  // }
 
   return (
     <div className='max-w-7xl mt-4'>
@@ -1255,10 +1345,8 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <textarea
                     placeholder='-'
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-                    // defaultValue={dataSoap[0]?.keluhan || tindakan || subjektif}
                     value={subjektif || tindakan || dataSoap[0]?.keluhan}
                     onChange={(e) => setSubjektif(e.target.value)}
-                    disabled={role.includes('petugas')}
                   />
                 </div>
                 {/* {dataSoap[0]?.keluhan || tindakan ? (
@@ -1308,7 +1396,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                               <td className=''>{data?.kd_poli || '-'}</td>
                               <td className=''>
                                 <button
-                                  disabled={role.includes('petugas')}
                                   className='underline'
                                   onClick={() =>
                                     handlePilihTindakan(data?.kd_jenis_prw, data?.nm_perawatan)
@@ -1337,7 +1424,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   defaultValue={dataSoap[0]?.pemeriksaan || objectPemeriksaan}
                   className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
                   onChange={(e) => setObjectPemeriksaan(e.target.value)}
-                  disabled={role.includes('petugas')}
                 />
               </div>
             </div>
@@ -1646,7 +1732,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               </>
             ) : null}
 
-            {selectedMedicines && Object.keys(selectedMedicines).length > 0 ? (
+            {/* {selectedMedicines && Object.keys(selectedMedicines).length > 0 ? (
               <div className='mt-3 flex justify-end'>
                 <button
                   disabled={role.includes('petugas')}
@@ -1656,7 +1742,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   Simpan
                 </button>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
         </div>
         <div className='border border-slate-300 rounded-lg p-3'>
@@ -1682,7 +1768,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             <textarea
               placeholder='-'
               disabled={role.includes('petugas')}
-              defaultValue={dataSoap[0]?.evaluasi || evaluasi || diagnosa}
+              defaultValue={evaluasi || diagnosa || dataSoap[0]?.evaluasi}
               className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
               onChange={(e) => setEvaluasi(e.target.value)}
             />

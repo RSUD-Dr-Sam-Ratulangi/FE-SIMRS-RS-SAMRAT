@@ -236,7 +236,7 @@ const TableData = ({ data, columns }: Props) => {
           </div>
         </div>
       </div>
-      <DataTable columns={columns} data={paginatedData} pagination={false} />
+      <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
       {/* {searchQuery === '' ? (
         <div className='flex justify-between p-2'>
           <div>

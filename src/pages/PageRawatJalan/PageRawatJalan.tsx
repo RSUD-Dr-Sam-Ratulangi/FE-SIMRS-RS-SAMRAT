@@ -4,6 +4,7 @@ import { api } from '../../services/api/config.api'
 import { useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { dateNow } from '../../utils/DateNow'
+import { ArrowPathIcon } from '@heroicons/react/24/solid'
 
 type DataItem = {
   no_reg: string
@@ -78,6 +79,7 @@ type DataItem = {
 export default function PageRawatJalan() {
   const [data, setData] = useState()
   const [jumlah, setJumlah] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
   const navigate = useNavigate()
   const tglSkrng = dateNow()
@@ -112,6 +114,8 @@ export default function PageRawatJalan() {
         setJumlah(jumlah)
       } catch (err) {
         console.log(err)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -125,7 +129,7 @@ export default function PageRawatJalan() {
       name: 'NAMA PASIEN',
       selector: (row: DataItem) => (
         <a
-          className='font-normal hover:cursor-pointer'
+          className='font-semibold uppercase text-md hover:cursor-pointer'
           onClick={async () => {
             localStorage.setItem('no_rawat', row.no_rawat)
             localStorage.setItem('no_antrian', row.no_reg)
@@ -143,7 +147,7 @@ export default function PageRawatJalan() {
     {
       name: 'UMUR',
       selector: (row: DataItem) => (
-        <p className='text-black mx-auto text-center text-[10px]'>{row.umurdaftar}</p>
+        <p className='text-black mx-auto text-center text-[15px]'>{row.umurdaftar}</p>
       ),
       sortable: true,
     },
@@ -157,8 +161,8 @@ export default function PageRawatJalan() {
       selector: (row: DataItem) => row.nm_dokter,
       sortable: true,
     },
-    { name: 'PENJAMIN', selector: (row: DataItem) => row.png_jawab, sortable: true },
-    { name: 'NO ASURANSI', selector: (row: DataItem) => row.no_peserta, sortable: true },
+    // { name: 'PENJAMIN', selector: (row: DataItem) => row.png_jawab, sortable: true },
+    // { name: 'NO ASURANSI', selector: (row: DataItem) => row.no_peserta, sortable: true },
     { name: 'TANGGAL KUNJUNGAN', selector: (row: DataItem) => row.tgl_registrasi, sortable: true },
     {
       name: 'STATUS BAYAR',
@@ -175,31 +179,42 @@ export default function PageRawatJalan() {
       selector: (row: DataItem) => row.status_lanjut,
       sortable: true,
     },
-    {
-      name: 'Actions',
-      selector: (row: DataItem) => (
-        <button
-          className='btn btn-xs btn-ghost'
-          onClick={async () => {
-            localStorage.setItem('no_rawat', row.no_rawat)
-            localStorage.setItem('no_antrian', row.no_reg)
-            localStorage.setItem('status_rawat', row.stts)
-            navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })
-          }}
-        >
-          Edit
-        </button>
-      ),
-    },
+    // {
+    //   name: 'Actions',
+    //   selector: (row: DataItem) => (
+    //     <button
+    //       className='btn btn-xs btn-ghost'
+    //       onClick={async () => {
+    //         localStorage.setItem('no_rawat', row.no_rawat)
+    //         localStorage.setItem('no_antrian', row.no_reg)
+    //         localStorage.setItem('status_rawat', row.stts)
+    //         navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })
+    //       }}
+    //     >
+    //       Edit
+    //     </button>
+    //   ),
+    // },
   ]
 
   return (
-    <div className='mt-3'>
-      <Breadcrumb />
-      <div className='mt-5'>
-        <span className='font-bold'>{jumlah} Pasien</span>
-        <TableData data={data} columns={columns} />
-      </div>
-    </div>
+    <>
+      {isLoading ? (
+        <p className='flex justify-center items-center h-screen'>
+          <ArrowPathIcon width={80} height={80} className='animate-spin' />
+          <span className='font-bold text-xl animate-pulse'>Memuat Data</span>
+        </p>
+      ) : (
+        <>
+          <div className='mt-3'>
+            <Breadcrumb />
+            <div className='mt-5'>
+              <span className='font-bold'>{jumlah} Pasien</span>
+              <TableData data={data} columns={columns} />
+            </div>
+          </div>
+        </>
+      )}
+    </>
   )
 }
