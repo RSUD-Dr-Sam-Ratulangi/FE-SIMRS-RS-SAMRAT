@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../../../../services/api/config.api'
-import { errorCopyResep, spesificSuccess } from '../../../../utils/ToastInfo'
+import { errorCopyResep, spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
 import { useParams } from 'react-router-dom'
 import { ClockIcon, CalendarDaysIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import { ToastContainer } from 'react-toastify'
@@ -109,8 +109,12 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
         const res = await api.get(
           `http://rsudsamrat.site:8901/api/v1/getResepDokterDetails?noResep=${response.data[0]}`,
         )
-        onRiwayatObatChange(res.data)
-        spesificSuccess({ doneMessage: 'Resep Berhasil Di Copy' })
+        if (res.data.length === 0) {
+          spesificError({ errMessage: 'Data Obat Tidak Ditemukan.' })
+        } else {
+          onRiwayatObatChange(res.data)
+          spesificSuccess({ doneMessage: 'Resep Berhasil Di Copy' })
+        }
       } catch (err) {
         errorCopyResep()
         console.log('Data obat gagal diambil', err)

@@ -28,12 +28,18 @@ const TableData = ({ data, columns }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
+    // Load filter value from localStorage on component mount
+    const storedFilter = localStorage.getItem('PoliFilter')
+    if (storedFilter) {
+      setSearchQuery(storedFilter)
+    }
+
+    // Apply filter logic
     const newFilteredData = data
       ? data.filter((item) => {
           if (searchQuery === '') {
             return true
           } else {
-            // ? bug
             const lowerCasedSearchQuery = searchQuery.toLowerCase()
             return Object.values(item).some((value) => {
               if (typeof value === 'string') {
@@ -44,6 +50,7 @@ const TableData = ({ data, columns }: Props) => {
           }
         })
       : null
+
     setFilteredData(newFilteredData)
   }, [searchQuery, data, columns])
 
@@ -100,6 +107,7 @@ const TableData = ({ data, columns }: Props) => {
                         <button
                           onClick={() => {
                             setSearchQuery('')
+
                             setIsOpen(false)
                           }}
                         >
@@ -111,6 +119,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK GERIATRI')
+
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -120,6 +129,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK SYARAF')
+
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -129,6 +139,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK PENYAKIT DALAM')
+
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -138,6 +149,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK JANTUNG')
+                              localStorage.setItem('PoliFilter', 'KLINIK JANTUNG')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -147,6 +159,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK GIGI')
+
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'

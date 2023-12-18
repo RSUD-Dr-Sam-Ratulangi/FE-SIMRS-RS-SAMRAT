@@ -103,6 +103,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   const [jumlahObat, setJumlahObat] = useState<number>(0)
   const [dataSoap, setDataSoap] = useState<DataItem[]>([])
   const [selectedMedicines, setSelectedMedicines] = useState<{ [kode: string]: Medicine }>({})
+  const [editedRowIndex, setEditedRowIndex] = useState(null)
 
   const navigate = useNavigate()
   const nmrRawat = localStorage.getItem('no_rawat')
@@ -172,12 +173,17 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     setSelectedMedicines((prev) => {
       const newSelectedMedicines = { ...prev }
       delete newSelectedMedicines[kode]
+
+      const planString = generatePlanString(newSelectedMedicines)
+      setPlan(planString)
+
       return newSelectedMedicines
     })
   }
 
-  const handleEditObat = () => {
+  const handleEditObat = (index) => {
     setEditObat(true)
+    setEditedRowIndex(index)
   }
 
   useEffect(() => {
@@ -364,8 +370,8 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       alasan2: alasan,
       rtl1: rtl,
       rtl2: rtl,
-      tanggalDatang: selectedDate,
-      tanggalRujukan: dateNow,
+      tanggalDatang: dateNow,
+      tanggalRujukan: selectedDate,
       noAntrian: noAntrian,
       kdDokter: nipCredentials,
       status: 'Menunggu',
@@ -898,10 +904,12 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
           } else if (!penilaian) {
             spesificError({ errMessage: 'Mohon Memasukan Data Assesmen.' })
-          } else if (Object.keys(selectedMedicines).length === 0) {
-            spesificError({
-              errMessage: 'Tidak Ada Obat yang dipilih. Mohon Untuk Memasukan Obat.',
-            })
+            // } else if (Object.keys(selectedMedicines).length === 0) {
+            //   spesificError({
+            //     errMessage: 'Tidak Ada Obat yang dipilih. Mohon Untuk Memasukan Obat.',
+            //   })
+          } else if (!dataSoap[0]?.rtl && !plan) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Plan' })
           } else if (!instruksi) {
             spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
           } else {
@@ -1001,6 +1009,8 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             spesificError({ errMessage: 'Mohon Memasukan Data Assesmen.' })
           } else if (!dataSoap[0]?.instruksi && !instruksi) {
             spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
+          } else if (!dataSoap[0]?.rtl && !plan) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Plan' })
           } else {
             const isDataCorrect = window.confirm(
               'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
@@ -1440,7 +1450,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             </div>
             <textarea
               placeholder='-'
-              value={penilaian || dataSoap[0]?.penilaian}
+              value={dataSoap[0]?.penilaian || penilaian}
               className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
               onChange={(e) => setPenilaian(e.target.value)}
               disabled={role.includes('petugas')}
@@ -1598,7 +1608,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                 }
                               }}
                               onChange={(e) => setAturanPakai(e.target.value)}
-                              className='text-center w-20 input input-bordered'
+                              className='w-32 input input-bordered'
                             />
                           </td>
                           <td>
@@ -1667,7 +1677,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                             <td className='text-center'>{index + 1}</td>
                             <td className='text-center'>{kode}</td>
                             <td className='text-center'>{data.nama}</td>
-                            {editObat ? (
+                            {editObat && editedRowIndex === index ? (
                               <>
                                 <td className='text-center'>
                                   <input
@@ -1700,8 +1710,9 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                               </>
                             )}
                             {editObat ? (
-                              <td className='flex justify-center gap-3'>
+                              <td className='flex justify-center items-center gap-3'>
                                 <button
+                                  disabled={!jumlahObat || !aturanPakai}
                                   onClick={() => {
                                     handlePilihObat(data.kode, data.nama, jumlahObat, aturanPakai)
                                     setEditObat(false)
@@ -1715,7 +1726,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                               </td>
                             ) : (
                               <td className='flex justify-center gap-3'>
-                                <button onClick={() => handleEditObat()}>
+                                <button onClick={() => handleEditObat(index)}>
                                   <p className='text-blue-500'>Edit</p>
                                 </button>
                                 <button onClick={() => handleHapusObat(kode)}>
@@ -1780,7 +1791,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 type='date'
                 className='input border border-slate-400'
                 onChange={handleDateChange}
-                disabled={role.includes('petugas')}
+                disabled
               />
             </div>
             <div>
@@ -1789,7 +1800,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 type='text'
                 className='input border border-slate-400'
                 onChange={(e) => setAlasan(e.target.value)}
-                disabled={role.includes('petugas')}
+                disabled
               />
             </div>
             <div>
@@ -1798,24 +1809,23 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 type='text'
                 className='input border border-slate-400'
                 onChange={(e) => setRtl(e.target.value)}
-                disabled={role.includes('petugas')}
+                disabled
               />
             </div>
           </div>
           <div className='flex justify-end'>
             <button
               className='btn btn-md bg-primary text-white'
-              disabled={!rtl || !alasan}
+              disabled
               onClick={postRencanKontrol}
             >
               Kirim
             </button>
           </div>
         </div>
-        <p>{selectedDate}</p>
         <div className=' w-auto mt-4'>
           <div className='flex text-base text-[#121713] items-center font-bold font-sans my-[20px]'>
-            <InformationCircleIcon width={20} height={20} />
+            <InformationCircleIcon width={25} height={25} />
             <p className='ml-[6px]'>Informasi</p>
           </div>
           <p className='w-full font-sans text-red-400 animate-pulse text-base font-normal leading-5'>
