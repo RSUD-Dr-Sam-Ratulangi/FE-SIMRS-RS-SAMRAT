@@ -78,7 +78,6 @@ type DataItem = {
 
 export default function PageRawatJalan() {
   const [data, setData] = useState()
-  const [jumlah, setJumlah] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
   const navigate = useNavigate()
@@ -110,8 +109,6 @@ export default function PageRawatJalan() {
         }
 
         setData(sortedData)
-        const jumlah = sortedData.length
-        setJumlah(jumlah)
       } catch (err) {
         console.log(err)
       } finally {
@@ -209,7 +206,6 @@ export default function PageRawatJalan() {
           <div className='mt-3'>
             <Breadcrumb />
             <div className='mt-5'>
-              <span className='font-bold'>{jumlah} Pasien</span>
               <TableData data={data} columns={columns} />
             </div>
           </div>

@@ -142,7 +142,11 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
               className='w-auto  bg-slate-100 rounded-xl mt-4 p-4 border border-slate-300'
             >
               <div className='flex justify-between'>
-                <p className=' font-bold text-xl text-[#121713] mb-2'>RIWAYAT SOAP (Rawat Jalan)</p>
+                <div>
+                  <p className=' font-bold text-xl text-[#121713] mb-2'>
+                    RIWAYAT SOAP (Rawat Jalan)
+                  </p>
+                </div>
                 <div className='flex w-auto p-3 pr-[6px] items-center rounded-xl bg-primary text-white text-base font-bold'>
                   <div className='flex items-center'>
                     <ClockIcon width={20} height={20} />
@@ -154,9 +158,14 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
                   </div>
                 </div>
               </div>
-              <p className='text text-sm border border-slate-500 rounded-lg p-2 font-bold w-fit'>
-                {riwayat.nm_poli} - {riwayat.kd_poli}
-              </p>
+              <div className='p-2 border border-green-500 bg-white w-fit rounded-xl'>
+                <p className='text text-xs font-semibold'>
+                  {riwayat.nm_poli} - {riwayat.kd_poli}
+                </p>
+                <p className=' font-bold text-sm text-[#121713] mt-2 '>
+                  PEMERIKSA : {riwayat.nama}
+                </p>
+              </div>
               <div className='mt-5'>
                 <div className='mt-5 mb-3 p-2'>
                   <label className='font-semibold text-slate-700 text-sm'>SUBJEK</label>

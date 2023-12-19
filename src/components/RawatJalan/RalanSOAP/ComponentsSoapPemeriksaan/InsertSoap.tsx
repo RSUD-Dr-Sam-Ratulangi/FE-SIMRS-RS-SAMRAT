@@ -189,7 +189,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   useEffect(() => {
     const handleGetTindakan = async () => {
       try {
-        if (searchTermTindakan.trim().length >= 2) {
+        if (searchTermTindakan.trim().length >= 3) {
           const response = await api.get(`api/v1/searchJnsPerawatan?keyword=${searchTermTindakan}`)
           setListTindakan(response.data)
         } else {
@@ -206,7 +206,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   useEffect(() => {
     const handleGetPenyakit = async () => {
       try {
-        if (searchTerm.trim().length >= 2) {
+        if (searchTerm.trim().length >= 3) {
           const response = await api.get(`/api/v1/getAllPenyakit?searchString=${searchTerm}`)
           setListPenyakit(response.data)
         } else {
@@ -1450,7 +1450,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             </div>
             <textarea
               placeholder='-'
-              value={dataSoap[0]?.penilaian || penilaian}
+              value={penilaian || dataSoap[0]?.penilaian}
               className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
               onChange={(e) => setPenilaian(e.target.value)}
               disabled={role.includes('petugas')}
@@ -1545,7 +1545,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             {listObat.length > 0 ? (
               <>
                 <div className='mt-4 pt-4 h-full overflow-auto'>
-                  <table className='w-full'>
+                  <table className='table table-lg w-full'>
                     <thead>
                       <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 '>
                         <th className='text-start'>NO</th>
@@ -1587,6 +1587,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                   const button = document.getElementById(`button_${index}`)
                                   if (button) {
                                     button.click()
+                                    setListObat([])
                                   }
                                 }
                               }}
@@ -1604,6 +1605,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                   const button = document.getElementById(`button_${index}`)
                                   if (button) {
                                     button.click()
+                                    setListObat([])
                                   }
                                 }
                               }}
@@ -1657,15 +1659,15 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                     <span>Daftar Obat yang ditambahkan :</span>
                   </label>
                   <div className='pt-4'>
-                    <table className='w-full'>
+                    <table className='table table-md w-full'>
                       <thead className='text-xs text-gray-400 font-bold border-b-2 border-gray-200 pb-2'>
                         <tr>
-                          <th className='w-1/6'>NO</th>
-                          <th className='w-1/6'>KODE OBAT</th>
-                          <th className='w-1/6'>NAMA OBAT</th>
-                          <th className='w-1/6'>JUMLAH</th>
-                          <th className='w-1/6'>ATURAN PAKAI</th>
-                          <th className='w-1/6'>AKSI</th>
+                          <th>NO</th>
+                          <th>KODE OBAT</th>
+                          <th>NAMA OBAT</th>
+                          <th>JUMLAH</th>
+                          <th>ATURAN PAKAI</th>
+                          <th>AKSI</th>
                         </tr>
                       </thead>
                       <tbody className='overflow-y-auto'>
@@ -1684,7 +1686,18 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                     id={`input_obat_${index}`}
                                     type='number'
                                     onChange={(e) => setJumlahObat(parseFloat(e.target.value))}
-                                    className='w-20 h-8 input input-bordered'
+                                    defaultValue={data.jumlahObat || jumlahObat}
+                                    className='w-20 h-10 input input-bordered'
+                                    onKeyPress={(e) => {
+                                      if (e.key === 'Enter') {
+                                        e.preventDefault()
+                                        const button = document.getElementById(`button__${index}`)
+                                        if (button) {
+                                          button.click()
+                                          setListObat([])
+                                        }
+                                      }
+                                    }}
                                   />
                                 </td>
                                 <td className='text-center'>
@@ -1692,8 +1705,19 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                     <input
                                       id={`input_aturan_pakai_${index}`}
                                       type='text'
+                                      defaultValue={data.aturanPakai || aturanPakai}
                                       onChange={(e) => setAturanPakai(e.target.value)}
-                                      className='w-20 h-8 input input-bordered'
+                                      className='w-32 h-10 input input-bordered'
+                                      onKeyPress={(e) => {
+                                        if (e.key === 'Enter') {
+                                          e.preventDefault()
+                                          const button = document.getElementById(`button__${index}`)
+                                          if (button) {
+                                            button.click()
+                                            setListObat([])
+                                          }
+                                        }
+                                      }}
                                     />
                                   </div>
                                 </td>
@@ -1701,7 +1725,11 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                             ) : (
                               <>
                                 <td className='text-center'>
-                                  <div className='border-[#E2E8F0] border-2 rounded flex justify-center'>
+                                  {/* <input
+                                    className='input-ghost w-20 text-center'
+                                    value={jumlahObat || data.jumlahObat}
+                                  /> */}
+                                  <div className='rounded flex justify-center'>
                                     {data.jumlahObat}
                                     <p className='text-disabled'>x</p>
                                   </div>
@@ -1709,14 +1737,21 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                 <td className='text-center'>{data.aturanPakai}</td>
                               </>
                             )}
-                            {editObat ? (
+                            {editObat && editedRowIndex === index ? (
                               <td className='flex justify-center items-center gap-3'>
                                 <button
-                                  disabled={!jumlahObat || !aturanPakai}
                                   onClick={() => {
-                                    handlePilihObat(data.kode, data.nama, jumlahObat, aturanPakai)
+                                    handlePilihObat(
+                                      data.kode,
+                                      data.nama,
+                                      jumlahObat || data.jumlahObat,
+                                      aturanPakai || data.aturanPakai,
+                                    )
                                     setEditObat(false)
+                                    setJumlahObat(0)
+                                    setAturanPakai('')
                                   }}
+                                  id={`button__${index}`}
                                 >
                                   <p className='text-green-500'>Simpan</p>
                                 </button>

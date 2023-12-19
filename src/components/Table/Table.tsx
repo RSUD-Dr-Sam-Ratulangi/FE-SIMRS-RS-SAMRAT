@@ -26,6 +26,7 @@ const TableData = ({ data, columns }: Props) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [filteredData, setFilteredData] = useState(data)
   const [isOpen, setIsOpen] = useState(false)
+  const [filterJumlahPasien, setFilterJumlahPasien] = useState(0)
 
   useEffect(() => {
     // Load filter value from localStorage on component mount
@@ -52,6 +53,15 @@ const TableData = ({ data, columns }: Props) => {
       : null
 
     setFilteredData(newFilteredData)
+
+    // Show the length of the filtered data
+    if (newFilteredData) {
+      console.log('Filtered Data Length:', newFilteredData.length)
+      setFilterJumlahPasien(newFilteredData.length)
+    } else {
+      console.log('Filtered Data is null or undefined.')
+      setFilterJumlahPasien(0)
+    }
   }, [searchQuery, data, columns])
 
   // const handlePageChange = (newPage: any) => {
@@ -129,7 +139,6 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK SYARAF')
-
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -149,7 +158,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK JANTUNG')
-                              localStorage.setItem('PoliFilter', 'KLINIK JANTUNG')
+
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -249,6 +258,7 @@ const TableData = ({ data, columns }: Props) => {
           </div>
         </div>
       </div>
+      <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
       <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
       {/* {searchQuery === '' ? (
         <div className='flex justify-between p-2'>

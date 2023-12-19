@@ -75,12 +75,18 @@ export default function PageLogin() {
       loginUser()
     }
   }
+  const handleKeyPressUserName = (event) => {
+    if (event.key === 'Enter') {
+      spesificError({ errMessage: 'Mohon Masukan Password' })
+    }
+  }
 
   return (
     <div className='hero min-h-screen'>
       <div className='hero-content'>
         <div className='card h-[500px] max-w-lg bg-slate-100 border-[3px] border-[#C9C9C95C] backdrop-blur'>
           <div className='card-body max-w-7xl'>
+            <img src='/assets/images/LOGORSREVISI4.png' alt='Logo' className='w-32 h-24 mx-auto' />
             <h1 className='mt-4 text-5xl font-bold text-center text-primary '>SIMRS</h1>
             <p className='grow-0 mb-8 text-xs text-center text-[#2D2D2D]'>
               Login menggunakan username dan password yang disediakan
@@ -93,7 +99,7 @@ export default function PageLogin() {
                 required
                 value={username}
                 onChange={handleChangeUsername}
-                onKeyPress={handleKeyPress}
+                onKeyPress={handleKeyPressUserName}
               />
               <div className='flex px-0 border-b-[1px] border-b-[#2D2D2D80] items-center'>
                 <input
@@ -122,8 +128,8 @@ export default function PageLogin() {
                 Login <ArrowRightIcon className='w-5' />
               </span>
             </button>
-            <p className='grow-0 absolute bottom-5 self-center text-[10px] text-[#16161626]'>
-              © 2022 UPTI RSUD Sam Ratulangi
+            <p className='grow-0 absolute bottom-5 self-center text-[15px] text-slate-400'>
+              © 2023 UPTIRS RSUD Sam Ratulangi Tondano
             </p>
           </div>
         </div>
