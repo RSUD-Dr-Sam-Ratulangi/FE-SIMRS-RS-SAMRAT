@@ -1,11 +1,9 @@
-import React from 'react'
-import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
-
-export default function PagePasien() {
+const App = () => {
   return (
-    <div>
-      <Breadcrumb />
-      PagePasien
-    </div>
+    <>
+      <p>IGD Page</p>
+    </>
   )
 }
+
+export default App

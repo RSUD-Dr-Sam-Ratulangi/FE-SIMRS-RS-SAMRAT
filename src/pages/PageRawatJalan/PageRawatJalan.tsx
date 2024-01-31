@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
 import { useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { dateNow } from '../../utils/DateNow'
-import { ArrowPathIcon } from '@heroicons/react/24/solid'
+import { ArrowPathIcon, PlayIcon } from '@heroicons/react/24/solid'
+import CustomTTSComponent from '../../utils/TtsSound'
 
 type DataItem = {
   no_reg: string
@@ -80,16 +81,30 @@ export default function PageRawatJalan() {
   const [data, setData] = useState()
   const [isLoading, setIsLoading] = useState(true)
 
+  const [selectedPatientName, setSelectedPatientName] = useState<string | null>(null)
+  const ttsComponentRef = useRef(null)
+  const [ttsKey, setTTSKey] = useState(0)
+
+  useEffect(() => {
+    if (selectedPatientName) {
+      const timeoutId = setTimeout(() => {
+        if (ttsComponentRef.current) {
+          ttsComponentRef.current.play()
+        }
+      }, 0)
+      return () => clearTimeout(timeoutId)
+    }
+  }, [selectedPatientName, ttsComponentRef])
+
   const navigate = useNavigate()
   const tglSkrng = dateNow()
   const tokenValue = localStorage.getItem('token')
+  const Kd = JSON.parse(tokenValue)
+  const kdDokter = Kd.dokter?.kd_dokter
+  const role = Object.keys(Kd)[0]
 
   useEffect(() => {
     const fetchData = async () => {
-      const Kd = JSON.parse(tokenValue)
-      const kdDokter = Kd.dokter?.kd_dokter
-      const role = Object.keys(Kd)[0]
-
       try {
         const response = await api.get(
           `/api/v1/getalllpasienmendaftar?kd_poli=&tglKunjungan=${tglSkrng}&tglKunjunganAkhir=${tglSkrng}`,
@@ -119,6 +134,20 @@ export default function PageRawatJalan() {
     fetchData()
   }, [tokenValue, tglSkrng])
 
+  const handleNameClick = (patientName: string, doctorName: string, poliName: string) => {
+    const lowerCaseName = patientName.toLowerCase()
+    const additionalInfo = 'silahkan datang ke ners station'
+    setSelectedPatientName(lowerCaseName + additionalInfo)
+    setTTSKey((prevKey) => prevKey + 1)
+    if (ttsComponentRef.current) {
+      ttsComponentRef.current.play()
+    }
+    console.log(speechSynthesis.getVoices())
+    localStorage.setItem('patientName', lowerCaseName)
+    localStorage.setItem('doctorName', doctorName)
+    localStorage.setItem('poliName', poliName)
+  }
+
   const columns = [
     { name: 'NO.REG', selector: (row: DataItem) => row.no_reg, sortable: true },
     { name: 'NO.RM', selector: (row: DataItem) => row.no_rkm_medis, sortable: true },
@@ -139,13 +168,10 @@ export default function PageRawatJalan() {
       ),
       sortable: true,
     },
-
     { name: 'NO RAWAT', selector: (row: DataItem) => row.no_rawat, sortable: true },
     {
-      name: 'UMUR',
-      selector: (row: DataItem) => (
-        <p className='text-black mx-auto text-center text-[15px]'>{row.umurdaftar}</p>
-      ),
+      name: 'DOKTER',
+      selector: (row: DataItem) => row.nm_dokter,
       sortable: true,
     },
     {
@@ -154,8 +180,8 @@ export default function PageRawatJalan() {
       sortable: true,
     },
     {
-      name: 'DOKTER',
-      selector: (row: DataItem) => row.nm_dokter,
+      name: 'STATUS PERIKSA',
+      selector: (row: DataItem) => row.stts,
       sortable: true,
     },
     // { name: 'PENJAMIN', selector: (row: DataItem) => row.png_jawab, sortable: true },
@@ -167,14 +193,28 @@ export default function PageRawatJalan() {
       sortable: true,
     },
     {
-      name: 'STATUS PERIKSA',
-      selector: (row: DataItem) => row.stts,
+      name: 'UMUR',
+      selector: (row: DataItem) => (
+        <p className='text-black mx-auto text-center text-[15px]'>{row.umurdaftar}</p>
+      ),
       sortable: true,
     },
     {
       name: 'STATUS LANJUT',
       selector: (row: DataItem) => row.status_lanjut,
       sortable: true,
+    },
+    {
+      name: 'PANGGIL',
+      sortable: true,
+      cell: (row: DataItem) => (
+        <button
+          className='panggil-button'
+          onClick={() => handleNameClick(row.nm_pasien, row.nm_dokter, row.nm_poli)}
+        >
+          <PlayIcon width={20} height={20} className='play-icon' />
+        </button>
+      ),
     },
     // {
     //   name: 'Actions',
@@ -191,7 +231,7 @@ export default function PageRawatJalan() {
     //       Edit
     //     </button>
     //   ),
-    // },
+    // },ls
   ]
 
   return (
@@ -199,11 +239,17 @@ export default function PageRawatJalan() {
       {isLoading ? (
         <p className='flex justify-center items-center h-screen'>
           <ArrowPathIcon width={80} height={80} className='animate-spin' />
-          <span className='font-bold text-xl animate-pulse'>Memuat Data</span>
         </p>
       ) : (
         <>
           <div className='mt-3'>
+            <div className='hidden'>
+              {selectedPatientName && (
+                <CustomTTSComponent key={ttsKey} ref={ttsComponentRef}>
+                  <p>{selectedPatientName}</p>
+                </CustomTTSComponent>
+              )}
+            </div>
             <Breadcrumb />
             <div className='mt-5'>
               <TableData data={data} columns={columns} />

@@ -1,15 +1,12 @@
 import DataTable from 'react-data-table-component'
 import { useState, useEffect } from 'react'
 import {
-  // ChevronDoubleLeftIcon,
-  // ChevronDoubleRightIcon,
-  // ChevronLeftIcon,
-  // ChevronRightIcon,
   MagnifyingGlassIcon,
   ChevronDownIcon,
   FunnelIcon,
   ArrowPathIcon,
 } from '@heroicons/react/24/solid'
+import { NavLink } from 'react-router-dom'
 
 type templateObject = {
   [key: string]: any
@@ -27,6 +24,8 @@ const TableData = ({ data, columns }: Props) => {
   const [filteredData, setFilteredData] = useState(data)
   const [isOpen, setIsOpen] = useState(false)
   const [filterJumlahPasien, setFilterJumlahPasien] = useState(0)
+
+  // const navigate = useNavigate()
 
   useEffect(() => {
     // Load filter value from localStorage on component mount
@@ -71,6 +70,11 @@ const TableData = ({ data, columns }: Props) => {
   // const handleRowsPerPageChange = (newRowsPerPage: any) => {
   //   setRowsPerPage(newRowsPerPage)
   //   setCurrentPage(1)
+  // }
+
+  // const antrianClick = () => {
+  //   navigate('/antrian-ralan')
+  //   navigate(0)
   // }
 
   const paginatedData = filteredData ? filteredData : []
@@ -258,7 +262,15 @@ const TableData = ({ data, columns }: Props) => {
           </div>
         </div>
       </div>
-      <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
+      <div className='flex justify-between'>
+        <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
+        <button className='btn btn-ghost hover:bg-none'>
+          <NavLink to={'/antrian-ralan'} reloadDocument target='_blank'>
+            Antrian
+          </NavLink>
+        </button>
+      </div>
+
       <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
       {/* {searchQuery === '' ? (
         <div className='flex justify-between p-2'>

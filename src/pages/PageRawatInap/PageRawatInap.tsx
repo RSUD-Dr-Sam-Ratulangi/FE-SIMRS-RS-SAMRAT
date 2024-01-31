@@ -76,6 +76,12 @@ export default function PageRawatInap() {
       width: '15rem',
     },
     {
+      name: 'Antrian',
+      selector: (row: DataItem) => row.nm_pasien,
+      sortable: true,
+      width: '15rem',
+    },
+    {
       name: '',
       selector: (row: DataItem) => (
         <button

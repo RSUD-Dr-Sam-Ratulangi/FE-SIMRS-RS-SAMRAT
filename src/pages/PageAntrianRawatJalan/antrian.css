@@ -1,0 +1,20 @@
+/* Add these styles to your existing CSS */
+@keyframes scroll {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-100%);
+    }
+  }
+  
+  /* Apply the animation to the table */
+  .table {
+    animation: scroll 300s linear infinite forwards;
+  }
+
+  .table thead {
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Set a background color if needed */
+}

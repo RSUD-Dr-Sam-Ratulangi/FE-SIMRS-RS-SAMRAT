@@ -481,8 +481,9 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
           })
           console.log('Berhasil')
           console.log(res.data)
+          console.log('obat berhasil :', resepDokterData)
         } catch (err) {
-          console.log('obat :', resepDokterData)
+          console.log('obat error :', resepDokterData)
           console.log(err)
         }
       }
@@ -941,6 +942,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               } finally {
                 navigate('/rawat-jalan/')
                 window.location.reload()
+                console.log('okok')
               }
             } else {
               spesificError({ errMessage: 'Batal Mengirim.' })
