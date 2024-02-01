@@ -1,11 +1,11 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
 import { useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { dateNow } from '../../utils/DateNow'
-import { ArrowPathIcon, PlayIcon } from '@heroicons/react/24/solid'
-import CustomTTSComponent from '../../utils/TtsSound'
+import { ArrowPathIcon } from '@heroicons/react/24/solid'
+// import CustomTTSComponent from '../../utils/TtsSound'
 
 type DataItem = {
   no_reg: string
@@ -81,20 +81,20 @@ export default function PageRawatJalan() {
   const [data, setData] = useState()
   const [isLoading, setIsLoading] = useState(true)
 
-  const [selectedPatientName, setSelectedPatientName] = useState<string | null>(null)
-  const ttsComponentRef = useRef(null)
-  const [ttsKey, setTTSKey] = useState(0)
+  // const [selectedPatientName, setSelectedPatientName] = useState<string | null>(null)
+  // const ttsComponentRef = useRef(null)
+  // const [ttsKey, setTTSKey] = useState(0)
 
-  useEffect(() => {
-    if (selectedPatientName) {
-      const timeoutId = setTimeout(() => {
-        if (ttsComponentRef.current) {
-          ttsComponentRef.current.play()
-        }
-      }, 0)
-      return () => clearTimeout(timeoutId)
-    }
-  }, [selectedPatientName, ttsComponentRef])
+  // useEffect(() => {
+  //   if (selectedPatientName) {
+  //     const timeoutId = setTimeout(() => {
+  //       if (ttsComponentRef.current) {
+  //         ttsComponentRef.current.play()
+  //       }
+  //     }, 0)
+  //     return () => clearTimeout(timeoutId)
+  //   }
+  // }, [selectedPatientName, ttsComponentRef])
 
   const navigate = useNavigate()
   const tglSkrng = dateNow()
@@ -134,19 +134,19 @@ export default function PageRawatJalan() {
     fetchData()
   }, [tokenValue, tglSkrng])
 
-  const handleNameClick = (patientName: string, doctorName: string, poliName: string) => {
-    const lowerCaseName = patientName.toLowerCase()
-    const additionalInfo = 'silahkan datang ke ners station'
-    setSelectedPatientName(lowerCaseName + additionalInfo)
-    setTTSKey((prevKey) => prevKey + 1)
-    if (ttsComponentRef.current) {
-      ttsComponentRef.current.play()
-    }
-    console.log(speechSynthesis.getVoices())
-    localStorage.setItem('patientName', lowerCaseName)
-    localStorage.setItem('doctorName', doctorName)
-    localStorage.setItem('poliName', poliName)
-  }
+  // const handleNameClick = (patientName: string, doctorName: string, poliName: string) => {
+  //   const lowerCaseName = patientName.toLowerCase()
+  //   const additionalInfo = 'silahkan datang ke ners station'
+  //   setSelectedPatientName(lowerCaseName + additionalInfo)
+  //   setTTSKey((prevKey) => prevKey + 1)
+  //   if (ttsComponentRef.current) {
+  //     ttsComponentRef.current.play()
+  //   }
+  //   console.log(speechSynthesis.getVoices())
+  //   localStorage.setItem('patientName', lowerCaseName)
+  //   localStorage.setItem('doctorName', doctorName)
+  //   localStorage.setItem('poliName', poliName)
+  // }
 
   const columns = [
     { name: 'NO.REG', selector: (row: DataItem) => row.no_reg, sortable: true },
@@ -204,18 +204,18 @@ export default function PageRawatJalan() {
       selector: (row: DataItem) => row.status_lanjut,
       sortable: true,
     },
-    {
-      name: 'PANGGIL',
-      sortable: true,
-      cell: (row: DataItem) => (
-        <button
-          className='panggil-button'
-          onClick={() => handleNameClick(row.nm_pasien, row.nm_dokter, row.nm_poli)}
-        >
-          <PlayIcon width={20} height={20} className='play-icon' />
-        </button>
-      ),
-    },
+    // {
+    //   name: 'PANGGIL',
+    //   sortable: true,
+    //   cell: (row: DataItem) => (
+    //     <button
+    //       className='panggil-button'
+    //       onClick={() => handleNameClick(row.nm_pasien, row.nm_dokter, row.nm_poli)}
+    //     >
+    //       <PlayIcon width={20} height={20} className='play-icon' />
+    //     </button>
+    //   ),
+    // },
     // {
     //   name: 'Actions',
     //   selector: (row: DataItem) => (
@@ -243,13 +243,13 @@ export default function PageRawatJalan() {
       ) : (
         <>
           <div className='mt-3'>
-            <div className='hidden'>
+            {/* <div className='hidden'>
               {selectedPatientName && (
                 <CustomTTSComponent key={ttsKey} ref={ttsComponentRef}>
                   <p>{selectedPatientName}</p>
                 </CustomTTSComponent>
               )}
-            </div>
+            </div> */}
             <Breadcrumb />
             <div className='mt-5'>
               <TableData data={data} columns={columns} />
