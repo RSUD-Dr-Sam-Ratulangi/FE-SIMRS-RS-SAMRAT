@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { api } from '../../../../services/api/config.api'
 import { errorCopyResep, spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
 import { useParams } from 'react-router-dom'
 import { ClockIcon, CalendarDaysIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import { ToastContainer } from 'react-toastify'
+import ModalLaborHistory from '../Laboratorium/Modal/ModalLaborHistory'
+import { PopupActions } from 'reactjs-popup/dist/types'
 
 type userData = {
   no_rkm_medis: string
@@ -42,7 +44,7 @@ type userData = {
   nip: string
   nama: string
   jbtn: string
-  no_rawat: string
+  no_rawat: any
   kd_penyakit: string
   status: string
   prioritas: number
@@ -59,11 +61,18 @@ type ApiData = userData[]
 
 interface RiwayatSoapRalanProps {
   onRiwayatObatChange: (riwayatObatData: any) => void
+  personalData: any
 }
 
-const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange }) => {
+const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
+  onRiwayatObatChange,
+  personalData,
+}) => {
+  const dataPersonal = personalData || {} // Hampir sama seperti null
+  const modalLaborRef = useRef<PopupActions>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [riwayatSoap, setRiwayatSoap] = useState<ApiData>([])
+  const [laborNmrRawat, setLaborNmrRawat] = useState('')
   const { id } = useParams()
   const tokenValue = localStorage.getItem('token')
   const Kd = JSON.parse(tokenValue)
@@ -76,7 +85,6 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
         const response = await api.get(`/api/v1/riwayatsoap?noRkmMedis=${id}`)
         const data: ApiData = await response.data
 
-        // Now, for each entry in the data, fetch the nm_poli
         const newData = await Promise.all(
           data.map(async (riwayat) => {
             const nmPoliResponse = await api.get(`/api/v1/poli?kode=${riwayat.kd_poli}`)
@@ -96,8 +104,6 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
 
     fetchRiwayatSoap()
   }, [])
-
-  console.log('riwayat soap', riwayatSoap)
 
   const testCopyResep = async (noRawat: any) => {
     try {
@@ -123,6 +129,21 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
       errorCopyResep()
       console.log('Gagal ambil resep', err)
     }
+  }
+
+  const modalLaborOpen = (noRawat: any) => {
+    if (modalLaborRef.current) {
+      modalLaborRef.current.open()
+      setLaborNmrRawat(noRawat)
+    }
+    console.log('Open')
+  }
+
+  const modalLaborClose = () => {
+    if (modalLaborRef.current) {
+      modalLaborRef.current.close()
+    }
+    console.log('Close')
   }
 
   return (
@@ -259,6 +280,20 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({ onRiwayatObatChange
                   <p className='whitespace-pre'>{riwayat.evaluasi || '-'}</p>
                 </div>
               </div>
+              <div className='hidden'>
+                <button
+                  className='text text-gray-100 btn bg-primary btn-md'
+                  onClick={() => modalLaborOpen(riwayat.no_rawat)}
+                >
+                  Riwayat Laboratorium
+                </button>
+              </div>
+              <ModalLaborHistory
+                ref={modalLaborRef}
+                onClose={modalLaborClose}
+                noRawat={laborNmrRawat}
+                dataPersonal={dataPersonal}
+              />
             </div>
           ))}
         </>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { api } from '../../../../services/api/config.api'
 import { errorPostSoap, spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
@@ -11,6 +11,8 @@ import {
 } from '@heroicons/react/24/solid'
 import { useNavigate, useParams } from 'react-router-dom'
 import { formatSelectedDate, formatSelectedDateNow } from '../../../../utils/DateNow'
+import ModalLaborInput from '../Laboratorium/Modal/ModalLaborInput'
+import { PopupActions } from 'reactjs-popup/dist/types'
 // import ToastInfo from '../../utils/ToastInfo'
 
 enum KesadaranOptions {
@@ -104,6 +106,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   const [dataSoap, setDataSoap] = useState<DataItem[]>([])
   const [selectedMedicines, setSelectedMedicines] = useState<{ [kode: string]: Medicine }>({})
   const [editedRowIndex, setEditedRowIndex] = useState(null)
+  const modalLaborRef = useRef<PopupActions>(null)
 
   const navigate = useNavigate()
   const nmrRawat = localStorage.getItem('no_rawat')
@@ -934,8 +937,8 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 await postResep()
                 await postDiagnosa()
                 await handleChangeStatusFirstSend()
-                navigate('/rawat-jalan/')
-                window.location.reload()
+                // navigate('/rawat-jalan/')
+                // window.location.reload()
               } catch (error) {
                 console.log('error dokter post', error)
                 spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
@@ -1140,6 +1143,20 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   //   console.log(planString)
   //   console.log(selectedMedicines)
   // }
+
+  const modalLaborInputOpen = () => {
+    if (modalLaborRef.current) {
+      modalLaborRef.current.open()
+    }
+    console.log('Open')
+  }
+
+  const modalLaborInputClose = () => {
+    if (modalLaborRef.current) {
+      modalLaborRef.current.close()
+    }
+    console.log('Close')
+  }
 
   return (
     <div className='max-w-7xl mt-4'>
@@ -1660,8 +1677,8 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <label className='label'>
                     <span>Daftar Obat yang ditambahkan :</span>
                   </label>
-                  <div className='pt-4'>
-                    <table className='table table-md w-full'>
+                  <div className='pt-4 w-full h-full'>
+                    <table className='table w-full'>
                       <thead className='text-xs text-gray-400 font-bold border-b-2 border-gray-200 pb-2'>
                         <tr>
                           <th>NO</th>
@@ -1886,8 +1903,17 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             )}
           </button>
         </div>
+        <div className='hidden'>
+          <button
+            className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-[#89988D] rounded-xl hover:opacity-80'
+            onClick={modalLaborInputOpen}
+          >
+            PERMINTAAN LABORATORIUM & RADIOLOGI
+          </button>
+        </div>
       </div>
       <ToastContainer />
+      <ModalLaborInput ref={modalLaborRef} onClose={modalLaborInputClose} />
     </div>
   )
 }

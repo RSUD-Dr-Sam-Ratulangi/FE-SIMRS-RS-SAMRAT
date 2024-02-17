@@ -81,6 +81,7 @@ export const spesificError = ({ errMessage }) =>
       fontWeight: 'bold',
       borderRadius: '10px',
       background: '#FFFFFF',
+      zIndex: 999,
     },
   })
 
@@ -102,5 +103,6 @@ export const spesificSuccess = ({ doneMessage }) =>
       fontWeight: 'bold',
       borderRadius: '10px',
       background: '#FFFFFF',
+      zIndex: 999,
     },
   })

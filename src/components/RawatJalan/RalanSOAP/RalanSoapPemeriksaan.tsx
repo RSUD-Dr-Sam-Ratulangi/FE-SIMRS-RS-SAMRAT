@@ -201,33 +201,11 @@ const RanapSoapPemeriksaan: React.FC = () => {
               <>Loading...</>
             )}
           </div>
-          {/* <div className='w-full mt-3'>
-            <div role='tablist' className='tabs tabs-lifted tabs-sm'>
-              <a
-                role='tab'
-                className={`tab ${selectedTab === 'Riwayat Soap' ? 'tab-active' : ''}`}
-                onClick={() => handleTabClick('Riwayat Soap')}
-              >
-                Riwayat Soap
-              </a>
-              <a
-                role='tab'
-                className={`tab ${selectedTab === 'Resep' ? 'tab-active' : ''}`}
-                onClick={() => handleTabClick('Resep')}
-              >
-                Resep
-              </a>
-              <a
-                role='tab'
-                className={`tab ${selectedTab === 'Riwayat Perawatan' ? 'tab-active' : ''}`}
-                onClick={() => handleTabClick('Riwayat Perawatan')}
-              >
-                Riwayat Perawatan
-              </a>
-            </div>
-          </div> */}
           <div>
-            <RiwayatSoapRalan onRiwayatObatChange={handleRiwayatObatChange} />
+            <RiwayatSoapRalan
+              onRiwayatObatChange={handleRiwayatObatChange}
+              personalData={personalData}
+            />
           </div>
         </div>
         <div className={`${isReverse ? 'max-w-4xl' : 'max-w-4xl'} ${isReverse ? 'mr-3' : 'ml-3'}`}>
