@@ -28,13 +28,11 @@ const TableData = ({ data, columns }: Props) => {
   // const navigate = useNavigate()
 
   useEffect(() => {
-    // Load filter value from localStorage on component mount
     const storedFilter = localStorage.getItem('PoliFilter')
     if (storedFilter) {
       setSearchQuery(storedFilter)
     }
 
-    // Apply filter logic
     const newFilteredData = data
       ? data.filter((item) => {
           if (searchQuery === '') {

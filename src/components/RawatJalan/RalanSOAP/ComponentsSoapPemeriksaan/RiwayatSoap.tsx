@@ -280,13 +280,15 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                   <p className='whitespace-pre'>{riwayat.evaluasi || '-'}</p>
                 </div>
               </div>
-              <div className='hidden'>
-                <button
-                  className='text text-gray-100 btn bg-primary btn-md'
-                  onClick={() => modalLaborOpen(riwayat.no_rawat)}
-                >
-                  Riwayat Laboratorium
-                </button>
+              <div>
+                {role.includes('petugas') ? null : (
+                  <button
+                    className='text text-gray-100 btn bg-primary btn-md'
+                    onClick={() => modalLaborOpen(riwayat.no_rawat)}
+                  >
+                    Riwayat Laboratorium
+                  </button>
+                )}
               </div>
               <ModalLaborHistory
                 ref={modalLaborRef}

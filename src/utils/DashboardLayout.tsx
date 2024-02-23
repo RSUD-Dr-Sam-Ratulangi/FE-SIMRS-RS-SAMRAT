@@ -5,13 +5,9 @@ interface DashboardLayoutProps {
   outlet: React.ReactNode
 }
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ activeLink, outlet }) => {
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ outlet }) => {
   return (
-    <div
-      className={`h-full overflow-auto ${
-        activeLink === '/login' ? 'w-full' : 'w-[calc(100%-288px)]'
-      } fixed right-0`}
-    >
+    <div className='w-full'>
       <div className='p-3'>{outlet}</div>
     </div>
   )

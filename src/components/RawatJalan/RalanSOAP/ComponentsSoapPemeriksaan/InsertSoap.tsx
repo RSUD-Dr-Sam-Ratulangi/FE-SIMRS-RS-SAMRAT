@@ -1469,7 +1469,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             </div>
             <textarea
               placeholder='-'
-              value={penilaian || dataSoap[0]?.penilaian}
+              defaultValue={penilaian || dataSoap[0]?.penilaian}
               className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
               onChange={(e) => setPenilaian(e.target.value)}
               disabled={role.includes('petugas')}
@@ -1903,13 +1903,15 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             )}
           </button>
         </div>
-        <div className='hidden'>
-          <button
-            className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-[#89988D] rounded-xl hover:opacity-80'
-            onClick={modalLaborInputOpen}
-          >
-            PERMINTAAN LABORATORIUM & RADIOLOGI
-          </button>
+        <div>
+          {role.includes('petugas') ? null : (
+            <button
+              className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
+              onClick={modalLaborInputOpen}
+            >
+              PERMINTAAN LABORATORIUM
+            </button>
+          )}
         </div>
       </div>
       <ToastContainer />

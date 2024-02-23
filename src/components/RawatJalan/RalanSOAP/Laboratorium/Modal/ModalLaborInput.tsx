@@ -21,26 +21,24 @@ interface ModalProps {
 const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
   const { onClose } = props
   const [dataLaborPemeriksaan, setDataLaborPemeriksaan] = useState([])
-  const [searchQueryPemeriksaan, setSearchQueryPemeriksaan] = useState('')
-  const [selectSaveTemplate, setSelectSaveTemplate] = useState(false)
   const [indikasi, setIndikasi] = useState('')
   const [info, setInfo] = useState('')
   const [errInfo, setErrInfo] = useState('')
-  const [filteredDataPemeriksaan, setFilteredDataPemeriksaan] = useState([])
   const [dataLaborDetailPemeriksaan, setDataLaborDetailPemeriksaan] = useState([])
   const [kodePemeriksaan, setKodePemeriksaan] = useState('')
-  const [currentPagePemeriksaan, setCurrentPagePemeriksaan] = useState(1)
-  const [currentPageFilterPemeriksaan, setCurrentPageFilterPemeriksaan] = useState(0)
   const [labSelectedDetailData, setLabSelectedDetailData] = useState([])
+  const [listSelectedDetailData, setListSelectedDetailData] = useState([])
   const [sending, setSending] = useState(false)
-  const pageSize = 6
   const SecondModalInputRef = useRef<PopupActions>(null)
-
   const nmrRawat = localStorage.getItem('no_rawat')
   const tokenValue = localStorage.getItem('token')
   const Kd = JSON.parse(tokenValue)
   let nipCredentials = ''
   const role = Object.keys(Kd)[0]
+  const pageSize = 10
+  const today = new Date()
+  const initialDate = today.toISOString().substr(0, 10)
+  const [tglPermintaan, setTanggalPermintaan] = useState(initialDate)
 
   if (role === 'dokter') {
     nipCredentials = Kd.dokter.kd_dokter
@@ -52,16 +50,16 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
     const fetchDataPemeriksaan = async () => {
       try {
         const response = await apiLabor.get(
-          `/api/v1/getallPeriksaLab?pageNumber=${currentPagePemeriksaan}&pageSize=${pageSize}`,
+          `/api/v1/searchJnsPerawatanLab?kdJenisPrw=&nmPerawatan=RSUD&page=0&size=${pageSize}`,
         )
-        setDataLaborPemeriksaan(response.data)
-        console.log('data')
+        setDataLaborPemeriksaan(response.data.content)
+        console.log('data', response.data.content)
       } catch (err) {
         console.log('labor data err', err)
       }
     }
     fetchDataPemeriksaan()
-  }, [currentPagePemeriksaan, pageSize])
+  }, [ref])
 
   useEffect(() => {
     const fetchDataDetailPemeriksaan = async () => {
@@ -78,58 +76,27 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
     fetchDataDetailPemeriksaan()
   }, [kodePemeriksaan])
 
-  useEffect(() => {
-    const handleSearchPemeriksaan = async () => {
-      try {
-        const response = await apiLabor.get(
-          `/api/v1/searchJnsPerawatanLab?kdJenisPrw&nmPerawatan=${searchQueryPemeriksaan}&page=${currentPageFilterPemeriksaan}&size=${pageSize}`,
-        )
-        setFilteredDataPemeriksaan(response.data.content)
-        console.log('filter search ok')
-      } catch (error) {
-        console.error('Error fetching search results:', error)
-      }
-    }
-
-    handleSearchPemeriksaan()
-  }, [searchQueryPemeriksaan, currentPageFilterPemeriksaan, pageSize])
-
   const pilihPemeriksaan = (kode: any) => {
     setKodePemeriksaan(kode)
     if (SecondModalInputRef.current) {
       SecondModalInputRef.current.open()
     }
-    setLabSelectedDetailData([])
   }
 
   const handleCloseFirstModal = () => {
     onClose()
     setLabSelectedDetailData([])
+    setListSelectedDetailData([])
     setErrInfo('')
     setInfo('')
     setIndikasi('')
-    setSelectSaveTemplate(false)
   }
+
   const handleCloseSecondModal = () => {
     if (SecondModalInputRef.current) {
       SecondModalInputRef.current.close()
     }
-  }
-
-  const handlePrevPagePemeriksaan = () => {
-    setCurrentPagePemeriksaan(currentPagePemeriksaan - 1)
-  }
-
-  const handleNextPagePemeriksaan = () => {
-    setCurrentPagePemeriksaan(currentPagePemeriksaan + 1)
-  }
-
-  const handlePrevFilterPagePemeriksaan = () => {
-    setCurrentPageFilterPemeriksaan(currentPagePemeriksaan - 1)
-  }
-
-  const handleNextFilterPagePemeriksaan = () => {
-    setCurrentPageFilterPemeriksaan(currentPagePemeriksaan + 0)
+    setLabSelectedDetailData([])
   }
 
   const handleSelectTemplate = (
@@ -140,19 +107,31 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
     nilai_rujukan_la: any,
     nilai_rujukan_pa: any,
   ) => {
-    // Add selected template to labSelectedDetailData
     setLabSelectedDetailData([
       ...labSelectedDetailData,
       { idTemplate, pemeriksaan, satuan, nilai_rujukan_ld, nilai_rujukan_la, nilai_rujukan_pa },
     ])
 
-    // Filter out the selected template from dataLaborDetailPemeriksaan
     const updatedDataLaborDetailPemeriksaan = dataLaborDetailPemeriksaan.filter(
       (data) => data.id_template !== idTemplate,
     )
     setDataLaborDetailPemeriksaan(updatedDataLaborDetailPemeriksaan)
 
     spesificSuccess({ doneMessage: `Pemeriksaan ${pemeriksaan} Berhasil Ditambahkan` })
+  }
+
+  const handleSelectAll = () => {
+    const allSelectedItems = dataLaborDetailPemeriksaan.map((data) => ({
+      idTemplate: data.id_template,
+      pemeriksaan: data.Pemeriksaan,
+      satuan: data.satuan,
+      nilai_rujukan_ld: data.nilai_rujukan_ld,
+      nilai_rujukan_la: data.nilai_rujukan_la,
+      nilai_rujukan_pa: data.nilai_rujukan_pa,
+    }))
+    setLabSelectedDetailData([...labSelectedDetailData, ...allSelectedItems])
+
+    setDataLaborDetailPemeriksaan([])
   }
 
   const handleRemoveTemplate = (idTemplate: any) => {
@@ -162,28 +141,43 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
     if (removedItemIndex !== -1) {
       const removedItem = labSelectedDetailData[removedItemIndex]
 
-      // Remove the item from labSelectedDetailData
       const updatedLabSelectedDetailData = [...labSelectedDetailData]
       updatedLabSelectedDetailData.splice(removedItemIndex, 1)
       setLabSelectedDetailData(updatedLabSelectedDetailData)
 
-      // Add the removed item back to dataLaborDetailPemeriksaan
       const restoredItem = {
-        id_template: removedItem.idTemplate, // Ensure the property name is consistent
+        id_template: removedItem.idTemplate,
         pemeriksaan: removedItem.pemeriksaan,
         satuan: removedItem.satuan,
         nilai_rujukan_ld: removedItem.nilai_rujukan_ld,
         nilai_rujukan_la: removedItem.nilai_rujukan_la,
         nilai_rujukan_pa: removedItem.nilai_rujukan_pa,
       }
+
       setDataLaborDetailPemeriksaan([...dataLaborDetailPemeriksaan, restoredItem])
 
       spesificSuccess({ doneMessage: `Pemeriksaan ${removedItem.pemeriksaan} Berhasil Dihapus` })
     }
   }
 
+  const handleRemoveFromList = (idTemplateToRemove) => {
+    const updatedListSelectedDetailData = listSelectedDetailData.map((item) => ({
+      ...item,
+      [Object.keys(item)[0]]: item[Object.keys(item)[0]].filter(
+        (innerItem) => innerItem.idTemplate !== idTemplateToRemove,
+      ),
+    }))
+    setListSelectedDetailData(updatedListSelectedDetailData)
+  }
+
   const handleSaveSelectTemplate = () => {
-    setSelectSaveTemplate(true)
+    const newData = {
+      [kodePemeriksaan]: [...labSelectedDetailData],
+    }
+    setListSelectedDetailData([...listSelectedDetailData, newData])
+
+    setLabSelectedDetailData([])
+
     handleCloseSecondModal()
   }
 
@@ -194,13 +188,17 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
       status: 'ralan',
       informasiTambahan: info,
       diagnosaKlinis: indikasi,
+      tglPermintaan: tglPermintaan,
     }
+
     if (!indikasi) {
       setErrInfo('MOHON MENGINPUT INDIKASI/KLINIS')
     } else if (!info) {
       setErrInfo('MOHON MENGINPUT INFORMASI TAMBAHAN')
-    } else if (Object.keys(dataLaborDetailPemeriksaan).length === 0) {
+    } else if (Object.keys(listSelectedDetailData).length === 0) {
       setErrInfo('MOHON MEMILIH SETIDAKNYA 1 PEMERIKSAAN')
+    } else if (!tglPermintaan) {
+      setErrInfo('MOHON MEMILIH TANGGAL PERMINTAAN')
     } else {
       const isDataCorrect = window.confirm(
         'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
@@ -210,29 +208,32 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
           const response1 = await apiLabor.post('/api/v1/permintaanLab', dataPermintaanLab)
           setSending(true)
           setErrInfo('')
-          try {
-            const response2 = await apiLabor.post('/api/v1/permintaanPemeriksaanLab', {
-              noOrder: response1.data.noorder,
-              kdJenisPrw: kodePemeriksaan,
-              sttsBayar: 'Belum',
-            })
-            console.log('repsonse2', response2)
-          } catch (err) {
-            spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, postPemeriksaanLab' })
-          }
 
-          // postDetailPemeriksaanLab
-          for (const item of labSelectedDetailData) {
+          for (const item of listSelectedDetailData) {
+            const key = Object.keys(item)[0]
             try {
-              const response3 = await apiLabor.post('/api/v1/permintaanDetailPermintaanLab', {
+              const response2 = await apiLabor.post('/api/v1/permintaanPemeriksaanLab', {
                 noOrder: response1.data.noorder,
-                kdJenisPrw: kodePemeriksaan,
-                idTemplate: item.idTemplate,
-                sttsBayar: 'Sudah',
+                kdJenisPrw: key,
+                sttsBayar: 'Belum',
               })
-              console.log('repsonse3', response3)
+              console.log('response2', response2)
             } catch (err) {
-              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga. postPermintaanLab' })
+              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, postPemeriksaanLab' })
+            }
+
+            for (const innerItem of item[key]) {
+              try {
+                const response3 = await apiLabor.post('/api/v1/permintaanDetailPermintaanLab', {
+                  noOrder: response1.data.noorder,
+                  kdJenisPrw: key,
+                  idTemplate: innerItem.idTemplate,
+                  sttsBayar: 'Sudah',
+                })
+                console.log('response3', response3)
+              } catch (err) {
+                spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga. postPermintaanLab' })
+              }
             }
           }
         } catch (err) {
@@ -241,12 +242,15 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
           setErrInfo('Terjadi Kesalahan tidak terduga, Mohon Coba Lagi')
         } finally {
           setSending(false)
+          handleCloseFirstModal()
         }
       }
     }
   }
 
   console.log(labSelectedDetailData)
+  console.log(dataLaborPemeriksaan)
+  console.log('listlist', listSelectedDetailData)
 
   return (
     <div>
@@ -307,143 +311,35 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
               />
             </div>
           </div>
-          <div className='mt-8 grid overflow-auto'>
-            <div>
-              <p className=' font-bold text-xl text-[#121713'>PEMERIKSAAN</p>
-              <div className='flex relative mt-1 gap-5'>
-                <input
-                  type='text'
-                  className='w-full px-3 py-2 border rounded-2xl outline-slate-500 '
-                  placeholder='Hematologi Rutin'
-                  value={searchQueryPemeriksaan}
-                  onChange={(e) => setSearchQueryPemeriksaan(e.target.value)}
-                />
-                {searchQueryPemeriksaan && (
-                  <>
-                    <button
-                      className='absolute top-1/2 transform -translate-y-1/2 right-64 btn-ghost hover:bg-white'
-                      onClick={() => setSearchQueryPemeriksaan('')}
-                    >
-                      <XMarkIcon width={25} height={25} />
-                    </button>
-                  </>
-                )}
-              </div>
+          <div>
+            <input
+              type='date'
+              className='input border border-slate-500 mt-3'
+              value={tglPermintaan}
+              onChange={(e) => setTanggalPermintaan(e.target.value)}
+            />
+            <div className='grid grid-cols-4 gap-3 mt-5'>
+              {dataLaborPemeriksaan.map((data, index) => (
+                <button
+                  key={index}
+                  className='btn bg-[#B6E5F2] text-black hover:bg-slate-50'
+                  onClick={() => pilihPemeriksaan(data.kd_jenis_prw)}
+                >
+                  {data.nm_perawatan}
+                </button>
+              ))}
             </div>
-            {searchQueryPemeriksaan ? (
-              <div className='mt-8 grid overflow-auto'>
-                <>
-                  <div className='mt-2 pt-4 h-full overflow-auto'>
-                    <table className='table table-lg w-full'>
-                      <thead>
-                        <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 '>
-                          <th className='text-start'>NO</th>
-                          <th className='text-start'>KODE PERIKSA</th>
-                          <th className='text-start'>NAMA PEMERIKSAAN</th>
-                          <th className='text-start'>AKSI</th>
-                        </tr>
-                      </thead>
-                      <tbody className='overflow-auto'>
-                        {filteredDataPemeriksaan.map((data, index) => (
-                          <tr
-                            key={index}
-                            className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px]'
-                          >
-                            <td className='text-start'>{index + 1}</td>
-                            <td className='text-start'>{data.kd_jenis_prw}</td>
-                            <td className='text-start'>{data.nm_perawatan}</td>
-                            <td>
-                              <button
-                                className='underline'
-                                onClick={() => pilihPemeriksaan(data.kd_jenis_prw)}
-                              >
-                                <p className='text-start'>Pilih</p>
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <div className='flex justify-between p-2'>
-                      <button
-                        className='btn bg-primary text-white'
-                        onClick={handlePrevFilterPagePemeriksaan}
-                        disabled={currentPageFilterPemeriksaan === 0}
-                      >
-                        Prev
-                      </button>
-                      <p className='flex items-center'>
-                        Halaman{' '}
-                        <span className='ml-2 font-bold'>{currentPageFilterPemeriksaan}</span>
-                      </p>
-                      <button
-                        className='btn bg-primary text-white'
-                        onClick={handleNextFilterPagePemeriksaan}
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </div>
-                </>
-              </div>
-            ) : (
-              <div className='mt-2 pt-4 h-full overflow-auto'>
-                <table className='table table-lg w-full'>
-                  <thead>
-                    <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 '>
-                      <th className='text-start'>NO</th>
-                      <th className='text-start'>KODE PERIKSA</th>
-                      <th className='text-start'>NAMA PEMERIKSAAN</th>
-                      <th className='text-start'>AKSI</th>
-                    </tr>
-                  </thead>
-                  <tbody className='overflow-auto'>
-                    {dataLaborPemeriksaan.map((data, index) => (
-                      <tr
-                        key={index}
-                        className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px]'
-                      >
-                        <td className='text-start'>{index + 1}</td>
-                        <td className='text-start'>{data.kd_jenis_prw}</td>
-                        <td className='text-start'>{data.nm_perawatan}</td>
-                        <td>
-                          <button
-                            className='underline'
-                            onClick={() => pilihPemeriksaan(data.kd_jenis_prw)}
-                          >
-                            <p className='text-start'>Pilih</p>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className='flex justify-between p-2'>
-                  <button
-                    className='btn bg-primary text-white'
-                    onClick={handlePrevPagePemeriksaan}
-                    disabled={currentPagePemeriksaan === 1}
-                  >
-                    Prev
-                  </button>
-                  <p className='flex items-center'>
-                    Halaman <span className='ml-2 font-bold'>{currentPagePemeriksaan}</span>
-                  </p>
-                  <button className='btn bg-primary text-white' onClick={handleNextPagePemeriksaan}>
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
           <div>
-            {selectSaveTemplate ? (
-              <div>
-                <label className='label font-bold'>DETAIL DAFTAR PEMERIKSAAN :</label>
+            {listSelectedDetailData.map((item, index) => (
+              <div
+                key={index}
+                className='h-56 overflow-auto border border-slate-300 rounded-lg mt-4'
+              >
                 <table className='table table-lg w-full'>
                   <thead>
                     <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200'>
-                      <th className='text-start'>NO</th>
+                      <th className='text-start'>Kode</th>
                       <th className='text-start'>ID TEMP</th>
                       <th className='text-start'>PEMERIKSAAN</th>
                       <th className='text-start'>SATUAN</th>
@@ -451,36 +347,45 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
                       <th className='text-start'>AKSI</th>
                     </tr>
                   </thead>
-                  <tbody className='overflow-auto'>
-                    {labSelectedDetailData.map((data, index) => (
-                      <tr
-                        key={index}
-                        className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px] hover:bg-slate-300 rounded-lg'
-                      >
-                        <td className='text-start'>{index + 1}</td>
-                        <td className='text-start'>{data.idTemplate}</td>
-                        <td className='text-start'>{data.pemeriksaan}</td>
-                        <td className='text-start'>{data.satuan}</td>
-                        <td className='text-start'>
-                          LD: {data.nilai_rujukan_ld}, LA: {data.nilai_rujukan_la}, PA:{' '}
-                          {data.nilai_rujukan_pa}
-                        </td>
-                        <td>
-                          <button
-                            className='underline'
-                            onClick={() => handleRemoveTemplate(data.idTemplate)}
+                  <tbody>
+                    {Object.keys(item).map((key) => (
+                      <React.Fragment key={key}>
+                        <tr className='text-gray-500 font-bold'>
+                          <td>
+                            <p className='font-bold'>{key}</p>
+                          </td>
+                        </tr>
+                        {item[key].map((innerItem, innerIndex) => (
+                          <tr
+                            key={`${key}-${innerIndex}`}
+                            className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px] hover:bg-slate-300 rounded-lg'
                           >
-                            <p className='text-start'>
-                              <TrashIcon width={20} height={20} className='mr-3' />
-                            </p>
-                          </button>
-                        </td>
-                      </tr>
+                            <td className='text-start'>{key}</td>
+                            <td className='text-start'>{innerItem.idTemplate}</td>
+                            <td className='text-start'>{innerItem.pemeriksaan}</td>
+                            <td className='text-start'>{innerItem.satuan}</td>
+                            <td className='text-start'>
+                              LD: {innerItem.nilai_rujukan_ld}, LA: {innerItem.nilai_rujukan_la},
+                              PA: {innerItem.nilai_rujukan_pa}
+                            </td>
+                            <td>
+                              <button
+                                className='underline'
+                                onClick={() => handleRemoveFromList(innerItem.idTemplate)}
+                              >
+                                <p className='text-start'>
+                                  <TrashIcon width={20} height={20} className='mr-3' />
+                                </p>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>
               </div>
-            ) : null}
+            ))}
           </div>
           <div className=' w-auto mt-4'>
             <div className='flex text-base text-[#121713] items-center font-bold font-sans my-[20px]'>
@@ -540,7 +445,13 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
                 <XMarkIcon width={25} height={25} />
               </button>
             </div>
-            <p>{nmrRawat}</p>
+            <div className='flex justify-between items-center mt-5 p-3'>
+              <p>{nmrRawat}</p>
+              <p className='font-bold'>{kodePemeriksaan}</p>
+              <button className='btn bg-blue-100 btn-sm' onClick={handleSelectAll}>
+                Pilih semua
+              </button>
+            </div>
             <div className='grid gap-4'>
               <div className='mt-2 pt-4 h-96 overflow-auto shadow p-2'>
                 <table className='table table-lg w-full'>
@@ -550,83 +461,88 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
                       <th className='text-start'>ID TEMP</th>
                       <th className='text-start'>PEMERIKSAAN</th>
                       <th className='text-start'>SATUAN</th>
-                      <th className='text-start'>NILAI RUJUKAN</th>
+                      <th className='text-start'>NILAI RUJUKANnn</th>
                     </tr>
                   </thead>
                   <tbody className='overflow-auto'>
-                    {dataLaborDetailPemeriksaan.map((data, index) => (
-                      <tr
-                        key={index}
-                        onClick={() =>
-                          handleSelectTemplate(
-                            data.id_template,
-                            data.Pemeriksaan,
-                            data.satuan,
-                            data.nilai_rujukan_ld,
-                            data.nilai_rujukan_la,
-                            data.nilai_rujukan_pa,
-                          )
-                        }
-                        className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px] hover:bg-slate-300 rounded-lg cursor-default'
-                      >
-                        <td className='text-start'>{index + 1}</td>
-                        <td className='text-start'>{data.id_template}</td>
-                        <td className='text-start'>{data.Pemeriksaan}</td>
-                        <td className='text-start'>{data.satuan}</td>
-                        <td className='text-start'>
-                          LD: {data.nilai_rujukan_ld}, LA: {data.nilai_rujukan_la}, PA:{' '}
-                          {data.nilai_rujukan_pa}
-                        </td>
-                      </tr>
-                    ))}
+                    {dataLaborDetailPemeriksaan
+                      .filter(
+                        (data) =>
+                          !labSelectedDetailData.some(
+                            (selectedData) => selectedData.idTemplate === data.id_template,
+                          ),
+                      )
+                      .map((data, index) => (
+                        <tr
+                          key={index}
+                          onClick={() =>
+                            handleSelectTemplate(
+                              data.id_template,
+                              data.Pemeriksaan,
+                              data.satuan,
+                              data.nilai_rujukan_ld,
+                              data.nilai_rujukan_la,
+                              data.nilai_rujukan_pa,
+                            )
+                          }
+                          className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px] hover:bg-slate-300 rounded-lg cursor-default'
+                        >
+                          <td className='text-start'>{index + 1}</td>
+                          <td className='text-start'>{data.id_template}</td>
+                          <td className='text-start'>{data.Pemeriksaan}</td>
+                          <td className='text-start'>{data.satuan}</td>
+                          <td className='text-start'>
+                            LD: {data.nilai_rujukan_ld}, LA: {data.nilai_rujukan_la}, PA:{' '}
+                            {data.nilai_rujukan_pa}
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
               <div className='mt-5'>
                 <p className=' font-bold text-xl text-gray-500'>DETAIL DAFTAR PEMERIKSAAN</p>
-                {labSelectedDetailData && (
-                  <div>
-                    <table className='table table-lg w-full'>
-                      <thead>
-                        <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200'>
-                          <th className='text-start'>NO</th>
-                          <th className='text-start'>ID TEMP</th>
-                          <th className='text-start'>PEMERIKSAAN</th>
-                          <th className='text-start'>SATUAN</th>
-                          <th className='text-start'>NILAI RUJUKAN</th>
-                          <th className='text-start'>AKSI</th>
+                <div>
+                  <table className='table table-lg w-full'>
+                    <thead>
+                      <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200'>
+                        <th className='text-start'>NO</th>
+                        <th className='text-start'>ID TEMP</th>
+                        <th className='text-start'>PEMERIKSAAN</th>
+                        <th className='text-start'>SATUAN</th>
+                        <th className='text-start'>NILAI RUJUKAN</th>
+                        <th className='text-start'>AKSI</th>
+                      </tr>
+                    </thead>
+                    <tbody className='overflow-auto'>
+                      {labSelectedDetailData.map((data, index) => (
+                        <tr
+                          key={index}
+                          className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px] hover:bg-slate-300 rounded-lg cursor-default'
+                        >
+                          <td className='text-start'>{index + 1}</td>
+                          <td className='text-start'>{data.idTemplate}</td>
+                          <td className='text-start'>{data.pemeriksaan}</td>
+                          <td className='text-start'>{data.satuan}</td>
+                          <td className='text-start'>
+                            LD: {data.nilai_rujukan_ld}, LA: {data.nilai_rujukan_la}, PA:{' '}
+                            {data.nilai_rujukan_pa}
+                          </td>
+                          <td>
+                            <button
+                              className='underline'
+                              onClick={() => handleRemoveTemplate(data.idTemplate)}
+                            >
+                              <p className='text-start'>
+                                <TrashIcon width={20} height={20} className='mr-3' />
+                              </p>
+                            </button>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody className='overflow-auto'>
-                        {labSelectedDetailData.map((data, index) => (
-                          <tr
-                            key={index}
-                            className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px] hover:bg-slate-300 rounded-lg cursor-default'
-                          >
-                            <td className='text-start'>{index + 1}</td>
-                            <td className='text-start'>{data.idTemplate}</td>
-                            <td className='text-start'>{data.pemeriksaan}</td>
-                            <td className='text-start'>{data.satuan}</td>
-                            <td className='text-start'>
-                              LD: {data.nilai_rujukan_ld}, LA: {data.nilai_rujukan_la}, PA:{' '}
-                              {data.nilai_rujukan_pa}
-                            </td>
-                            <td>
-                              <button
-                                className='underline'
-                                onClick={() => handleRemoveTemplate(data.idTemplate)}
-                              >
-                                <p className='text-start'>
-                                  <TrashIcon width={20} height={20} className='mr-3' />
-                                </p>
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

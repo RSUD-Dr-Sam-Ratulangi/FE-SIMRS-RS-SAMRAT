@@ -114,13 +114,11 @@ export default function PageRawatJalan() {
         let sortedData = responseData
 
         if (role === 'dokter') {
-          sortedData = responseData.sort((a, b) => {
-            if (a.kd_dokter === kdDokter) return -1
-            if (b.kd_dokter === kdDokter) return 1
-            return a.kd_dokter.localeCompare(b.kd_dokter)
-          })
-
-          sortedData = sortedData.filter((item) => item.kd_dokter === kdDokter)
+          sortedData = responseData
+            .filter((item) => item.kd_dokter === kdDokter)
+            .sort((a, b) => a.no_reg.localeCompare(b.no_reg))
+        } else if (role === 'petugas') {
+          sortedData = responseData.sort((a, b) => a.no_reg.localeCompare(b.no_reg))
         }
 
         setData(sortedData)
