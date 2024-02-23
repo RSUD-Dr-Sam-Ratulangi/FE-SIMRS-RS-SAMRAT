@@ -419,7 +419,7 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
       <Popup
         ref={SecondModalInputRef}
         modal
-        closeOnDocumentClick={true}
+        closeOnDocumentClick={false}
         overlayStyle={{
           background: 'rgba(0, 0, 0, 0.5)',
           display: 'flex',
