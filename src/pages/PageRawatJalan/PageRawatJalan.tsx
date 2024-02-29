@@ -78,8 +78,10 @@ type DataItem = {
 }
 
 export default function PageRawatJalan() {
+  const tglSkrng = dateNow()
   const [data, setData] = useState()
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [changeDate, setChangeDate] = useState(tglSkrng)
 
   // const [selectedPatientName, setSelectedPatientName] = useState<string | null>(null)
   // const ttsComponentRef = useRef(null)
@@ -97,7 +99,6 @@ export default function PageRawatJalan() {
   // }, [selectedPatientName, ttsComponentRef])
 
   const navigate = useNavigate()
-  const tglSkrng = dateNow()
   const tokenValue = localStorage.getItem('token')
   const Kd = JSON.parse(tokenValue)
   const kdDokter = Kd.dokter?.kd_dokter
@@ -106,8 +107,9 @@ export default function PageRawatJalan() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true)
         const response = await api.get(
-          `/api/v1/getalllpasienmendaftar?kd_poli=&tglKunjungan=${tglSkrng}&tglKunjunganAkhir=${tglSkrng}`,
+          `/api/v1/getalllpasienmendaftar?kd_poli=&tglKunjungan=${changeDate}&tglKunjunganAkhir=${changeDate}`,
         )
         const responseData = response.data
 
@@ -130,7 +132,12 @@ export default function PageRawatJalan() {
     }
 
     fetchData()
-  }, [tokenValue, tglSkrng])
+  }, [tokenValue, changeDate])
+
+  const handleDateChange = (event: any) => {
+    const dateValue = event.target.value
+    setChangeDate(dateValue)
+  }
 
   // const handleNameClick = (patientName: string, doctorName: string, poliName: string) => {
   //   const lowerCaseName = patientName.toLowerCase()
@@ -235,9 +242,12 @@ export default function PageRawatJalan() {
   return (
     <>
       {isLoading ? (
-        <p className='flex justify-center items-center h-screen'>
-          <ArrowPathIcon width={80} height={80} className='animate-spin' />
-        </p>
+        <div className='flex flex-row justify-center items-center h-screen'>
+          <ArrowPathIcon width={85} height={85} className='animate-spin'></ArrowPathIcon>
+          <span>
+            Memuat Data <span className='text font-bold text-xl'>{changeDate}</span>
+          </span>
+        </div>
       ) : (
         <>
           <div className='mt-3'>
@@ -250,6 +260,15 @@ export default function PageRawatJalan() {
             </div> */}
             <Breadcrumb />
             <div className='mt-5'>
+              <div>
+                <label className='label font-bold'>Pilih Tanggal :</label>
+                <input
+                  type='date'
+                  className='input border-primary text-sm'
+                  value={changeDate}
+                  onChange={handleDateChange}
+                />
+              </div>
               <TableData data={data} columns={columns} />
             </div>
           </div>

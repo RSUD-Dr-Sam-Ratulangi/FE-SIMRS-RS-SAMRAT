@@ -8,6 +8,7 @@ import ModalLaborHistory from '../Laboratorium/Modal/ModalLaborHistory'
 import { PopupActions } from 'reactjs-popup/dist/types'
 
 type userData = {
+  existsInLabTable: any
   no_rkm_medis: string
   nm_pasien: string
   no_ktp: string
@@ -73,6 +74,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const [riwayatSoap, setRiwayatSoap] = useState<ApiData>([])
   const [laborNmrRawat, setLaborNmrRawat] = useState('')
+  const [noRawatExist, setNoRawatExist] = useState(null)
   const { id } = useParams()
   const tokenValue = localStorage.getItem('token')
   const Kd = JSON.parse(tokenValue)
@@ -85,15 +87,38 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
         const response = await api.get(`/api/v1/riwayatsoap?noRkmMedis=${id}`)
         const data: ApiData = await response.data
 
+        // Extracting all no_rawat values
+        const noRawatList = data.map((item) => item.no_rawat)
+
+        // Check each no_rawat
+        const checkNoRawat = async (noRawat) => {
+          try {
+            const checkResponse = await api.get(
+              `http://rsudsamrat.site:8901/api/v1/checkPermintaanLab?noRawat=${noRawat}`,
+            )
+            const checkData = checkResponse.data
+            return checkData === 'no_rawat exists in permintaan_lab table'
+          } catch (error) {
+            console.error('Error checking no_rawat:', error)
+            return false
+          }
+        }
+
+        // Check all no_rawat concurrently
+        const results = await Promise.all(noRawatList.map(checkNoRawat))
+
+        // Set the state based on the results
+        setNoRawatExist(results)
+
         const newData = await Promise.all(
           data.map(async (riwayat) => {
             const nmPoliResponse = await api.get(`/api/v1/poli?kode=${riwayat.kd_poli}`)
             const nmPoliData = nmPoliResponse.data[0].nm_poli
+
             // eslint-disable-next-line camelcase
             return { ...riwayat, nm_poli: nmPoliData }
           }),
         )
-
         setRiwayatSoap(newData)
       } catch (err) {
         console.log(err)
@@ -145,6 +170,8 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
     }
     console.log('Close')
   }
+
+  console.log('exist?', noRawatExist)
 
   return (
     <div className='h-[2360px] overflow-y-auto mt-4 rounded-xl border border-slate-100'>
@@ -280,15 +307,15 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                   <p className='whitespace-pre'>{riwayat.evaluasi || '-'}</p>
                 </div>
               </div>
-              <div>
-                {role.includes('petugas') ? null : (
+              <div key={index}>
+                {noRawatExist[index] ? (
                   <button
                     className='text text-gray-100 btn bg-primary btn-md'
                     onClick={() => modalLaborOpen(riwayat.no_rawat)}
                   >
                     Riwayat Laboratorium
                   </button>
-                )}
+                ) : null}
               </div>
               <ModalLaborHistory
                 ref={modalLaborRef}

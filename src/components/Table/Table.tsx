@@ -6,7 +6,6 @@ import {
   FunnelIcon,
   ArrowPathIcon,
 } from '@heroicons/react/24/solid'
-import { NavLink } from 'react-router-dom'
 
 type templateObject = {
   [key: string]: any
@@ -98,6 +97,12 @@ const TableData = ({ data, columns }: Props) => {
                 className='w-full input input-bordered'
               />
             </div>
+            {/* <input
+              type='date'
+              onChange={handleSelectDate}
+              value={selectedDate}
+              className='input text-sm border-primary'
+            /> */}
             <div className='relative dropdown  dropdown-bottom dropdown-end'>
               <button
                 onClick={() => setIsOpen(true)}
@@ -262,11 +267,12 @@ const TableData = ({ data, columns }: Props) => {
       </div>
       <div className='flex justify-between'>
         <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
-        <button className='btn btn-ghost hover:bg-none'>
-          <NavLink to={'/antrian-ralan'} reloadDocument target='_blank'>
-            Antrian
-          </NavLink>
-        </button>
+        {/* <input
+          type='date'
+          onChange={handleChangeDate}
+          value={selectedDate}
+          className='input hover:bg-slate-300 border-slate-500'
+        /> */}
       </div>
 
       <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />

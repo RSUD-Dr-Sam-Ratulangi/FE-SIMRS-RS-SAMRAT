@@ -312,12 +312,15 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
             </div>
           </div>
           <div>
-            <input
-              type='date'
-              className='input border border-slate-500 mt-3'
-              value={tglPermintaan}
-              onChange={(e) => setTanggalPermintaan(e.target.value)}
-            />
+            <div className='flex items-center'>
+              <label className='label'>Tanggal Permintaan :</label>
+              <input
+                type='date'
+                className='input input-md border border-slate-500 mt-3'
+                value={tglPermintaan}
+                onChange={(e) => setTanggalPermintaan(e.target.value)}
+              />
+            </div>
             <div className='grid grid-cols-4 gap-3 mt-5'>
               {dataLaborPemeriksaan.map((data, index) => (
                 <button

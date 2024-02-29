@@ -1006,6 +1006,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             }
           }
         } else if (role.includes('dokter')) {
+          //           if (!dataSoap[0].keluhan && (!subjektif || !tindakan))
           if (!dataSoap[0].keluhan && (!subjektif || !tindakan)) {
             spesificError({ errMessage: 'Mohon Memasukan Data Subjektif..' })
           } else if (!dataSoap[0]?.pemeriksaan && !objectPemeriksaan) {
