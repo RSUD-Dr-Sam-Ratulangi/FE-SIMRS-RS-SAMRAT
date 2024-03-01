@@ -61,7 +61,6 @@ const RanapSoapPemeriksaan: React.FC = () => {
   const [riwayatObat, setRiwayatObat] = useState([])
   const [isReverse, setIsReverse] = useState(false)
   // const [selectedTab, setSelectedTab] = useState('Riwayat Soap')
-  console.log('parent page :', riwayatObat)
 
   useEffect(() => {
     const fetchPersonalData = async () => {

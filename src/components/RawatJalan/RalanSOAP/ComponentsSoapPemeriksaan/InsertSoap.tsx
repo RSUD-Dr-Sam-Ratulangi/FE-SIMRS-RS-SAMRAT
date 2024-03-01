@@ -248,7 +248,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
           `api/v1/RiwayatSoapByNoRawat?noRkmMedis=${id}&noRawat=${nmrRawat}`,
         )
         setDataSoap(response.data)
-        console.log('data soap', response.data)
       } catch (err) {
         console.log(err)
       }
@@ -282,8 +281,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     const fetchExistObat = async () => {
       try {
         const response = await api.get(`/api/v1/getResepDokterDetails?noResep=${nmrResep}`)
-        console.log('Ini obat yang sudah ada', response.data)
-
         setObatExist(response.data)
       } catch (err) {
         console.log('tidak ada obat yang sudah ada', err)

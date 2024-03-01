@@ -171,8 +171,6 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
     console.log('Close')
   }
 
-  console.log('exist?', noRawatExist)
-
   return (
     <div className='h-[2360px] overflow-y-auto mt-4 rounded-xl border border-slate-100'>
       {isLoading ? (

@@ -53,7 +53,6 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
           `/api/v1/searchJnsPerawatanLab?kdJenisPrw=&nmPerawatan=RSUD&page=0&size=${pageSize}`,
         )
         setDataLaborPemeriksaan(response.data.content)
-        console.log('data', response.data.content)
       } catch (err) {
         console.log('labor data err', err)
       }
@@ -68,7 +67,6 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
           `/api/v1/templateLaboratorium?kdJenisPrw=${kodePemeriksaan}`,
         )
         setDataLaborDetailPemeriksaan(response.data)
-        console.log('data detail')
       } catch (err) {
         console.log('labor data err', err)
       }
@@ -212,12 +210,11 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
           for (const item of listSelectedDetailData) {
             const key = Object.keys(item)[0]
             try {
-              const response2 = await apiLabor.post('/api/v1/permintaanPemeriksaanLab', {
+              await apiLabor.post('/api/v1/permintaanPemeriksaanLab', {
                 noOrder: response1.data.noorder,
                 kdJenisPrw: key,
                 sttsBayar: 'Belum',
               })
-              console.log('response2', response2)
             } catch (err) {
               spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, postPemeriksaanLab' })
             }
@@ -247,10 +244,6 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
       }
     }
   }
-
-  console.log(labSelectedDetailData)
-  console.log(dataLaborPemeriksaan)
-  console.log('listlist', listSelectedDetailData)
 
   return (
     <div>

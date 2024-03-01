@@ -40,12 +40,10 @@ const ModalLaborHistory = forwardRef<PopupActions, ModalLaborHistoryProps>((prop
         })
 
         setDataRiwayat(newDataRiwayat)
-        console.log('riwaytlabor', newDataRiwayat)
       } catch (err) {
         console.log(err)
       } finally {
         setLoading(false)
-        console.log('ok')
       }
     }
 
@@ -68,7 +66,8 @@ const ModalLaborHistory = forwardRef<PopupActions, ModalLaborHistoryProps>((prop
         borderRadius: '12px',
         padding: '20px',
         width: '80rem',
-        maxHeight: '80vh',
+        // maxHeight: 'full',
+        height: 'full',
         backgroundColor: 'whitesmoke',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
       }}
@@ -102,7 +101,7 @@ const ModalLaborHistory = forwardRef<PopupActions, ModalLaborHistoryProps>((prop
               {Object.keys(dataRiwayat).length === 0 ? (
                 <p>Null</p>
               ) : (
-                <div className='p-2 bg-white h-80 overflow-auto'>
+                <div className='p-2 bg-white h-[580px] overflow-auto'>
                   {Object.keys(dataRiwayat).map((nm_perawatan, index) => (
                     <div key={index} className='mt-3'>
                       <p className='text text-lg font-bold text-gray-500 underline mb-5'>
@@ -114,8 +113,8 @@ const ModalLaborHistory = forwardRef<PopupActions, ModalLaborHistoryProps>((prop
                             <th className='text-start'>PEMERIKSAAN</th>
                             <th className='text-start'>SATUAN</th>
                             <th className='text-start'>NILAI RUJUKAN</th>
-                            <th className='text-start'>KETERANGAN</th>
                             <th className='text-start'>HASIL</th>
+                            <th className='text-start'>KETERANGAN</th>
                           </tr>
                         </thead>
                         <tbody className='overflow-auto'>
@@ -130,8 +129,8 @@ const ModalLaborHistory = forwardRef<PopupActions, ModalLaborHistoryProps>((prop
                                 LD: {data.nilai_rujukan_ld}, LA: {data.nilai_rujukan_la}, PA:{' '}
                                 {data.nilai_rujukan_pa}
                               </td>
+                              <td className='text-start font-bold text-lg'>{data.nilai}</td>
                               <td className='text-start'>{data.keterangan}</td>
-                              <td className='text-start'>{data.nilai}</td>
                             </tr>
                           ))}
                         </tbody>
