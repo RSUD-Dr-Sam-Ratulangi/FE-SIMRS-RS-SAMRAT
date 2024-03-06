@@ -93,9 +93,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
         // Check each no_rawat
         const checkNoRawat = async (noRawat) => {
           try {
-            const checkResponse = await api.get(
-              `http://rsudsamrat.site:8901/api/v1/checkPermintaanLab?noRawat=${noRawat}`,
-            )
+            const checkResponse = await api.get(`/api/v1/checkPermintaanLab?noRawat=${noRawat}`)
             const checkData = checkResponse.data
             return checkData === 'no_rawat exists in permintaan_lab table'
           } catch (error) {
@@ -133,13 +131,11 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   const testCopyResep = async (noRawat: any) => {
     try {
       const response = await api.get(
-        `http://rsudsamrat.site:8901/api/v1/getPrescriptionNumbers?noRkmMedis=${id}&noRawat=${noRawat}`,
+        `/api/v1/getPrescriptionNumbers?noRkmMedis=${id}&noRawat=${noRawat}`,
       )
       // ambil data obat
       try {
-        const res = await api.get(
-          `http://rsudsamrat.site:8901/api/v1/getResepDokterDetails?noResep=${response.data[0]}`,
-        )
+        const res = await api.get(`/api/v1/getResepDokterDetails?noResep=${response.data[0]}`)
         if (res.data.length === 0) {
           spesificError({ errMessage: 'Data Obat Tidak Ditemukan.' })
         } else {

@@ -41,7 +41,7 @@ const ModalLaborHistory = forwardRef<PopupActions, ModalLaborHistoryProps>((prop
 
         setDataRiwayat(newDataRiwayat)
       } catch (err) {
-        console.log(err)
+        null
       } finally {
         setLoading(false)
       }

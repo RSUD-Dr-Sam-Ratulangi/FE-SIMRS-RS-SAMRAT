@@ -28,6 +28,7 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
   const [kodePemeriksaan, setKodePemeriksaan] = useState('')
   const [labSelectedDetailData, setLabSelectedDetailData] = useState([])
   const [listSelectedDetailData, setListSelectedDetailData] = useState([])
+  const [laborData, setLaborData] = useState('')
   const [sending, setSending] = useState(false)
   const SecondModalInputRef = useRef<PopupActions>(null)
   const nmrRawat = localStorage.getItem('no_rawat')
@@ -245,6 +246,15 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
     }
   }
 
+  const testPostLabor = () => {
+    setLaborData(
+      (prevValue) =>
+        `${prevValue}\nIndikasi: ${indikasi}\nInformasi: ${info}\nTanggal Permintaan: ${tglPermintaan}\n${listSelectedDetailData}`,
+    )
+  }
+
+  console.log('data labor', laborData)
+
   return (
     <div>
       {/* FIRST MODAL */}
@@ -321,7 +331,10 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
                   className='btn bg-[#B6E5F2] text-black hover:bg-slate-50'
                   onClick={() => pilihPemeriksaan(data.kd_jenis_prw)}
                 >
-                  {data.nm_perawatan}
+                  <p className='grid gap-1 text-[13px]'>
+                    <span>{data.nm_perawatan}</span>{' '}
+                    <span className='font-light'>({data.kd_jenis_prw})</span>
+                  </p>
                 </button>
               ))}
             </div>
@@ -398,14 +411,24 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
                 <ArrowPathIcon width={30} height={30} className='mr-3 animate-spin' />
               </div>
             ) : (
-              <button
-                onClick={postLabor}
-                className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'
-              >
-                <p className='flex'>
-                  <ArchiveBoxArrowDownIcon width={20} height={20} className='mr-3' /> Selesai
-                </p>
-              </button>
+              <div>
+                <button
+                  onClick={postLabor}
+                  className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'
+                >
+                  <p className='flex'>
+                    <ArchiveBoxArrowDownIcon width={20} height={20} className='mr-3' /> Selesai
+                  </p>
+                </button>
+                <button
+                  onClick={testPostLabor}
+                  className='hidden items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'
+                >
+                  <p className='flex'>
+                    <ArchiveBoxArrowDownIcon width={20} height={20} className='mr-3' /> TEST
+                  </p>
+                </button>
+              </div>
             )}
           </div>
         </div>
