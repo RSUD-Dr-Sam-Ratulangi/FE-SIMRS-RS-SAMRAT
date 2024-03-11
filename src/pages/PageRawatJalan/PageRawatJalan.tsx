@@ -165,7 +165,7 @@ export default function PageRawatJalan() {
             localStorage.setItem('no_rawat', row.no_rawat)
             localStorage.setItem('no_antrian', row.no_reg)
             localStorage.setItem('status_rawat', row.stts)
-            navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })
+            navigate(`/rawat-jalan/soap-pemeriksaan/${row.no_rkm_medis}`, { state: { data: row } })
           }}
         >
           {row.nm_pasien}

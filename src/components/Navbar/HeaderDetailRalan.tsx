@@ -10,12 +10,12 @@ const HeaderRalan: React.FC = () => {
 
   const links = [
     {
-      name: 'Elektronik Rekam Medis',
-      link: `/rawat-jalan/rme/${id}`,
-    },
-    {
       name: 'SOAP & Pemeriksaan',
       link: `/rawat-jalan/soap-pemeriksaan/${id}`,
+    },
+    {
+      name: 'Elektronik Rekam Medis',
+      link: `/rawat-jalan/rme/${id}`,
     },
   ]
 
