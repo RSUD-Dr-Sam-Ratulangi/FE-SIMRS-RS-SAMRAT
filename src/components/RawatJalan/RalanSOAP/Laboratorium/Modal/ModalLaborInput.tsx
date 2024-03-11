@@ -16,10 +16,11 @@ import { ToastContainer } from 'react-toastify'
 
 interface ModalProps {
   onClose: () => void
+  onLaborData: any
 }
 
 const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
-  const { onClose } = props
+  const { onClose, onLaborData } = props
   const [dataLaborPemeriksaan, setDataLaborPemeriksaan] = useState([])
   const [indikasi, setIndikasi] = useState('')
   const [info, setInfo] = useState('')
@@ -240,20 +241,33 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
           setErrInfo('Terjadi Kesalahan tidak terduga, Mohon Coba Lagi')
         } finally {
           setSending(false)
+          postLaborString()
           handleCloseFirstModal()
         }
       }
     }
   }
 
-  const testPostLabor = () => {
-    setLaborData(
-      (prevValue) =>
-        `${prevValue}\nIndikasi: ${indikasi}\nInformasi: ${info}\nTanggal Permintaan: ${tglPermintaan}\n${listSelectedDetailData}`,
-    )
+  const postLaborString = () => {
+    const pemeriksaanList = listSelectedDetailData.map((index) => index)
+    let laborDataString = ''
+
+    pemeriksaanList.forEach((examinationObject) => {
+      Object.keys(examinationObject).forEach((key) => {
+        const data = examinationObject[key]
+        data.forEach((data) => {
+          laborDataString += `\n${key} - ${data.pemeriksaan}`
+          setLaborData(
+            `Data Permintaan Laboratorium\nIndikasi: ${indikasi}\nInformasi: ${info}\nTanggal Permintaan: ${tglPermintaan}\n${laborDataString}\n`,
+          )
+        })
+      })
+    })
   }
 
-  console.log('data labor', laborData)
+  useEffect(() => {
+    onLaborData(laborData)
+  }, [laborData])
 
   return (
     <div>
@@ -343,7 +357,7 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
             {listSelectedDetailData.map((item, index) => (
               <div
                 key={index}
-                className='h-56 overflow-auto border border-slate-300 rounded-lg mt-4'
+                className='h-80 overflow-auto border border-slate-300 rounded-lg mt-4'
               >
                 <table className='table table-lg w-full'>
                   <thead>
@@ -418,14 +432,6 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
                 >
                   <p className='flex'>
                     <ArchiveBoxArrowDownIcon width={20} height={20} className='mr-3' /> Selesai
-                  </p>
-                </button>
-                <button
-                  onClick={testPostLabor}
-                  className='hidden items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'
-                >
-                  <p className='flex'>
-                    <ArchiveBoxArrowDownIcon width={20} height={20} className='mr-3' /> TEST
                   </p>
                 </button>
               </div>

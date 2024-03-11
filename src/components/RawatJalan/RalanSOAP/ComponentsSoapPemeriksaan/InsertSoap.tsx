@@ -106,6 +106,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   const [dataSoap, setDataSoap] = useState<DataItem[]>([])
   const [selectedMedicines, setSelectedMedicines] = useState<{ [kode: string]: Medicine }>({})
   const [editedRowIndex, setEditedRowIndex] = useState(null)
+  const [laborData, setLaborData] = useState('')
   const modalLaborRef = useRef<PopupActions>(null)
 
   const navigate = useNavigate()
@@ -187,6 +188,11 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   const handleEditObat = (index) => {
     setEditObat(true)
     setEditedRowIndex(index)
+  }
+
+  const handleLaborData = (laborData) => {
+    console.log('Received labor data:', laborData)
+    setLaborData(laborData)
   }
 
   useEffect(() => {
@@ -360,12 +366,20 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   }
 
   const postRencanKontrol = async () => {
-    setDiagnosa(
-      (prevValue) =>
-        `${
-          prevValue ? prevValue + '\n' : ''
-        }${evaluasi}\nAlasan: ${alasan}\nRTL: ${rtl}\nTanggal Datang: ${dateNow}\nTanggal Rujukan: ${selectedDate}`,
-    )
+    if (!selectedDate) {
+      spesificError({ errMessage: 'Mohon Memilih Tanggal Rujukan' })
+    } else if (!alasan) {
+      spesificError({ errMessage: 'Mohon Memasukan Alasan.' })
+    } else if (!rtl) {
+      spesificError({ errMessage: 'Mohon Memasukan RTL.' })
+    } else {
+      setDiagnosa(
+        (prevValue) =>
+          `${
+            prevValue ? prevValue + '\n' : ''
+          }-KONTROL KEMBALI-\nAlasan: ${alasan}\nRTL: ${rtl}\nTanggal Datang: ${dateNow}\nTanggal Rujukan: ${selectedDate}\n`,
+      )
+    }
     // const data = {
     //   noRkmMedis: id,
     //   diagnosa: penilaian,
@@ -797,6 +811,19 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   // }
 
   const handlePostSoap = async () => {
+    // EVALUSI STRING LOGIC
+    const [laborDataValue, diagnosaValue, evaluasiValue, dataSoapValue] = [
+      laborData,
+      diagnosa,
+      evaluasi,
+      dataSoap[0]?.evaluasi,
+    ]
+
+    const evaluasiToSend = [laborDataValue, diagnosaValue, evaluasiValue, dataSoapValue]
+      .filter(Boolean)
+      .map((value) => value || '')
+      .join('\n')
+
     const dataPost = {
       noRawat: nmrRawat,
       suhuTubuh: suhu,
@@ -815,7 +842,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       lingkar_perut: '-',
       penilaian: dataSoap[0]?.penilaian || penilaian,
       rtl: plan || rtl,
-      evaluasi: evaluasi || diagnosa,
+      evaluasi: evaluasiToSend || dataSoap[0]?.evaluasi,
       instruksi: instruksi,
       nip: nipCredentials,
     }
@@ -839,7 +866,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       pemeriksaan: objectPemeriksaan || dataSoap[0]?.pemeriksaan,
       nip: nipCredentials,
       rtl: plan || rtl || dataSoap[0]?.rtl,
-      evaluasi: evaluasi || diagnosa || dataSoap[0]?.evaluasi,
+      evaluasi: evaluasiToSend || dataSoap[0]?.evaluasi,
     }
     try {
       const response = await api.get(`/api/v1/checkPemeriksaanRalan?noRawat=${nmrRawat}`)
@@ -1477,6 +1504,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               <input
                 type='text'
                 value={searchTerm}
+                disabled={role.includes('petugas')}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className='w-full px-3 py-2 border rounded-2xl focus:outline-none focus:border-blue-500'
                 placeholder='Kanker'
@@ -1552,6 +1580,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             <div className='flex relative mt-1'>
               <input
                 type='text'
+                disabled={role.includes('petugas')}
                 onChange={(e) => setSearchTermObat(e.target.value)}
                 className='w-full px-3 py-2 border rounded-2xl focus:outline-none focus:border-blue-500'
                 placeholder='Paracetamol'
@@ -1829,7 +1858,10 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             <textarea
               placeholder='-'
               disabled={role.includes('petugas')}
-              value={diagnosa || evaluasi || dataSoap[0]?.evaluasi}
+              value={[laborData, diagnosa, evaluasi, dataSoap[0]?.evaluasi]
+                .filter(Boolean)
+                .map((value) => value || '')
+                .join('\n')}
               className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
               onChange={(e) => setEvaluasi(e.target.value)}
             />
@@ -1838,6 +1870,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             <div>
               <label className='label'>Tanggal Balik</label>
               <input
+                disabled={role.includes('petugas')}
                 type='date'
                 className='input border border-slate-400'
                 onChange={handleDateChange}
@@ -1847,6 +1880,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               <label className='label'>Alasan</label>
               <input
                 type='text'
+                disabled={role.includes('petugas')}
                 className='input border border-slate-400'
                 onChange={(e) => setAlasan(e.target.value)}
               />
@@ -1855,14 +1889,19 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               <label className='label'>RTL</label>
               <input
                 type='text'
+                disabled={role.includes('petugas')}
                 className='input border border-slate-400'
                 onChange={(e) => setRtl(e.target.value)}
               />
             </div>
           </div>
           <div className='flex justify-end'>
-            <button className='btn btn-md bg-primary text-white' onClick={postRencanKontrol}>
-              Kirim
+            <button
+              disabled={role.includes('petugas')}
+              className='btn btn-md bg-primary text-white'
+              onClick={postRencanKontrol}
+            >
+              Simpan
             </button>
           </div>
         </div>
@@ -1904,7 +1943,11 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
         </div>
       </div>
       <ToastContainer />
-      <ModalLaborInput ref={modalLaborRef} onClose={modalLaborInputClose} />
+      <ModalLaborInput
+        ref={modalLaborRef}
+        onClose={modalLaborInputClose}
+        onLaborData={handleLaborData}
+      />
     </div>
   )
 }
