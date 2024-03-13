@@ -866,7 +866,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       pemeriksaan: objectPemeriksaan || dataSoap[0]?.pemeriksaan,
       nip: nipCredentials,
       rtl: plan || rtl || dataSoap[0]?.rtl,
-      evaluasi: dataSoap[0]?.evaluasi,
+      evaluasi: evaluasiToSend || dataSoap[0]?.evaluasi,
     }
     try {
       const response = await api.get(`/api/v1/checkPemeriksaanRalan?noRawat=${nmrRawat}`)
@@ -909,7 +909,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                     },
                   },
                 )
-
                 console.log('BERHASIL MENGIRIM ,POST response:', response.data)
                 await handleChangeStatusFirstSend()
               } catch (error) {
