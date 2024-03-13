@@ -916,8 +916,8 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 console.log('error petugas post', error)
                 spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
               } finally {
-                // navigate('/rawat-jalan/')
-                // window.location.reload()
+                navigate('/rawat-jalan/')
+                window.location.reload()
               }
             } else {
               spesificError({ errMessage: 'Batal Mengirim.' })
