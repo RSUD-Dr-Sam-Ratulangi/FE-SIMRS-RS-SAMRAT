@@ -811,7 +811,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   // }
 
   const handlePostSoap = async () => {
-    // EVALUSI STRING LOGIC
+    // // EVALUSI STRING LOGIC
     const [laborDataValue, diagnosaValue, evaluasiValue, dataSoapValue] = [
       laborData,
       diagnosa,
@@ -842,7 +842,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       lingkar_perut: '-',
       penilaian: dataSoap[0]?.penilaian || penilaian,
       rtl: plan || rtl,
-      evaluasi: evaluasiToSend || dataSoap[0]?.evaluasi,
+      evaluasi: evaluasi || diagnosa || evaluasiToSend,
       instruksi: instruksi,
       nip: nipCredentials,
     }
@@ -866,7 +866,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       pemeriksaan: objectPemeriksaan || dataSoap[0]?.pemeriksaan,
       nip: nipCredentials,
       rtl: plan || rtl || dataSoap[0]?.rtl,
-      evaluasi: evaluasiToSend || dataSoap[0]?.evaluasi,
+      evaluasi: dataSoap[0]?.evaluasi,
     }
     try {
       const response = await api.get(`/api/v1/checkPemeriksaanRalan?noRawat=${nmrRawat}`)
@@ -916,8 +916,8 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 console.log('error petugas post', error)
                 spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
               } finally {
-                navigate('/rawat-jalan/')
-                window.location.reload()
+                // navigate('/rawat-jalan/')
+                // window.location.reload()
               }
             } else {
               spesificError({ errMessage: 'Batal Mengirim.' })
