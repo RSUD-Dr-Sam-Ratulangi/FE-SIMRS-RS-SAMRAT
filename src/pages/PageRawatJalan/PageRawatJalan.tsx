@@ -3,7 +3,6 @@ import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
 import { useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
-import { dateNow } from '../../utils/DateNow'
 import { ArrowPathIcon } from '@heroicons/react/24/solid'
 // import CustomTTSComponent from '../../utils/TtsSound'
 
@@ -78,7 +77,7 @@ type DataItem = {
 }
 
 export default function PageRawatJalan() {
-  const tglSkrng = dateNow()
+  const tglSkrng = localStorage.getItem('tglSkrng')
   const [data, setData] = useState()
   const [isLoading, setIsLoading] = useState(false)
   const [changeDate, setChangeDate] = useState(tglSkrng)
@@ -136,7 +135,10 @@ export default function PageRawatJalan() {
 
   const handleDateChange = (event: any) => {
     const dateValue = event.target.value
-    setChangeDate(dateValue)
+    localStorage.setItem('tglSkrng', dateValue)
+    const getDate = localStorage.getItem('tglSkrng')
+
+    setChangeDate(getDate)
   }
 
   // const handleNameClick = (patientName: string, doctorName: string, poliName: string) => {
@@ -153,6 +155,40 @@ export default function PageRawatJalan() {
   //   localStorage.setItem('poliName', poliName)
   // }
 
+  const createContextMenu = (e, url) => {
+    e.preventDefault() // Prevent default context menu
+
+    const existingContextMenu = document.querySelector('.custom-context-menu')
+    if (existingContextMenu) {
+      console.log('Context menu exists. Removing...')
+      existingContextMenu.remove() // Use remove() method to remove the element from the DOM
+    } else {
+      console.log('Context menu does not exist.')
+    }
+
+    const contextMenu = document.createElement('div')
+    contextMenu.className =
+      'custom-context-menu absolute z-10 bg-white border border-gray-200 rounded shadow'
+    contextMenu.innerHTML = `
+    <button class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left" onclick="window.open('${url}', '_blank')">BUKA DI TAB BARU</button>
+  `
+    document.body.appendChild(contextMenu)
+    contextMenu.style.cssText = `
+    top: ${e.clientY}px;
+    left: ${e.clientX}px;
+  `
+
+    const closeContextMenu = (event) => {
+      const isClickInsideContextMenu = contextMenu.contains(event.target)
+      if (!isClickInsideContextMenu) {
+        console.log('Closing context menu...')
+        contextMenu.remove() // Remove the context menu
+        document.removeEventListener('click', closeContextMenu) // Remove the event listener
+      }
+    }
+    document.addEventListener('click', closeContextMenu)
+  }
+
   const columns = [
     { name: 'NO.REG', selector: (row: DataItem) => row.no_reg, sortable: true },
     { name: 'NO.RM', selector: (row: DataItem) => row.no_rkm_medis, sortable: true },
@@ -167,6 +203,12 @@ export default function PageRawatJalan() {
             localStorage.setItem('status_rawat', row.stts)
             navigate(`/rawat-jalan/soap-pemeriksaan/${row.no_rkm_medis}`, { state: { data: row } })
           }}
+          onContextMenu={(e) =>
+            createContextMenu(
+              e,
+              `${window.location.origin}/rawat-jalan/soap-pemeriksaan/${row.no_rkm_medis}`,
+            )
+          }
         >
           {row.nm_pasien}
         </a>

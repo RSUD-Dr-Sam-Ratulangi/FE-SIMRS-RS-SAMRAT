@@ -4,9 +4,11 @@ import { spesificError } from '../../utils/ToastInfo'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../services/api/config.api'
 import { ToastContainer } from 'react-toastify'
+import { dateNow } from '../../utils/DateNow'
 
 export default function PageLogin() {
   // const [isChecked, setIsChecked] = useState(false)
+  const tglSkrng = dateNow()
   const [isPasswordVisible, setIstPasswordVisible] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -34,6 +36,7 @@ export default function PageLogin() {
             const tokenString = localStorage.getItem('token')
             const token = JSON.parse(tokenString)
             const kdDokter = token?.dokter?.kd_dokter
+            localStorage.setItem('tglSkrng', tglSkrng)
             try {
               const response = await api.get(
                 `http://rsudsamrat.site:8901/api/v1/getJadwalDokter?kdDokter=${kdDokter}`,

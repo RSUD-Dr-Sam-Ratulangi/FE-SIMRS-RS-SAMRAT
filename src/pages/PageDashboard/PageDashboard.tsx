@@ -96,7 +96,7 @@ export default function PageDashboard() {
       </div>
       <div className='flex items-center justify-between bg-white/60 filter backdrop-blur-xl border border-white -mt-[60px] rounded-xl m-4 p-4 shadow-soft'>
         <div className='flex items-center'>
-          <img src='/assets/images/profile.png' alt='' className='w-20 h-20 rounded-xl' />
+          <img src='/assets/images/rsud_img.svg' alt='' className='w-24 h-24 rounded-xl' />
           <div className='flex flex-col ml-4'>
             <span className='font-bold text-lg'>{name}</span>
             <span className='text-sm'>{keys}</span>
