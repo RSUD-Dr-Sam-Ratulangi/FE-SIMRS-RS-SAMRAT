@@ -24,6 +24,7 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
   const [dataLaborPemeriksaan, setDataLaborPemeriksaan] = useState([])
   const [indikasi, setIndikasi] = useState('')
   const [info, setInfo] = useState('')
+  const [errCheck, setErrCheck] = useState(false)
   const [errInfo, setErrInfo] = useState('')
   const [dataLaborDetailPemeriksaan, setDataLaborDetailPemeriksaan] = useState([])
   const [kodePemeriksaan, setKodePemeriksaan] = useState('')
@@ -84,12 +85,25 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
   }
 
   const handleCloseFirstModal = () => {
-    onClose()
-    setLabSelectedDetailData([])
-    setListSelectedDetailData([])
-    setErrInfo('')
-    setInfo('')
-    setIndikasi('')
+    if (errCheck) {
+      const isDataCorrect = window.confirm('DATA LABORATORIUM BELUM TERKIRIM, LANJUTKAN ?')
+      if (isDataCorrect) {
+        onClose()
+        setLabSelectedDetailData([])
+        setListSelectedDetailData([])
+        setErrInfo('')
+        setInfo('')
+        setIndikasi('')
+        setErrCheck(false)
+      }
+    } else {
+      onClose()
+      setLabSelectedDetailData([])
+      setListSelectedDetailData([])
+      setErrInfo('')
+      setInfo('')
+      setIndikasi('')
+    }
   }
 
   const handleCloseSecondModal = () => {
@@ -205,6 +219,8 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
       )
       if (isDataCorrect) {
         try {
+          let isError = false
+
           const response1 = await apiLabor.post('/api/v1/permintaanLab', dataPermintaanLab)
           setSending(true)
           setErrInfo('')
@@ -218,7 +234,10 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
                 sttsBayar: 'Belum',
               })
             } catch (err) {
+              isError = true
+              setErrCheck(true)
               spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, postPemeriksaanLab' })
+              setErrInfo('Terjadi Kesalahan tidak terduga, Mohon Coba Lagi')
             }
 
             for (const innerItem of item[key]) {
@@ -231,18 +250,27 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
                 })
                 console.log('response3', response3)
               } catch (err) {
-                spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga. postPermintaanLab' })
+                setErrCheck(true)
+                isError = true
+                spesificError({
+                  errMessage: 'Terjadi Kesalahan tidak terduga. EACH ITEM LABOR DATA',
+                })
+                setErrInfo('Terjadi Kesalahan tidak terduga, Mohon Coba Lagi')
               }
             }
+          }
+
+          if (!isError) {
+            postLaborString()
+            handleCloseFirstModal()
           }
         } catch (err) {
           spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, Mohon Coba Lagi' })
           setSending(false)
+          setErrCheck(true)
           setErrInfo('Terjadi Kesalahan tidak terduga, Mohon Coba Lagi')
         } finally {
           setSending(false)
-          postLaborString()
-          handleCloseFirstModal()
         }
       }
     }

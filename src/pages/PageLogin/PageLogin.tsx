@@ -37,6 +37,7 @@ export default function PageLogin() {
             const token = JSON.parse(tokenString)
             const kdDokter = token?.dokter?.kd_dokter
             localStorage.setItem('tglSkrng', tglSkrng)
+            localStorage.setItem('PoliString', '')
             try {
               const response = await api.get(
                 `http://rsudsamrat.site:8901/api/v1/getJadwalDokter?kdDokter=${kdDokter}`,

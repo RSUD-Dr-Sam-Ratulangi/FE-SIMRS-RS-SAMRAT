@@ -5,6 +5,7 @@ import {
   ChevronDownIcon,
   FunnelIcon,
   ArrowPathIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/solid'
 
 type templateObject = {
@@ -19,7 +20,8 @@ type Props = {
 const TableData = ({ data, columns }: Props) => {
   // const [currentPage, setCurrentPage] = useState(1)
   // const [rowsPerPage, setRowsPerPage] = useState(15)
-  const [searchQuery, setSearchQuery] = useState('')
+  const PoliString = localStorage.getItem('PoliString')
+  const [searchQuery, setSearchQuery] = useState(PoliString)
   const [filteredData, setFilteredData] = useState(data)
   const [isOpen, setIsOpen] = useState(false)
   const [filterJumlahPasien, setFilterJumlahPasien] = useState(0)
@@ -27,11 +29,6 @@ const TableData = ({ data, columns }: Props) => {
   // const navigate = useNavigate()
 
   useEffect(() => {
-    const storedFilter = localStorage.getItem('PoliFilter')
-    if (storedFilter) {
-      setSearchQuery(storedFilter)
-    }
-
     const newFilteredData = data
       ? data.filter((item) => {
           if (searchQuery === '') {
@@ -50,7 +47,6 @@ const TableData = ({ data, columns }: Props) => {
 
     setFilteredData(newFilteredData)
 
-    // Show the length of the filtered data
     if (newFilteredData) {
       console.log('Filtered Data Length:', newFilteredData.length)
       setFilterJumlahPasien(newFilteredData.length)
@@ -88,7 +84,16 @@ const TableData = ({ data, columns }: Props) => {
           </span>
           <div className='flex gap-2 '>
             <div className='relative w-full'>
-              <MagnifyingGlassIcon className='absolute right-4 bottom-4 h-[16.02px] w-[16.02px] bg-none text-[#55A46B]' />
+              {searchQuery ? (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]'
+                >
+                  <XMarkIcon />
+                </button>
+              ) : (
+                <MagnifyingGlassIcon className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]' />
+              )}
               <input
                 type='text'
                 placeholder='Cari...'
@@ -124,7 +129,7 @@ const TableData = ({ data, columns }: Props) => {
                         <button
                           onClick={() => {
                             setSearchQuery('')
-
+                            localStorage.setItem('PoliString', '')
                             setIsOpen(false)
                           }}
                         >
@@ -136,7 +141,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK GERIATRI')
-
+                              localStorage.setItem('PoliString', 'KLINIK GERIATRI')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -146,6 +151,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK SYARAF')
+                              localStorage.setItem('PoliString', 'KLINIK SYARAF')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -155,7 +161,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK PENYAKIT DALAM')
-
+                              localStorage.setItem('PoliString', 'KLINIK PENYAKIT DALAM')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -165,7 +171,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK JANTUNG')
-
+                              localStorage.setItem('PoliString', 'KLINIK JANTUNG')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -175,7 +181,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK GIGI')
-
+                              localStorage.setItem('PoliString', 'KLINIK GIGI')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -185,6 +191,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK KANDUNGAN')
+                              localStorage.setItem('PoliString', 'KLINIK KANDUNGAN')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -194,6 +201,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK ANAK')
+                              localStorage.setItem('PoliString', 'KLINIK ANAK')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -203,6 +211,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK MATA')
+                              localStorage.setItem('PoliString', 'KLINIK MATA')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -212,6 +221,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK JIWA')
+                              localStorage.setItem('PoliString', 'KLINIK JIWA')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -221,6 +231,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK KULIT & KELAMIN')
+                              localStorage.setItem('PoliString', 'KLINIK KULIT & KELAMIN')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -230,6 +241,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK FISIOTERAPI')
+                              localStorage.setItem('PoliString', 'KLINIK FISIOTERAPI')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
@@ -239,6 +251,7 @@ const TableData = ({ data, columns }: Props) => {
                           <button
                             onClick={() => {
                               setSearchQuery('KLINIK BEDAH')
+                              localStorage.setItem('PoliString', 'KLINIK BEDAH')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
