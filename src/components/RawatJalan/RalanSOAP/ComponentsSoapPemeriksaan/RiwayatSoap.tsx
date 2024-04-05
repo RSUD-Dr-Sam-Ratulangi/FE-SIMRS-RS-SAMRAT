@@ -139,8 +139,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
             `api/v1/getDataPasienRalanByNoRawat?noRawat=${riwayat.no_rawat}`,
           )
           const data = response.data
-          updatedDokterNames[riwayat.no_rawat] = data.nm_dokter
-          console.log('Nama Dokter', updatedDokterNames)
+          updatedDokterNames[riwayat.no_rawat] = data.nm_dokter.toUpperCase()
         }
         setDokterNames(updatedDokterNames)
       } catch (error) {
