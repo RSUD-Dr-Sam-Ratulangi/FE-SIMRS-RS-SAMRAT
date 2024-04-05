@@ -74,6 +74,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const [riwayatSoap, setRiwayatSoap] = useState<ApiData>([])
   const [laborNmrRawat, setLaborNmrRawat] = useState('')
+  const [dokterNames, setDokterNames] = useState({})
   const [noRawatExist, setNoRawatExist] = useState(null)
   const { id } = useParams()
   const tokenValue = localStorage.getItem('token')
@@ -127,6 +128,28 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
 
     fetchRiwayatSoap()
   }, [])
+
+  // Get Nama Dokter ?
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const updatedDokterNames = {}
+        for (const riwayat of riwayatSoap) {
+          const response = await api.get(
+            `api/v1/getDataPasienRalanByNoRawat?noRawat=${riwayat.no_rawat}`,
+          )
+          const data = response.data
+          updatedDokterNames[riwayat.no_rawat] = data.nm_dokter
+          console.log('Nama Dokter', updatedDokterNames)
+        }
+        setDokterNames(updatedDokterNames)
+      } catch (error) {
+        console.error('Error Mengambil data berdasarkan nomor Rawat, riwayat Soap:', error)
+      }
+    }
+
+    fetchData()
+  }, [riwayatSoap])
 
   const testCopyResep = async (noRawat: any) => {
     try {
@@ -205,8 +228,9 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                   {riwayat.nm_poli} - {riwayat.kd_poli}
                 </p>
                 <p className=' font-bold text-sm text-[#121713] mt-2 '>
-                  PEMERIKSA : {riwayat.nama}
+                  DOKTER : {dokterNames[riwayat.no_rawat]}
                 </p>
+                {/* <p className=' font-bold text-sm text-[#121713] mt-2 '>PERAWAT : {riwayat.nama}</p> */}
               </div>
               <div className='mt-5'>
                 <div className='mt-5 mb-3 p-2'>

@@ -1246,7 +1246,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.suhu_tubuh : 'Loading'}
                     defaultValue={dataSoap[0]?.suhu_tubuh || suhu}
                     onChange={(e) => setSuhu(e.target.value)}
@@ -1260,7 +1260,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.tensi : 'Loading'}
                     defaultValue={dataSoap[0]?.tensi || tensi}
                     onChange={(e) => setTensi(e.target.value)}
@@ -1274,7 +1274,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.nadi : 'Loading'}
                     defaultValue={dataSoap[0]?.nadi || nadi}
                     onChange={(e) => setNadi(e.target.value)}
@@ -1288,7 +1288,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.respirasi : 'Loading'}
                     defaultValue={dataSoap[0]?.respirasi || rr}
                     onChange={(e) => setRr(e.target.value)}
@@ -1302,7 +1302,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.tinggi : 'Loading'}
                     defaultValue={dataSoap[0]?.tinggi || tinggi}
                     onChange={(e) => setTinggi(e.target.value)}
@@ -1316,7 +1316,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.berat : 'Loading'}
                     defaultValue={dataSoap[0]?.berat || berat}
                     onChange={(e) => setBerat(e.target.value)}
@@ -1330,7 +1330,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     defaultValue={dataSoap[0]?.spo2 || spo2}
                     onChange={(e) => setSpo2(e.target.value)}
                     disabled={role.includes('dokter')}
@@ -1343,7 +1343,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     defaultValue={dataSoap[0]?.gcs || gcs}
                     onChange={(e) => setGcs(e.target.value)}
                     disabled={role.includes('dokter')}
@@ -1356,7 +1356,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     defaultValue={dataSoap[0]?.alergi || alergi}
                     onChange={(e) => setAlergi(e.target.value)}
                     disabled={role.includes('dokter')}
@@ -1367,7 +1367,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                     <span>Kesadaran</span>
                   </label>
                   <select
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     defaultValue={dataSoap[0]?.kesadaran || kesadaran}
                     onChange={(e) => setSelectedKesadaran(e.target.value)}
                     disabled={role.includes('dokter')}
@@ -1492,7 +1492,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             <textarea
               placeholder='-'
               defaultValue={penilaian || dataSoap[0]?.penilaian}
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
               onChange={(e) => setPenilaian(e.target.value)}
               disabled={role.includes('petugas')}
             />
@@ -1505,7 +1505,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 value={searchTerm}
                 disabled={role.includes('petugas')}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className='w-full px-3 py-2 border rounded-2xl focus:outline-none focus:border-blue-500'
+                className='w-full px-3 py-2 border rounded-2xl  disabled:bg-slate-200 disabled:text-black'
                 placeholder='Kanker'
               />
             </div>
@@ -1567,7 +1567,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             </label>
             <textarea
               placeholder='-'
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
               // value={plan}
               value={plan || dataSoap[0]?.rtl}
               disabled={role.includes('petugas')}
@@ -1581,7 +1581,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 type='text'
                 disabled={role.includes('petugas')}
                 onChange={(e) => setSearchTermObat(e.target.value)}
-                className='w-full px-3 py-2 border rounded-2xl focus:outline-none focus:border-blue-500'
+                className='w-full px-3 py-2 border rounded-2xl disabled:bg-slate-200 disabled:text-black'
                 placeholder='Paracetamol'
               />
               {listObat.length > 0 ? (
@@ -1841,7 +1841,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             </label>
             <textarea
               placeholder='-'
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
               // value={dataSoap ? dataSoap[0]?.instruksi : instruksi}
               defaultValue={dataSoap[0]?.instruksi || instruksi}
               onChange={(e) => setInstruksi(e.target.value)}
@@ -1861,7 +1861,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 .filter(Boolean)
                 .map((value) => value || '')
                 .join('\n')}
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
               onChange={(e) => setEvaluasi(e.target.value)}
             />
           </div>
@@ -1871,7 +1871,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               <input
                 disabled={role.includes('petugas')}
                 type='date'
-                className='input border border-slate-400'
+                className='input border border-disabled disabled:bg-slate-200 disabled:text-black'
                 onChange={handleDateChange}
               />
             </div>
@@ -1880,7 +1880,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               <input
                 type='text'
                 disabled={role.includes('petugas')}
-                className='input border border-slate-400'
+                className='input border  border-disabled disabled:bg-slate-200 disabled:text-black'
                 onChange={(e) => setAlasan(e.target.value)}
               />
             </div>
@@ -1889,7 +1889,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               <input
                 type='text'
                 disabled={role.includes('petugas')}
-                className='input border border-slate-400'
+                className='input border  border-disabled disabled:bg-slate-200 disabled:text-black'
                 onChange={(e) => setRtl(e.target.value)}
               />
             </div>
