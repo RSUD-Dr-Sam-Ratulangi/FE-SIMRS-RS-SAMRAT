@@ -5,7 +5,7 @@ import React, { forwardRef, useState, useEffect } from 'react'
 import Popup from 'reactjs-popup'
 import { PopupActions } from 'reactjs-popup/dist/types'
 import { api } from '../../../../../services/api/config.api'
-import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import { ArrowPathIcon } from '@heroicons/react/24/solid'
 import Zoom from 'react-medium-image-zoom'
 import 'react-medium-image-zoom/dist/styles.css'
 
@@ -16,7 +16,6 @@ interface ModalRadiologiHistoryProps {
 
 const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProps>((props, ref) => {
   const nmrRawat = props.noRawat
-  const onClose = props.onClose
   // const SecondModalInputRef = useRef<PopupActions>(null)
   const [tglPeriksa, setTglPeriksa] = useState('')
   const [jam, setJam] = useState('')
@@ -59,10 +58,6 @@ const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProp
     seeImages()
   }, [nmrRawat])
 
-  const handleCloseModal = () => {
-    onClose()
-  }
-
   // const openSecondModal = () => {
   //   if (SecondModalInputRef.current) {
   //     SecondModalInputRef.current.open()
@@ -74,7 +69,7 @@ const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProp
       <Popup
         ref={ref}
         modal
-        closeOnDocumentClick={false}
+        closeOnDocumentClick={true}
         overlayStyle={{
           background: 'rgba(0, 0, 0, 0.5)',
           display: 'flex',
@@ -111,10 +106,6 @@ const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProp
                   <p className=' font-bold text-2xl text-[#121713] mb-5 underline'>
                     RIWAYAT PEMERIKSAAN RADIOLOGI
                   </p>
-                  <button className='btn flex justify-end btn-ghost' onClick={handleCloseModal}>
-                    <XMarkIcon width={25} height={25} />
-                    Close
-                  </button>
                 </div>
               </div>
               <div className='mt-5 overflow-auto '>
