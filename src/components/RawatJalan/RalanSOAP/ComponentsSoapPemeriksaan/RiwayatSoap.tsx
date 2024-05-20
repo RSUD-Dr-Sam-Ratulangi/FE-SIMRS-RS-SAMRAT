@@ -6,6 +6,7 @@ import { ClockIcon, CalendarDaysIcon, ArrowPathIcon } from '@heroicons/react/24/
 import { ToastContainer } from 'react-toastify'
 import ModalLaborHistory from '../Laboratorium/Modal/ModalLaborHistory'
 import { PopupActions } from 'reactjs-popup/dist/types'
+import ModalRadiologiHistory from '../Radiologi/Modal/ModalRadiologiHistory'
 
 type userData = {
   existsInLabTable: any
@@ -71,11 +72,14 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
 }) => {
   const dataPersonal = personalData || {} // Hampir sama seperti null
   const modalLaborRef = useRef<PopupActions>(null)
+  const ModalRadiologiRef = useRef<PopupActions>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [riwayatSoap, setRiwayatSoap] = useState<ApiData>([])
   const [laborNmrRawat, setLaborNmrRawat] = useState('')
+  const [radiologiNmrRawat, setRadiologiNmrRawat] = useState('')
   const [dokterNames, setDokterNames] = useState({})
-  const [noRawatExist, setNoRawatExist] = useState(null)
+  const [noRawatExistLab, setNoRawatExistLab] = useState(null)
+  const [noRawatExistRadiologi, setNoRawatExistRadiologi] = useState(null)
   const { id } = useParams()
   const tokenValue = localStorage.getItem('token')
   const Kd = JSON.parse(tokenValue)
@@ -91,8 +95,8 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
         // Extracting all no_rawat values
         const noRawatList = data.map((item) => item.no_rawat)
 
-        // Check each no_rawat
-        const checkNoRawat = async (noRawat) => {
+        // Labor Check No Rawat
+        const checkNoRawatLab = async (noRawat) => {
           try {
             const checkResponse = await api.get(`/api/v1/checkPermintaanLab?noRawat=${noRawat}`)
             const checkData = checkResponse.data
@@ -104,10 +108,26 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
         }
 
         // Check all no_rawat concurrently
-        const results = await Promise.all(noRawatList.map(checkNoRawat))
+        const results = await Promise.all(noRawatList.map(checkNoRawatLab))
 
         // Set the state based on the results
-        setNoRawatExist(results)
+        setNoRawatExistLab(results)
+
+        // Radiologi Check no Rawat
+        const checkNoRawatRadiologi = async (noRawat) => {
+          try {
+            const checkResponse = await api.get(`/api/v1/check-no-rawat?noRawat=${noRawat}`)
+            const checkData = checkResponse.data
+            return checkData.exists
+          } catch (error) {
+            console.error('Error checking no_rawat:', error)
+            return false
+          }
+        }
+
+        const resultRadiologi = await Promise.all(noRawatList.map(checkNoRawatRadiologi))
+
+        setNoRawatExistRadiologi(resultRadiologi)
 
         const newData = await Promise.all(
           data.map(async (riwayat) => {
@@ -185,6 +205,21 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   const modalLaborClose = () => {
     if (modalLaborRef.current) {
       modalLaborRef.current.close()
+    }
+    console.log('Close')
+  }
+
+  const modalRadiologiOpen = (noRawat: any) => {
+    if (ModalRadiologiRef.current) {
+      ModalRadiologiRef.current.open()
+      setRadiologiNmrRawat(noRawat)
+    }
+    console.log('Open')
+  }
+
+  const modalRadiologiClose = () => {
+    if (ModalRadiologiRef.current) {
+      ModalRadiologiRef.current.close()
     }
     console.log('Close')
   }
@@ -324,14 +359,26 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                   <p className='whitespace-pre'>{riwayat.evaluasi || '-'}</p>
                 </div>
               </div>
-              <div key={index}>
-                {noRawatExist[index] ? (
-                  <button
-                    className='text text-gray-100 btn bg-primary btn-md'
-                    onClick={() => modalLaborOpen(riwayat.no_rawat)}
-                  >
-                    Riwayat Laboratorium
-                  </button>
+              <div key={index} className='flex justify-start'>
+                {noRawatExistLab[index] ? (
+                  <div className='flex justify-start gap-2'>
+                    <button
+                      className='text text-gray-100 btn bg-primary btn-md'
+                      onClick={() => modalLaborOpen(riwayat.no_rawat)}
+                    >
+                      Riwayat Laboratorium
+                    </button>
+                  </div>
+                ) : null}
+                {noRawatExistRadiologi[index] ? (
+                  <div>
+                    <button
+                      className='text text-gray-100 btn bg-primary btn-md'
+                      onClick={() => modalRadiologiOpen(riwayat.no_rawat)}
+                    >
+                      Riwayat Radiologi
+                    </button>
+                  </div>
                 ) : null}
               </div>
               <ModalLaborHistory
@@ -339,6 +386,11 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                 onClose={modalLaborClose}
                 noRawat={laborNmrRawat}
                 dataPersonal={dataPersonal}
+              />
+              <ModalRadiologiHistory
+                ref={ModalRadiologiRef}
+                noRawat={radiologiNmrRawat}
+                onClose={modalRadiologiClose}
               />
             </div>
           ))}

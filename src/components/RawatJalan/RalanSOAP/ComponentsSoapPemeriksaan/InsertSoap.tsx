@@ -13,6 +13,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { formatSelectedDate, formatSelectedDateNow } from '../../../../utils/DateNow'
 import ModalLaborInput from '../Laboratorium/Modal/ModalLaborInput'
 import { PopupActions } from 'reactjs-popup/dist/types'
+import ModalRadiologiInput from '../Radiologi/Modal/ModalRadiologiInput'
 // import ToastInfo from '../../utils/ToastInfo'
 
 enum KesadaranOptions {
@@ -107,7 +108,9 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   const [selectedMedicines, setSelectedMedicines] = useState<{ [kode: string]: Medicine }>({})
   const [editedRowIndex, setEditedRowIndex] = useState(null)
   const [laborData, setLaborData] = useState('')
+  const [radiologiData, setRadiologiData] = useState('')
   const modalLaborRef = useRef<PopupActions>(null)
+  const modalRadiologiRef = useRef<PopupActions>(null)
 
   const navigate = useNavigate()
   const nmrRawat = localStorage.getItem('no_rawat')
@@ -193,6 +196,10 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   const handleLaborData = (laborData) => {
     console.log('Received labor data:', laborData)
     setLaborData(laborData)
+  }
+
+  const handleRadiologiData = (radiologiData) => {
+    setRadiologiData(radiologiData)
   }
 
   useEffect(() => {
@@ -380,35 +387,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
           }-KONTROL KEMBALI-\nAlasan: ${alasan}\nRTL: ${rtl}\nTanggal Datang: ${dateNow}\nTanggal Rujukan: ${selectedDate}\n`,
       )
     }
-    // const data = {
-    //   noRkmMedis: id,
-    //   diagnosa: penilaian,
-    //   terapi: 'Some Therapy',
-    //   alasan1: alasan,
-    //   alasan2: alasan,
-    //   rtl1: rtl,
-    //   rtl2: rtl,
-    //   tanggalDatang: dateNow,
-    //   tanggalRujukan: selectedDate,
-    //   noAntrian: noAntrian,
-    //   kdDokter: nipCredentials,
-    //   status: 'Menunggu',
-    // }
-    // let response: AxiosResponse<any> | undefined
-    // try {
-    //   response = await api.post('/api/v1/insertSkdpBpjs', data, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //   })
-    //   console.log('diagnosa', response.data)
-    //   spesificSuccess({ doneMessage: 'Rencana Kontrol Berhasil Dikirim' })
-    // } catch (err) {
-    //   errorPostSoap()
-    // } finally {
-    //   if (response) {
-    //   }
-    // }
   }
 
   const postDiagnosa = async () => {
@@ -503,323 +481,23 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     console.log('no rawat sudah ada, skip')
   }
 
-  // NEED FIX BEFORE ACTIVE AGAIN
-  // const handlePostSoap = async () => {
-  //   const dataPetugas = {
-  //     noRawat: nmrRawat,
-  //     suhuTubuh: suhu,
-  //     tensi: tensi,
-  //     nadi: nadi,
-  //     respirasi: rr,
-  //     tinggi: tinggi,
-  //     berat: berat,
-  //     spo2: spo2,
-  //     gcs: gcs,
-  //     kesadaran: kesadaran,
-  //     keluhan: subjektif,
-  //     pemeriksaan: '',
-  //     alergi: alergi,
-  //     lingkarPerut: '',
-  //     rtl: '',
-  //     penilaian: penilaian,
-  //     instruksi: instruksi,
-  //     evaluasi: evaluasi,
-  //     nip: nipCredentials,
-  //   }
-  //   const dataDokter = {
-  //     keluhan: subjektif || tindakan,
-  //     noRawat: nmrRawat,
-  //     pemeriksaan: objectPemeriksaan,
-  //     nip: nipCredentials,
-  //     penilaian: penilaian,
-  //     rtl: plan || rtl,
-  //     evaluasi: evaluasi || diagnosa,
-  //     instruksi: instruksi,
-  //   }
-
-  //   if (role.includes('petugas')) {
-  //     if (!suhu) {
-  //       spesificError({ errMessage: 'Masukan Data Suhu Tubuh.' })
-  //     } else if (!tensi) {
-  //       spesificError({ errMessage: 'Masukan Data Tensi.' })
-  //     } else if (!nadi) {
-  //       spesificError({ errMessage: 'Masukan Data nadi' })
-  //     } else if (!rr) {
-  //       spesificError({ errMessage: 'Masukan Data RR.' })
-  //     } else if (!tinggi) {
-  //       spesificError({ errMessage: 'Masukan Data Tinggi Pasien.' })
-  //     } else if (!berat) {
-  //       spesificError({ errMessage: 'Masukan Data Berat Pasien.' })
-  //     } else if (!spo2) {
-  //       spesificError({ errMessage: 'Masukan Data SPO2' })
-  //     } else if (!alergi) {
-  //       spesificError({ errMessage: 'Masukan Data alergi.' })
-  //     } else if (!kesadaran) {
-  //       spesificError({ errMessage: 'Masukan Data Kesadaran Pasien' })
-  //     } else {
-  //       try {
-  //         const response = await api.post(
-  //           '/api/v1/postPemeriksaanRalan',
-  //           JSON.stringify(dataPetugas),
-  //           {
-  //             headers: {
-  //               'Content-Type': 'application/json',
-  //             },
-  //           },
-  //         )
-  //         console.log('BERHASIL MENGIRIM(petugas) ,POST response:', response.data)
-  //         await handleChangeStatusPetugas()
-  //         window.location.reload()
-  //       } catch (error) {
-  //         console.log('error petugas', error)
-  //       }
-  //     }
-  //   } else if (role.includes('dokter')) {
-  //     if (!tindakan && !subjektif) {
-  //       spesificError({ errMessage: 'Mohon Memasukan Data Subjektif.' })
-  //     } else if (!objectPemeriksaan) {
-  //       spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
-  //     } else if (!penilaian) {
-  //       spesificError({ errMessage: 'Mohon Memasukan Data Assesmen.' })
-  //     } else if (Object.keys(selectedMedicines).length === 0) {
-  //       spesificError({ errMessage: 'Tidak Ada Obat yang dipilih. Mohon Untuk Memasukan Obat.' })
-  //     } else if (!instruksi) {
-  //       spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
-  //     } else {
-  //       try {
-  //         const response = await api.put(
-  //           '/api/v1/updatePemeriksaanRalan',
-  //           JSON.stringify(dataDokter),
-  //           {
-  //             headers: {
-  //               'Content-Type': 'application/json',
-  //             },
-  //           },
-  //         )
-  //         await postResep()
-  //         await postDiagnosa()
-  //         await handleChangeStatusDokter()
-  //         console.log(response)
-  //         window.location.reload()
-  //       } catch (err) {
-  //         console.log('err dokter put', err)
-  //       }
-  //     }
-  //   }
-  // }
-
-  // NEED FIX BEFORE ACTIVE AGAIN(2)
-  // const handlePostSoap = async () => {
-  //   const dataBelumPeriksa = {
-  //     noRawat: nmrRawat,
-  //     suhuTubuh: suhu || '0',
-  //     tensi: tensi || '0/0',
-  //     nadi: nadi || '0',
-  //     respirasi: rr || '0',
-  //     tinggi: tinggi || '0',
-  //     berat: berat || '0',
-  //     spo2: spo2 || '0',
-  //     gcs: gcs || '0',
-  //     kesadaran: kesadaran || 'Compos Mentis',
-  //     keluhan: subjektif || tindakan,
-  //     pemeriksaan: objectPemeriksaan,
-  //     alergi: alergi || '-',
-  //     // eslint-disable-next-line camelcase
-  //     lingkar_perut: '-',
-  //     penilaian: dataSoap[0]?.penilaian || penilaian,
-  //     rtl: plan || rtl,
-  //     evaluasi: evaluasi || diagnosa,
-  //     instruksi: instruksi,
-  //     nip: nipCredentials,
-  //   }
-  //   const dataBerkasDiterima = {
-  //     noRawat: nmrRawat,
-  //     suhuTubuh: suhu || dataSoap[0]?.suhu_tubuh,
-  //     tensi: tensi || dataSoap[0]?.tensi,
-  //     nadi: nadi || dataSoap[0]?.nadi,
-  //     respirasi: rr || dataSoap[0]?.respirasi,
-  //     tinggi: tinggi || dataSoap[0]?.tinggi,
-  //     berat: berat || dataSoap[0]?.berat,
-  //     spo2: spo2 || dataSoap[0]?.spo2,
-  //     gcs: gcs || dataSoap[0]?.gcs,
-  //     // eslint-disable-next-line camelcase
-  //     lingkar_perut: '-',
-  //     kesadaran: dataSoap[0]?.kesadaran || kesadaran || 'Compos Mentis',
-  //     alergi: alergi || dataSoap[0]?.alergi,
-  //     penilaian: dataSoap[0]?.penilaian || penilaian,
-  //     instruksi: dataSoap[0]?.instruksi || instruksi,
-  //     keluhan: dataSoap[0]?.keluhan || subjektif || tindakan,
-  //     pemeriksaan: dataSoap[0]?.pemeriksaan || objectPemeriksaan,
-  //     nip: nipCredentials,
-  //     rtl: dataSoap[0]?.rtl || plan || rtl,
-  //     evaluasi: dataSoap[0]?.evaluasi || evaluasi || diagnosa,
-  //   }
-
-  //   if (sttsRawat === 'Belum') {
-  //     if (role.includes('petugas')) {
-  //       if (!suhu) {
-  //         spesificError({ errMessage: 'Masukan Data Suhu Tubuh.' })
-  //       } else if (!tensi) {
-  //         spesificError({ errMessage: 'Masukan Data Tensi.' })
-  //       } else if (!nadi) {
-  //         spesificError({ errMessage: 'Masukan Data nadi' })
-  //       } else if (!rr) {
-  //         spesificError({ errMessage: 'Masukan Data RR.' })
-  //       } else if (!tinggi) {
-  //         spesificError({ errMessage: 'Masukan Data Tinggi Pasien.' })
-  //       } else if (!berat) {
-  //         spesificError({ errMessage: 'Masukan Data Berat Pasien.' })
-  //       } else if (!spo2) {
-  //         spesificError({ errMessage: 'Masukan Data SPO2' })
-  //       } else if (!alergi) {
-  //         spesificError({ errMessage: 'Masukan Data alergi.' })
-  //       } else {
-  //         try {
-  //           const response = await api.post(
-  //             '/api/v1/postPemeriksaanRalan',
-  //             JSON.stringify(dataBelumPeriksa),
-  //             {
-  //               headers: {
-  //                 'Content-Type': 'application/json',
-  //               },
-  //             },
-  //           )
-  //           console.log('BERHASIL MENGIRIM(sebelum Periksa) ,POST response:', response.data)
-  //           await postResep()
-  //           await postDiagnosa()
-  //           await handleChangeStatusFirstSend()
-  //           navigate('/rawat-jalan/')
-  //           window.location.reload()
-  //         } catch (error) {
-  //           console.log('error petugas', error)
-  //           spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-  //         }
-  //       }
-  //     } else if (role.includes('dokter')) {
-  //       if (!tindakan && !subjektif) {
-  //         spesificError({ errMessage: 'Mohon Memasukan Data Subjektif.' })
-  //       } else if (!objectPemeriksaan) {
-  //         spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
-  //       } else if (!penilaian) {
-  //         spesificError({ errMessage: 'Mohon Memasukan Data Assesmen.' })
-  //       } else if (Object.keys(selectedMedicines).length === 0) {
-  //         spesificError({ errMessage: 'Tidak Ada Obat yang dipilih. Mohon Untuk Memasukan Obat.' })
-  //       } else if (!instruksi) {
-  //         spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
-  //       } else {
-  //         try {
-  //           const response = await api.post(
-  //             '/api/v1/postPemeriksaanRalan',
-  //             JSON.stringify(dataBelumPeriksa),
-  //             {
-  //               headers: {
-  //                 'Content-Type': 'application/json',
-  //               },
-  //             },
-  //           )
-  //           console.log('BERHASIL MENGIRIM(sebelum Periksa) ,POST response:', response.data)
-  //           await postResep()
-  //           await postDiagnosa()
-  //           await handleChangeStatusFirstSend()
-  //           navigate('/rawat-jalan/')
-  //           window.location.reload()
-  //         } catch (error) {
-  //           console.log('error petugas', error)
-  //           spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-  //         }
-  //       }
-  //     }
-  //   } else if (sttsRawat === 'Berkas Diterima') {
-  //     if (role.includes('petugas')) {
-  //       if (!suhu) {
-  //         spesificError({ errMessage: 'Masukan Data Suhu Tubuh.' })
-  //       } else if (!tensi) {
-  //         spesificError({ errMessage: 'Masukan Data Tensi.' })
-  //       } else if (!nadi) {
-  //         spesificError({ errMessage: 'Masukan Data nadi' })
-  //       } else if (!rr) {
-  //         spesificError({ errMessage: 'Masukan Data RR.' })
-  //       } else if (!tinggi) {
-  //         spesificError({ errMessage: 'Masukan Data Tinggi Pasien.' })
-  //       } else if (!berat) {
-  //         spesificError({ errMessage: 'Masukan Data Berat Pasien.' })
-  //       } else if (!spo2) {
-  //         spesificError({ errMessage: 'Masukan Data SPO2' })
-  //       } else if (!alergi) {
-  //         spesificError({ errMessage: 'Masukan Data alergi.' })
-  //       } else {
-  //         try {
-  //           const response = await api.put(
-  //             '/api/v1/updatePemeriksaanRalan',
-  //             JSON.stringify(dataBerkasDiterima),
-  //             {
-  //               headers: {
-  //                 'Content-Type': 'application/json',
-  //               },
-  //             },
-  //           )
-  //           await postResep()
-  //           await postDiagnosa()
-  //           await handleChangeStatusSecondSend()
-  //           console.log(response)
-  //           navigate('/rawat-jalan/')
-  //           window.location.reload()
-  //         } catch (err) {
-  //           console.log('err dokter put', err)
-  //           spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-  //         }
-  //       }
-  //     } else if (role.includes('dokter')) {
-  //       if (!tindakan && !subjektif) {
-  //         spesificError({ errMessage: 'Mohon Memasukan Data Subjektif.' })
-  //       } else if (!objectPemeriksaan) {
-  //         spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
-  //       } else if (!penilaian) {
-  //         spesificError({ errMessage: 'Mohon Memasukan Data Assesmen.' })
-  //       } else if (Object.keys(selectedMedicines).length === 0) {
-  //         spesificError({ errMessage: 'Tidak Ada Obat yang dipilih. Mohon Untuk Memasukan Obat.' })
-  //       } else if (!instruksi) {
-  //         spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
-  //       } else if (!evaluasi && !diagnosa) {
-  //         spesificError({ errMessage: 'Mohon Memasukan Data Evaluasi.' })
-  //       } else {
-  //         try {
-  //           const response = await api.post(
-  //             '/api/v1/postPemeriksaanRalan',
-  //             JSON.stringify(dataBerkasDiterima),
-  //             {
-  //               headers: {
-  //                 'Content-Type': 'application/json',
-  //               },
-  //             },
-  //           )
-  //           console.log('BERHASIL MENGIRIM(sebelum Periksa) ,POST response:', response.data)
-  //           await postResep()
-  //           await postDiagnosa()
-  //           await handleChangeStatusFirstSend()
-  //           navigate('/rawat-jalan/')
-  //           window.location.reload()
-  //         } catch (error) {
-  //           console.log('error petugas', error)
-  //           spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-  //         }
-  //       }
-  //     }
-  //   } else {
-  //     spesificError({ errMessage: 'Sudah Selesai Periksa. Tidak Bisa Mengirim' })
-  //   }
-  // }
-
   const handlePostSoap = async () => {
     // // EVALUSI STRING LOGIC
-    const [laborDataValue, diagnosaValue, evaluasiValue, dataSoapValue] = [
+    const [laborDataValue, radiologiDataValue, diagnosaValue, evaluasiValue, dataSoapValue] = [
       laborData,
+      radiologiData,
       diagnosa,
       evaluasi,
       dataSoap[0]?.evaluasi,
     ]
 
-    const evaluasiToSend = [laborDataValue, diagnosaValue, evaluasiValue, dataSoapValue]
+    const evaluasiToSend = [
+      laborDataValue,
+      radiologiDataValue,
+      diagnosaValue,
+      evaluasiValue,
+      dataSoapValue,
+    ]
       .filter(Boolean)
       .map((value) => value || '')
       .join('\n')
@@ -1157,27 +835,28 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     return planArray.join('\n')
   }
 
-  // const testSimpan = async () => {
-  //   const planString = generatePlanString(selectedMedicines)
-  //   setPlan(planString)
-  //   setAturanPakai('')
-  //   setListObat([])
-  //   console.log(planString)
-  //   console.log(selectedMedicines)
-  // }
-
   const modalLaborInputOpen = () => {
     if (modalLaborRef.current) {
       modalLaborRef.current.open()
     }
-    console.log('Open')
   }
 
   const modalLaborInputClose = () => {
     if (modalLaborRef.current) {
       modalLaborRef.current.close()
     }
-    console.log('Close')
+  }
+
+  const modalRadiologiInputOpen = () => {
+    if (modalRadiologiRef.current) {
+      modalRadiologiRef.current.open()
+    }
+  }
+
+  const modalRadiologiInputClose = () => {
+    if (modalRadiologiRef.current) {
+      modalRadiologiRef.current.close()
+    }
   }
 
   return (
@@ -1857,7 +1536,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             <textarea
               placeholder='-'
               disabled={role.includes('petugas')}
-              value={[laborData, diagnosa, evaluasi, dataSoap[0]?.evaluasi]
+              value={[laborData, radiologiData, diagnosa, evaluasi, dataSoap[0]?.evaluasi]
                 .filter(Boolean)
                 .map((value) => value || '')
                 .join('\n')}
@@ -1894,10 +1573,10 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               />
             </div>
           </div>
-          <div className='flex justify-end'>
+          <div className='flex justify-end mr-3'>
             <button
               disabled={role.includes('petugas')}
-              className='btn btn-md bg-primary text-white'
+              className='btn btn-[8px] bg-primary text-white'
               onClick={postRencanKontrol}
             >
               Simpan
@@ -1905,12 +1584,12 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
           </div>
         </div>
         <div className=' w-auto mt-4'>
-          <div className='flex text-base text-[#121713] items-center font-bold font-sans my-[20px]'>
+          <div className='flex text-base text-[#121713] items-center font-bold font-sans my-[10px] ml-2'>
             <InformationCircleIcon width={25} height={25} />
-            <p className='ml-[6px]'>Informasi</p>
+            <p className='ml-[4px]'>Informasi</p>
           </div>
-          <p className='w-full font-sans text-red-400 animate-pulse text-base font-normal leading-5'>
-            Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam
+          <p className='w-full text-center font-sans text-red-400 animate-pulse font-normal leading-5 text-[20px]'>
+            Mohon pastikan data yang di Input sudah benar sebelum melanjutkan. Kesalahan dalam
             pengisian data dapat berdampak pada perawatan pasien.
           </p>
           <button
@@ -1932,12 +1611,20 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
         </div>
         <div>
           {role.includes('petugas') ? null : (
-            <button
-              className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
-              onClick={modalLaborInputOpen}
-            >
-              PERMINTAAN LABORATORIUM
-            </button>
+            <div className='flex justify-between gap-3'>
+              <button
+                className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
+                onClick={modalLaborInputOpen}
+              >
+                PERMINTAAN LABORATORIUM
+              </button>
+              <button
+                className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
+                onClick={modalRadiologiInputOpen}
+              >
+                PERMINTAAN RADIOLOGI
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -1946,6 +1633,11 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
         ref={modalLaborRef}
         onClose={modalLaborInputClose}
         onLaborData={handleLaborData}
+      />
+      <ModalRadiologiInput
+        ref={modalRadiologiRef}
+        onClose={modalRadiologiInputClose}
+        onRadiologiData={handleRadiologiData}
       />
     </div>
   )

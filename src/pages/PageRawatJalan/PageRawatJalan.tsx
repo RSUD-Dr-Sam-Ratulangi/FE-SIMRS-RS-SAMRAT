@@ -161,7 +161,7 @@ export default function PageRawatJalan() {
     const existingContextMenu = document.querySelector('.custom-context-menu')
     if (existingContextMenu) {
       console.log('Context menu exists. Removing...')
-      existingContextMenu.remove() // Use remove() method to remove the element from the DOM
+      existingContextMenu.remove()
     } else {
       console.log('Context menu does not exist.')
     }

@@ -56,7 +56,6 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
           `/api/v1/searchJnsPerawatanLab?kdJenisPrw=&nmPerawatan=RSUD&page=0&size=${pageSize}`,
         )
         setDataLaborPemeriksaan(response.data.content)
-        console.log('data labor', response.data.content)
       } catch (err) {
         console.log('labor data err', err)
       }
