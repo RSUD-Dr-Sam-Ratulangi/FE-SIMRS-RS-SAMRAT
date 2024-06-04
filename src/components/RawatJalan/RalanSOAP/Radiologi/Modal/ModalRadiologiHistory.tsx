@@ -41,7 +41,7 @@ const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProp
     try {
       setIsLoading(true)
       const response = await api.get(`/api/v1/radiology-images?noRawat=${nmrRawat}`)
-
+      console.log('images', response.data)
       const imageUrls = response.data.map(
         (item) => `http://rsudsamrat.site/webapps/radiologi/${item.lokasi_gambar}`,
       )
@@ -57,6 +57,18 @@ const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProp
   useEffect(() => {
     seeImages()
   }, [nmrRawat])
+
+  const renderText = (text) => {
+    if (text.includes('\n')) {
+      return text.split('\n').map((line, index) => (
+        <p key={index} className='font-bold text-2xl indent-1'>
+          {line}
+        </p>
+      ))
+    } else {
+      return <p className='font-bold text-3xl indent-1'>{text}</p>
+    }
+  }
 
   // const openSecondModal = () => {
   //   if (SecondModalInputRef.current) {
@@ -104,14 +116,17 @@ const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProp
                     <p className=' font-bold text-xl text-[#121713]'>Jam: {jam}</p>
                   </div>
                   <p className=' font-bold text-2xl text-[#121713] mb-5 underline'>
-                    RIWAYAT PEMERIKSAAN RADIOLOGI
+                    HASIL PEMERIKSAAN RADIOLOGI
                   </p>
                 </div>
               </div>
-              <div className='mt-5 overflow-auto '>
+              <div className='mt-5'>
                 <label className='label font-bold text-2xl'>HASIL : </label>
-                <p className='font-bold text-3xl underline indent-1'>{hasil}</p>
+                <div className='overflow-auto border-4 border-zinc-500 rounded-xl shadow-xl p-5 '>
+                  <p className='font-bold text-3xl indent-1'>{renderText(hasil)}</p>
+                </div>
               </div>
+
               {isLoading ? (
                 <ArrowPathIcon width={20} height={20} />
               ) : (
