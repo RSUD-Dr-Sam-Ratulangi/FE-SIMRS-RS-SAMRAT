@@ -226,7 +226,7 @@ const RanapSoapPemeriksaan: React.FC = () => {
               ) : null}
             </div>
 
-            <div className='rounded-xl mt-4 p-4 bg-slate-100 max-w-screen-lg '>
+            <div className='rounded-xl mt-4 p-4 bg-slate-100 min-w-fit'>
               <p className=' font-bold text-xl text-[#121713]'>SOAP</p>
               <p className='text-disabled '>
                 Isi semua data dibawah ini untuk menambahkan SOAP baru kedalam daftar

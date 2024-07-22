@@ -82,20 +82,6 @@ export default function PageRawatJalan() {
   const [isLoading, setIsLoading] = useState(false)
   const [changeDate, setChangeDate] = useState(tglSkrng)
 
-  // const [selectedPatientName, setSelectedPatientName] = useState<string | null>(null)
-  // const ttsComponentRef = useRef(null)
-  // const [ttsKey, setTTSKey] = useState(0)
-
-  // useEffect(() => {
-  //   if (selectedPatientName) {
-  //     const timeoutId = setTimeout(() => {
-  //       if (ttsComponentRef.current) {
-  //         ttsComponentRef.current.play()
-  //       }
-  //     }, 0)
-  //     return () => clearTimeout(timeoutId)
-  //   }
-  // }, [selectedPatientName, ttsComponentRef])
 
   const navigate = useNavigate()
   const tokenValue = localStorage.getItem('token')
@@ -140,20 +126,6 @@ export default function PageRawatJalan() {
 
     setChangeDate(getDate)
   }
-
-  // const handleNameClick = (patientName: string, doctorName: string, poliName: string) => {
-  //   const lowerCaseName = patientName.toLowerCase()
-  //   const additionalInfo = 'silahkan datang ke ners station'
-  //   setSelectedPatientName(lowerCaseName + additionalInfo)
-  //   setTTSKey((prevKey) => prevKey + 1)
-  //   if (ttsComponentRef.current) {
-  //     ttsComponentRef.current.play()
-  //   }
-  //   console.log(speechSynthesis.getVoices())
-  //   localStorage.setItem('patientName', lowerCaseName)
-  //   localStorage.setItem('doctorName', doctorName)
-  //   localStorage.setItem('poliName', poliName)
-  // }
 
   const createContextMenu = (e, url) => {
     e.preventDefault() // Prevent default context menu
@@ -251,34 +223,6 @@ export default function PageRawatJalan() {
       selector: (row: DataItem) => row.status_lanjut,
       sortable: true,
     },
-    // {
-    //   name: 'PANGGIL',
-    //   sortable: true,
-    //   cell: (row: DataItem) => (
-    //     <button
-    //       className='panggil-button'
-    //       onClick={() => handleNameClick(row.nm_pasien, row.nm_dokter, row.nm_poli)}
-    //     >
-    //       <PlayIcon width={20} height={20} className='play-icon' />
-    //     </button>
-    //   ),
-    // },
-    // {
-    //   name: 'Actions',
-    //   selector: (row: DataItem) => (
-    //     <button
-    //       className='btn btn-xs btn-ghost'
-    //       onClick={async () => {
-    //         localStorage.setItem('no_rawat', row.no_rawat)
-    //         localStorage.setItem('no_antrian', row.no_reg)
-    //         localStorage.setItem('status_rawat', row.stts)
-    //         navigate(`/rawat-jalan/rme/${row.no_rkm_medis}`, { state: { data: row } })
-    //       }}
-    //     >
-    //       Edit
-    //     </button>
-    //   ),
-    // },ls
   ]
 
   return (

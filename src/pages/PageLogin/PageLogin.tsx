@@ -132,7 +132,7 @@ export default function PageLogin() {
                 Login <ArrowRightIcon className='w-5' />
               </span>
             </button>
-            <p className='grow-0 absolute bottom-5 self-center text-[15px] text-slate-400'>
+            <p className='grow-0 text-center absolute bottom-5 self-center text-[15px] text-slate-400'>
               © 2023 UPTIRS RSUD Sam Ratulangi Tondano
             </p>
           </div>

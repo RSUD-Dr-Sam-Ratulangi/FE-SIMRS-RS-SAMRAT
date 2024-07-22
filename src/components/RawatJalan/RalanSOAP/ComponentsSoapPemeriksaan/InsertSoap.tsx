@@ -176,7 +176,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   }
 
   const handleHapusObat = (kode: string) => {
-    // Update selectedMedicines state to remove the selected medicine
     setSelectedMedicines((prev) => {
       const newSelectedMedicines = { ...prev }
       delete newSelectedMedicines[kode]
@@ -450,7 +449,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       for (const key in selectedMedicines) {
         const medicineData = selectedMedicines[key]
 
-        // Checking Exist Selected Medicine Data,
         if (existingMedicines.includes(medicineData.kode)) {
           console.log('Medicine already exists, skipping:', medicineData)
           continue
@@ -801,7 +799,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       const newSelectedMedicines = { ...prev }
 
       if (newSelectedMedicines[kode] || copyResep) {
-        // If medicine is already selected, increase the quantity
         newSelectedMedicines[kode] = {
           ...newSelectedMedicines[kode],
           nama: nama,
@@ -810,11 +807,9 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
           kode: kode,
         }
       } else {
-        // If medicine is selected for the first time, add it to the state
         newSelectedMedicines[kode] = { nama, aturanPakai, jumlahObat, kode }
       }
 
-      // Generate plan string here when selecting a new medicine
       const planString = generatePlanString(newSelectedMedicines)
       setPlan(planString)
 
@@ -830,8 +825,6 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       const planItem = `${nama} ${kode} - Jumlah: ${jumlahObat}, Aturan Pakai: ${aturanPakai}.`
       planArray.push(planItem)
     }
-
-    // Join the array into a single string
     return planArray.join('\n')
   }
 
@@ -860,7 +853,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   }
 
   return (
-    <div className='max-w-7xl mt-4'>
+    <div className='min-w-fit mt-4'>
       <div>
         <p className=' font-bold text-xl text-[#121713]'>Pemeriksaan</p>
         <p className=' font-bold text-xl text-[#121713]'>No Resep: {nmrResep}</p>
@@ -1274,7 +1267,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             </div>
             {listObat.length > 0 ? (
               <>
-                <div className='mt-4 pt-4 h-full overflow-auto'>
+                <div className='mt-4 pt-4 h-full'>
                   <table className='table table-lg w-full'>
                     <thead>
                       <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 '>
@@ -1318,22 +1311,40 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                             />
                           </td>
                           <td>
-                            <input
-                              id={`input_aturan_pakai_${index}`}
-                              type='text'
-                              onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault()
-                                  const button = document.getElementById(`button_${index}`)
-                                  if (button) {
-                                    button.click()
-                                    setListObat([])
+                            {data.nama_brng.includes('Racikan') ? (
+                              <textarea
+                                id={`input_aturan_pakai_${index}`}
+                                onChange={(e) => setAturanPakai(e.target.value)}
+                                className='textarea textarea-bordered w-96'
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' && e.shiftKey === false) {
+                                    e.preventDefault()
+                                    const button = document.getElementById(`button_${index}`)
+                                    if (button) {
+                                      button.click()
+                                      setListObat([])
+                                    }
                                   }
-                                }
-                              }}
-                              onChange={(e) => setAturanPakai(e.target.value)}
-                              className='w-32 input input-bordered'
-                            />
+                                }}
+                              />
+                            ) : (
+                              <input
+                                id={`input_aturan_pakai_${index}`}
+                                type='text'
+                                onKeyPress={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault()
+                                    const button = document.getElementById(`button_${index}`)
+                                    if (button) {
+                                      button.click()
+                                      setListObat([])
+                                    }
+                                  }
+                                }}
+                                onChange={(e) => setAturanPakai(e.target.value)}
+                                className='input input-bordered w-32'
+                              />
+                            )}
                           </td>
                           <td>
                             <button
