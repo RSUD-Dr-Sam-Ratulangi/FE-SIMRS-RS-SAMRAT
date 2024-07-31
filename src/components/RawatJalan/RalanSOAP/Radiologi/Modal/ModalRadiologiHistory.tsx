@@ -47,7 +47,7 @@ const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProp
       )
       setGambar(imageUrls)
     } catch (err) {
-      console.log('error Image Radiologi', err)
+      null
       setIsLoading(false)
     } finally {
       setIsLoading(false)

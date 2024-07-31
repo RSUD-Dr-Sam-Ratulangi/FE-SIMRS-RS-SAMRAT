@@ -336,13 +336,13 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     }
   }
 
-  // cek no rawat jika sudah ada
+  // cek no resep jika sudah ada
   const checkExistNoResep = async () => {
     try {
       const response = await api.get(
         `/api/v1/getPrescriptionNumbers?noRkmMedis=${id}&noRawat=${nmrRawat}`,
       )
-      console.log(response.data[0])
+      console.log('reseeppp', response.data)
       if (response.data.length === 0) {
         try {
           const data = {

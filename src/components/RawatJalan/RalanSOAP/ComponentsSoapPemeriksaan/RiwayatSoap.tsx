@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify'
 import ModalLaborHistory from '../Laboratorium/Modal/ModalLaborHistory'
 import { PopupActions } from 'reactjs-popup/dist/types'
 import ModalRadiologiHistory from '../Radiologi/Modal/ModalRadiologiHistory'
+import PdfComponent from '../Pdf/PrintSoapPDF'
 
 type userData = {
   existsInLabTable: any
@@ -96,7 +97,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
         const noRawatList = data.map((item) => item.no_rawat)
 
         // Labor Check No Rawat
-        const checkNoRawatLab = async (noRawat) => {
+        const checkNoRawatLab = async (noRawat: any) => {
           try {
             const checkResponse = await api.get(`/api/v1/checkPermintaanLab?noRawat=${noRawat}`)
             const checkData = checkResponse.data
@@ -114,7 +115,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
         setNoRawatExistLab(results)
 
         // Radiologi Check no Rawat
-        const checkNoRawatRadiologi = async (noRawat) => {
+        const checkNoRawatRadiologi = async (noRawat: any) => {
           try {
             const checkResponse = await api.get(`/api/v1/check-no-rawat?noRawat=${noRawat}`)
             const checkData = checkResponse.data
@@ -359,27 +360,45 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                   <p className='whitespace-pre'>{riwayat.evaluasi || '-'}</p>
                 </div>
               </div>
-              <div key={index} className='flex justify-start'>
-                {noRawatExistLab[index] ? (
-                  <div className='flex justify-start gap-2'>
-                    <button
-                      className='text text-gray-100 btn bg-primary btn-md'
-                      onClick={() => modalLaborOpen(riwayat.no_rawat)}
-                    >
-                      Riwayat Laboratorium
-                    </button>
-                  </div>
-                ) : null}
-                {noRawatExistRadiologi[index] ? (
-                  <div>
-                    <button
-                      className='text text-gray-100 btn bg-primary btn-md'
-                      onClick={() => modalRadiologiOpen(riwayat.no_rawat)}
-                    >
-                      Riwayat Radiologi
-                    </button>
-                  </div>
-                ) : null}
+              <div key={index} className='flex justify-between'>
+                <div className='flex justify-start'>
+                  {noRawatExistLab[index] ? (
+                    <div className='flex justify-start gap-2'>
+                      <button
+                        className='text text-gray-100 btn bg-primary btn-md'
+                        onClick={() => modalLaborOpen(riwayat.no_rawat)}
+                      >
+                        Riwayat Laboratorium
+                      </button>
+                    </div>
+                  ) : null}
+                  {noRawatExistRadiologi[index] ? (
+                    <div>
+                      <button
+                        className='text text-gray-100 btn bg-primary btn-md'
+                        onClick={() => modalRadiologiOpen(riwayat.no_rawat)}
+                      >
+                        Riwayat Radiologi
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+                <div>
+                  <button
+                    className='text text-gray-100 btn bg-primary btn-md'
+                    onClick={() =>
+                      PdfComponent(
+                        riwayat.no_rawat,
+                        id,
+                        riwayat.kd_poli,
+                        riwayat.nm_poli,
+                        dokterNames[riwayat.no_rawat],
+                      )
+                    }
+                  >
+                    Print PDF
+                  </button>
+                </div>
               </div>
               <ModalLaborHistory
                 ref={modalLaborRef}
