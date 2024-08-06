@@ -41,7 +41,7 @@ const ModalLaborHistory = forwardRef<PopupActions, ModalLaborHistoryProps>((prop
 
         setDataRiwayat(newDataRiwayat)
       } catch (err) {
-        null
+        console.warn(`DATA LABORATORIUM ON ${nmrRawat} NOT FOUND`)
       } finally {
         setLoading(false)
       }

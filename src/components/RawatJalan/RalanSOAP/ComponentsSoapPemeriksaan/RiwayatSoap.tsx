@@ -8,6 +8,7 @@ import ModalLaborHistory from '../Laboratorium/Modal/ModalLaborHistory'
 import { PopupActions } from 'reactjs-popup/dist/types'
 import ModalRadiologiHistory from '../Radiologi/Modal/ModalRadiologiHistory'
 import PdfComponent from '../Pdf/PrintSoapPDF'
+import LoadingBar from 'react-top-loading-bar'
 
 type userData = {
   existsInLabTable: any
@@ -65,10 +66,13 @@ type ApiData = userData[]
 interface RiwayatSoapRalanProps {
   onRiwayatObatChange: (riwayatObatData: any) => void
   personalData: any
+  errResepMessage: (message: any) => void
+  trueFalseResep: (boolean) => void
 }
-
 const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   onRiwayatObatChange,
+  errResepMessage,
+  trueFalseResep,
   personalData,
 }) => {
   const dataPersonal = personalData || {} // Hampir sama seperti null
@@ -81,6 +85,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   const [dokterNames, setDokterNames] = useState({})
   const [noRawatExistLab, setNoRawatExistLab] = useState(null)
   const [noRawatExistRadiologi, setNoRawatExistRadiologi] = useState(null)
+  const [progress, setProgress] = useState(0)
   const { id } = useParams()
   const tokenValue = localStorage.getItem('token')
   const Kd = JSON.parse(tokenValue)
@@ -92,26 +97,20 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
       try {
         const response = await api.get(`/api/v1/riwayatsoap?noRkmMedis=${id}`)
         const data: ApiData = await response.data
-
-        // Extracting all no_rawat values
         const noRawatList = data.map((item) => item.no_rawat)
 
-        // Labor Check No Rawat
         const checkNoRawatLab = async (noRawat: any) => {
           try {
             const checkResponse = await api.get(`/api/v1/checkPermintaanLab?noRawat=${noRawat}`)
             const checkData = checkResponse.data
             return checkData === 'no_rawat exists in permintaan_lab table'
           } catch (error) {
-            console.error('Error checking no_rawat:', error)
             return false
           }
         }
 
-        // Check all no_rawat concurrently
         const results = await Promise.all(noRawatList.map(checkNoRawatLab))
 
-        // Set the state based on the results
         setNoRawatExistLab(results)
 
         // Radiologi Check no Rawat
@@ -171,27 +170,70 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
     fetchData()
   }, [riwayatSoap])
 
-  const testCopyResep = async (noRawat: any) => {
+  const copyResep = async (noRawat: any) => {
     try {
       const response = await api.get(
         `/api/v1/getPrescriptionNumbers?noRkmMedis=${id}&noRawat=${noRawat}`,
       )
+      setProgress(20)
       // ambil data obat
       try {
         const res = await api.get(`/api/v1/getResepDokterDetails?noResep=${response.data[0]}`)
+        setProgress(50)
         if (res.data.length === 0) {
           spesificError({ errMessage: 'Data Obat Tidak Ditemukan.' })
+          setProgress(100)
         } else {
-          onRiwayatObatChange(res.data)
-          spesificSuccess({ doneMessage: 'Resep Berhasil Di Copy' })
+          const checkBarangPromises = res.data.map(async (item, index) => {
+            const searchRes = await api.get(
+              `/api/v1/searchDatabarang?searchString=${item.kode_brng}`,
+            )
+            setProgress(50 + ((index + 1) / res.data.length) * 50)
+            if (searchRes.data.length === 0) {
+              // eslint-disable-next-line camelcase
+              return { notFound: true, kode_brng: item.kode_brng, nama_brng: item.nama_brng }
+            }
+            return { notFound: false, item }
+          })
+
+          const checkResults = await Promise.all(checkBarangPromises)
+          const validItems = checkResults
+            .filter((result) => !result.notFound)
+            .map((result) => result.item)
+          const notFoundItems = checkResults.filter((result) => result.notFound)
+
+          if (validItems.length > 0) {
+            onRiwayatObatChange(validItems)
+            if (notFoundItems.length > 0) {
+              const notFoundMessages = notFoundItems
+                .map((item) => `Obat (${item.nama_brng}, kode ${item.kode_brng})`)
+                .join(', ')
+              spesificSuccess({
+                doneMessage: `Resep Berhasil Di Copy. \n ${notFoundMessages}`,
+              })
+              errResepMessage(`${notFoundMessages}`)
+              trueFalseResep(true)
+              setProgress(100)
+            } else {
+              spesificSuccess({ doneMessage: 'Resep Berhasil Di Copy' })
+              trueFalseResep(false)
+            }
+          } else {
+            spesificError({ errMessage: 'Tidak ada obat yang valid ditemukan.' })
+            trueFalseResep(false)
+          }
         }
       } catch (err) {
         errorCopyResep()
         console.log('Data obat gagal diambil', err)
+        setProgress(100)
+        trueFalseResep(false)
       }
     } catch (err) {
       errorCopyResep()
       console.log('Gagal ambil resep', err)
+      setProgress(100)
+      trueFalseResep(false)
     }
   }
 
@@ -227,6 +269,12 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
 
   return (
     <div className='h-[2360px] overflow-y-auto mt-4 rounded-xl border border-slate-100'>
+      <LoadingBar
+        color='#55a46b'
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+        height={7}
+      ></LoadingBar>
       {isLoading ? (
         <>
           <p className='flex justify-center items-center'>
@@ -342,7 +390,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                       {role.includes('dokter') ? (
                         <button
                           className='btn btn-ghost hover:bg-slate-100'
-                          onClick={() => testCopyResep(riwayat.no_rawat)}
+                          onClick={() => copyResep(riwayat.no_rawat)}
                         >
                           <span className='font-bold'>COPY RESEP</span>
                         </button>
@@ -393,6 +441,8 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                         riwayat.kd_poli,
                         riwayat.nm_poli,
                         dokterNames[riwayat.no_rawat],
+                        riwayat.nm_pasien,
+                        setProgress,
                       )
                     }
                   >

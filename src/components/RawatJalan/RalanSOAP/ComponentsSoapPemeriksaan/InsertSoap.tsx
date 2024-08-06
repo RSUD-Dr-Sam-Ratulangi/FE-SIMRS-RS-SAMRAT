@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+import LoadingBar from 'react-top-loading-bar'
 import { api } from '../../../../services/api/config.api'
 import { spesificError } from '../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
@@ -8,6 +9,7 @@ import {
   ArchiveBoxArrowDownIcon,
   InformationCircleIcon,
   ArrowPathIcon,
+  ExclamationCircleIcon,
 } from '@heroicons/react/24/solid'
 import { useNavigate, useParams } from 'react-router-dom'
 import { formatSelectedDate, formatSelectedDateNow } from '../../../../utils/DateNow'
@@ -30,6 +32,7 @@ enum KesadaranOptions {
 }
 
 type DataItem = {
+  jam_rawat: string
   kd_penyakit: string
   nm_penyakit: string
   ciri_ciri: string
@@ -66,8 +69,13 @@ interface Medicine {
 }
 
 // eslint-disable-next-line react/prop-types
-const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
+const InsertSoapRalan: React.FC<{ copyResep: any; resepMessage: any; trueFalseResep: boolean }> = ({
+  copyResep,
+  resepMessage,
+  trueFalseResep,
+}) => {
   const [loading, setIsLoading] = useState(false)
+  const [progress, setProgress] = useState(0)
   const [obatExist, setObatExist] = useState([])
   const [rtl, setRtl] = useState('')
   const [kdPenyakit, setKdPenyakit] = useState('')
@@ -121,6 +129,9 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   let nipCredentials = ''
   const role = Object.keys(Kd)[0]
   const { id } = useParams()
+
+  const date = new Date()
+  const showTime = date.getHours() + ':' + date.getMinutes()
 
   if (role === 'dokter') {
     nipCredentials = Kd.dokter.kd_dokter
@@ -181,7 +192,9 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       delete newSelectedMedicines[kode]
 
       const planString = generatePlanString(newSelectedMedicines)
-      setPlan(planString)
+      setPlan(
+        `----------------------------------------\nWaktu Penyimpanan OBAT: ${showTime}\n---------------------------------------- \n${planString}`,
+      )
 
       return newSelectedMedicines
     })
@@ -261,7 +274,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
         )
         setDataSoap(response.data)
       } catch (err) {
-        console.log(err)
+        console.log('Error Taking Data Soap', err)
       }
     }
     fetchDataSoap()
@@ -545,6 +558,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       evaluasi: evaluasiToSend || dataSoap[0]?.evaluasi,
     }
     try {
+      setProgress(20)
       const response = await api.get(`/api/v1/checkPemeriksaanRalan?noRawat=${nmrRawat}`)
       const message = response.data.message
 
@@ -586,6 +600,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   },
                 )
                 console.log('BERHASIL MENGIRIM ,POST response:', response.data)
+                setProgress(100)
                 await handleChangeStatusFirstSend()
               } catch (error) {
                 console.log('error petugas post', error)
@@ -631,15 +646,21 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                 setIsLoading(true)
 
                 console.log('BERHASIL MENGIRIM(dokter) ,POST response:', response.data)
+                setProgress(60)
                 await postResep()
+                setProgress(70)
                 await postDiagnosa()
+                setProgress(80)
                 await handleChangeStatusFirstSend()
                 // navigate('/rawat-jalan/')
                 // window.location.reload()
+                setProgress(100)
               } catch (error) {
                 console.log('error dokter post', error)
                 spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
+                setProgress(100)
               } finally {
+                setProgress(100)
                 navigate('/rawat-jalan/')
                 window.location.reload()
                 console.log('okok')
@@ -687,14 +708,17 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                     },
                   },
                 )
-
+                setProgress(70)
                 setIsLoading(true)
+                setProgress(86)
                 await handleChangeStatusSecondSend()
                 console.log(response)
+                setProgress(100)
               } catch (err) {
                 console.log('err petugas put', err)
                 spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
               } finally {
+                setProgress(100)
                 navigate('/rawat-jalan/')
                 window.location.reload()
               }
@@ -733,13 +757,19 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
 
                 setIsLoading(true)
                 console.log('BERHASIL MENGIRIM(dokter):', response.data)
+                setProgress(70)
                 await postResep()
+                setProgress(80)
                 await postDiagnosa()
+                setProgress(86)
                 await handleChangeStatusSecondSend()
+                setProgress(100)
               } catch (error) {
                 console.log('error dokter put', error)
                 spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
+                setProgress(100)
               } finally {
+                setProgress(100)
                 navigate('/rawat-jalan/')
                 window.location.reload()
               }
@@ -750,6 +780,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
         }
       }
     } catch (err) {
+      setProgress(100)
       console.log('ini error apa?', err)
     }
   }
@@ -811,8 +842,9 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       }
 
       const planString = generatePlanString(newSelectedMedicines)
-      setPlan(planString)
-
+      setPlan(
+        `----------------------------------------\nWaktu Penyimpanan Pertama: ${showTime}\n---------------------------------------- \n${planString}`,
+      )
       return newSelectedMedicines
     })
   }
@@ -854,6 +886,12 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
 
   return (
     <div className='min-w-fit mt-4'>
+      <LoadingBar
+        color='#55a46b'
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+        height={7}
+      ></LoadingBar>
       <div>
         <p className=' font-bold text-xl text-[#121713]'>Pemeriksaan</p>
         <p className=' font-bold text-xl text-[#121713]'>No Resep: {nmrResep}</p>
@@ -1483,6 +1521,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                     setEditObat(false)
                                     setJumlahObat(0)
                                     setAturanPakai('')
+                                    trueFalseResep = false
                                   }}
                                   id={`button__${index}`}
                                 >
@@ -1493,7 +1532,7 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                 </button>
                               </td>
                             ) : (
-                              <td className='flex justify-center gap-3'>
+                              <td className='flex items-center justify-center gap-3'>
                                 <button onClick={() => handleEditObat(index)}>
                                   <p className='text-blue-500'>Edit</p>
                                 </button>
@@ -1507,10 +1546,22 @@ const InsertSoapRalan: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                       </tbody>
                     </table>
                   </div>
+                  {trueFalseResep ? (
+                    <>
+                      <div className='grid animate-pulse mt-1'>
+                        <label className='label text-red-500'>PERINGATAN :</label>
+                        <div className='flex'>
+                          <ExclamationCircleIcon width={30} height={23} color='#f02f00' />{' '}
+                          <p className='flex text-center pl-2 text-red-500'>
+                            {resepMessage} <p className='font-bold pl-1'> TIDAK ADA</p>
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  ) : null}
                 </div>
               </>
             ) : null}
-
             {/* {selectedMedicines && Object.keys(selectedMedicines).length > 0 ? (
               <div className='mt-3 flex justify-end'>
                 <button

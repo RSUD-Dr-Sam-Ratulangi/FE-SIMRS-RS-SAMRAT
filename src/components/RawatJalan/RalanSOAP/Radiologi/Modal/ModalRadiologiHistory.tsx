@@ -31,7 +31,7 @@ const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProp
         setJam(response.data.jam)
         setHasil(response.data.hasil)
       } catch (err) {
-        null
+        console.warn(`DATA RADIOLOGI ON ${nmrRawat} NOT FOUND`)
       }
     }
     fetchData()
@@ -41,13 +41,12 @@ const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProp
     try {
       setIsLoading(true)
       const response = await api.get(`/api/v1/radiology-images?noRawat=${nmrRawat}`)
-      console.log('images', response.data)
       const imageUrls = response.data.map(
         (item) => `http://rsudsamrat.site/webapps/radiologi/${item.lokasi_gambar}`,
       )
       setGambar(imageUrls)
     } catch (err) {
-      null
+      console.warn('images not found')
       setIsLoading(false)
     } finally {
       setIsLoading(false)

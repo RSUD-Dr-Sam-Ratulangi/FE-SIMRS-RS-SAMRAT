@@ -58,6 +58,8 @@ type userData = {
 const RanapSoapPemeriksaan: React.FC = () => {
   const { id } = useParams()
   const [personalData, setPersonalData] = useState<userData>()
+  const [errResepMessage, setErrResepMessage] = useState('')
+  const [trueFalseResep, setTrueFalseResep] = useState(false)
   const [riwayatObat, setRiwayatObat] = useState([])
   const [isReverse, setIsReverse] = useState(false)
   // const [selectedTab, setSelectedTab] = useState('Riwayat Soap')
@@ -79,6 +81,14 @@ const RanapSoapPemeriksaan: React.FC = () => {
   // ambil data dari child
   const handleRiwayatObatChange = (riwayatObatData: any) => {
     setRiwayatObat(riwayatObatData)
+  }
+
+  const handleResepMessage = (message: any) => {
+    setErrResepMessage(message)
+  }
+
+  const checkTrueFalseResep = (value: boolean) => {
+    setTrueFalseResep(value)
   }
 
   // const handleTabClick = (tabName) => {
@@ -205,6 +215,8 @@ const RanapSoapPemeriksaan: React.FC = () => {
               <RiwayatSoapRalan
                 onRiwayatObatChange={handleRiwayatObatChange}
                 personalData={personalData}
+                errResepMessage={handleResepMessage}
+                trueFalseResep={checkTrueFalseResep}
               />
             </div>
           </div>
@@ -231,7 +243,11 @@ const RanapSoapPemeriksaan: React.FC = () => {
               <p className='text-disabled '>
                 Isi semua data dibawah ini untuk menambahkan SOAP baru kedalam daftar
               </p>
-              <InsertSoapRalan copyResep={riwayatObat} />
+              <InsertSoapRalan
+                copyResep={riwayatObat}
+                resepMessage={errResepMessage}
+                trueFalseResep={trueFalseResep}
+              />
             </div>
           </div>
         </div>

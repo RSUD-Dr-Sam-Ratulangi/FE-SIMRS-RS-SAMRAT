@@ -1,12 +1,20 @@
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
 import logo from '../../../../assets/img/LOGORSREVISI4.png'
-import QRCode from 'react-qr-code'
-import { renderToString } from 'react-dom/server'
-import { Canvg } from 'canvg'
+// import QRCode from 'react-qr-code'
+// import { renderToString } from 'react-dom/server'
+// import { Canvg } from 'canvg'
 import { api } from '../../../../services/api/config.api'
 
-const PdfComponent = async (noRawat: any, id: any, kdPoli: any, nmPoli: any, dokterNames: any) => {
+const PdfComponent = async (
+  noRawat: any,
+  id: any,
+  kdPoli: any,
+  nmPoli: any,
+  dktrName: any,
+  nmPasien: any,
+  progress: (value: number) => void,
+) => {
   let existLab = false
   let existRadiologi = false
   let nmrResep = null
@@ -17,6 +25,7 @@ const PdfComponent = async (noRawat: any, id: any, kdPoli: any, nmPoli: any, dok
   let tindakanTableRows = []
 
   try {
+    progress(20)
     const noResep = await api.get(
       `/api/v1/getPrescriptionNumbers?noRkmMedis=${id}&noRawat=${noRawat}`,
     )
@@ -85,6 +94,7 @@ const PdfComponent = async (noRawat: any, id: any, kdPoli: any, nmPoli: any, dok
     nmrResep = noResep.data[0]
     if (nmrResep) {
       try {
+        progress(40)
         const dataObat = await api.get(`/api/v1/getResepDokterDetails?noResep=${nmrResep}`)
         console.log('data obat', dataObat.data)
         const obatD = dataObat.data
@@ -108,10 +118,10 @@ const PdfComponent = async (noRawat: any, id: any, kdPoli: any, nmPoli: any, dok
   }
 
   try {
+    progress(74)
     const data = await api.get(`/api/v1/RiwayatSoapByNoRawat?noRkmMedis=${id}&noRawat=${noRawat}`)
     const dataDiagnosa = await api.get(`/api/v1/getDiagnosaPasien?noRawat=${noRawat}`)
-    console.log('data', data.data[0].tgl_perawatan)
-
+    console.log('data', data.data[0])
     if (data) {
       try {
         const dataId = await api.get(`/api/v1/getPatientData?noRkmMedis=${id}`)
@@ -324,6 +334,32 @@ const PdfComponent = async (noRawat: any, id: any, kdPoli: any, nmPoli: any, dok
                 1: { cellWidth: 60 },
               },
             })
+            const addEvaluasi = () => {
+              const pageHeight = doc.internal.pageSize.height
+              const marginBottom = 10
+              const yPosition = doc.lastAutoTable.finalY + 5
+              const evaluasiText = data.data[0]?.evaluasi || ''
+              const textHeight = doc.getTextDimensions(evaluasiText).h
+
+              if (yPosition + textHeight > pageHeight - marginBottom) {
+                doc.addPage()
+              }
+
+              doc.setFontSize(8)
+              doc.text(evaluasiText, 10, yPosition + 5)
+            }
+
+            addEvaluasi()
+
+            const pageHeight = doc.internal.pageSize.height
+            const marginBottom = 8
+            const yPosition = pageHeight - marginBottom
+
+            doc.setFontSize(8)
+            doc.text(`${nmPasien}`, 30, yPosition)
+            doc.text(`${dktrName}`, doc.internal.pageSize.getWidth() / 2 + 30, yPosition)
+
+            progress(85)
 
             return doc.lastAutoTable.finalY + 5
           }
@@ -335,39 +371,7 @@ const PdfComponent = async (noRawat: any, id: any, kdPoli: any, nmPoli: any, dok
           img.onload = async () => {
             const lineY = addTitleHead(doc, img)
             belowHeader(doc, lineY)
-
-            const qrCodeSvgStringPesertaJkn = renderToString(
-              <QRCode value={`${dataId.data.no_rkm_medis}/${dataId.data.nm_pasien}`} size={128} />,
-            )
-            const qrCodeSvgStringDpjpDokter = renderToString(
-              <QRCode value={`${data.data[0].nip}/${dokterNames}`} size={128} />,
-            )
-
-            const canvas = document.createElement('canvas')
-            const ctx = canvas.getContext('2d')
-            const pJkn = Canvg.fromString(ctx, qrCodeSvgStringPesertaJkn)
-            await pJkn.render()
-            const qrCodeImageDataJkn = canvas.toDataURL('image/png')
-
-            const dpjpDokter = Canvg.fromString(ctx, qrCodeSvgStringDpjpDokter)
-            await dpjpDokter.render()
-            const qrCodeImageDataDpjp = canvas.toDataURL('image/png')
-
-            const qrSize = 15
-            const pageHeight = doc.internal.pageSize.getHeight()
-            const textYOffset = 3
-
-            const firstQrX = 140
-            const firstQrY = pageHeight - qrSize - 5
-            doc.setFontSize(12)
-            doc.text('DPJP Dokter Pemeriksa', firstQrX - 15, firstQrY - textYOffset)
-            doc.addImage(qrCodeImageDataDpjp, 'PNG', firstQrX, firstQrY, qrSize, qrSize)
-
-            const secondQrX = 40
-            const secondQrY = pageHeight - qrSize - 5
-            doc.text('Peserta JKN', secondQrX - 4, secondQrY - textYOffset)
-            doc.addImage(qrCodeImageDataJkn, 'PNG', secondQrX, secondQrY, qrSize, qrSize)
-
+            progress(100)
             doc.save(`SBPK_${noRawat}`)
           }
         }
@@ -376,9 +380,11 @@ const PdfComponent = async (noRawat: any, id: any, kdPoli: any, nmPoli: any, dok
       }
     } else {
       window.alert('ERROR!!!')
+      progress(100)
     }
   } catch (err) {
     window.alert('ERROR TAKING DATA!!!')
+    progress(100)
   }
 }
 
