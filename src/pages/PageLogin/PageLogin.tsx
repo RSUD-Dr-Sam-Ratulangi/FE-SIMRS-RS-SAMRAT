@@ -16,7 +16,7 @@ export default function PageLogin() {
 
   const loginUser = async () => {
     try {
-      const response = await fetch('http://rsudsamrat.site:8901/api/v1/login', {
+      const response = await fetch('http://43.99.33.8:8901/api/v1/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,9 +39,7 @@ export default function PageLogin() {
             localStorage.setItem('tglSkrng', tglSkrng)
             localStorage.setItem('PoliString', '')
             try {
-              const response = await api.get(
-                `http://rsudsamrat.site:8901/api/v1/getJadwalDokter?kdDokter=${kdDokter}`,
-              )
+              const response = await api.get(`/api/v1/getJadwalDokter?kdDokter=${kdDokter}`)
               const kode = response.data
               localStorage.setItem('kd_poli', JSON.stringify(kode))
               console.log('data kode dokter', kode)
