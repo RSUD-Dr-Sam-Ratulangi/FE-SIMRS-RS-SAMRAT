@@ -3,15 +3,15 @@ import { NavLink, useLocation, useNavigate, useParams, Link } from 'react-router
 import Breadcrumb from '../BreadCrumb/Breadcrumb'
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'
 
-const HeaderRanap: React.FC = () => {
+const HeaderIgd: React.FC = () => {
   const id = useParams().id
   const location = useLocation()
   const navigate = useNavigate()
 
   const links = [
     {
-      name: 'SOAP & Pemeriksaan',
-      link: `/rawat-inap/soap-pemeriksaan/${id}`,
+      name: 'IGD SOAP & Pemeriksaan',
+      link: `/pasien-igd/soap-pemeriksaan/${id}`,
     },
   ]
 
@@ -37,7 +37,7 @@ const HeaderRanap: React.FC = () => {
       </div>
       <div className='flex text-disabled mt-4'>
         <ArrowLeftIcon className='w-4 mr-1' />
-        <a className=' font-sans cursor-pointer' onClick={() => navigate('/rawat-inap')}>
+        <a className=' font-sans cursor-pointer' onClick={() => navigate('/rawat-jalan')}>
           Kembali
         </a>
       </div>
@@ -57,4 +57,4 @@ const HeaderRanap: React.FC = () => {
   )
 }
 
-export default HeaderRanap
+export default HeaderIgd

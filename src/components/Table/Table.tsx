@@ -7,6 +7,7 @@ import {
   ArrowPathIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid'
+import { useLocation } from 'react-router-dom'
 
 type templateObject = {
   [key: string]: any
@@ -18,6 +19,7 @@ type Props = {
 }
 
 const TableData = ({ data, columns }: Props) => {
+  const location = useLocation()
   // const [currentPage, setCurrentPage] = useState(1)
   // const [rowsPerPage, setRowsPerPage] = useState(15)
   const PoliString = localStorage.getItem('PoliString')
@@ -26,7 +28,8 @@ const TableData = ({ data, columns }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [filterJumlahPasien, setFilterJumlahPasien] = useState(0)
 
-  // const navigate = useNavigate()
+  // if pasien igd page
+  const isPasienIgd = location.pathname.includes('pasien-igd')
 
   useEffect(() => {
     const newFilteredData = data
@@ -56,34 +59,14 @@ const TableData = ({ data, columns }: Props) => {
     }
   }, [searchQuery, data, columns])
 
-  // const handlePageChange = (newPage: any) => {
-  //   setCurrentPage(newPage)
-  // }
-
-  // const handleRowsPerPageChange = (newRowsPerPage: any) => {
-  //   setRowsPerPage(newRowsPerPage)
-  //   setCurrentPage(1)
-  // }
-
-  // const antrianClick = () => {
-  //   navigate('/antrian-ralan')
-  //   navigate(0)
-  // }
-
   const paginatedData = filteredData ? filteredData : []
 
   return (
     <div>
-      <div className='flex items-center w-full pb-4'>
-        <div className='w-full'>
-          <span className='text-[10px] flex items-center gap-5 mb-3'>
-            <p className='font-bold'>Cari berdasarkan No. RM, Nama, atau Nomor Rawat</p>{' '}
-            <button onClick={() => window.location.reload()}>
-              <ArrowPathIcon className='w-5 h-5' />
-            </button>
-          </span>
+      {isPasienIgd ? (
+        <div>
           <div className='flex gap-2 '>
-            <div className='relative w-full'>
+            <div className='relative w-full mb-2'>
               {searchQuery ? (
                 <button
                   onClick={() => setSearchQuery('')}
@@ -102,12 +85,6 @@ const TableData = ({ data, columns }: Props) => {
                 className='w-full input input-bordered'
               />
             </div>
-            {/* <input
-              type='date'
-              onChange={handleSelectDate}
-              value={selectedDate}
-              className='input text-sm border-primary'
-            /> */}
             <div className='relative dropdown  dropdown-bottom dropdown-end'>
               <button
                 onClick={() => setIsOpen(true)}
@@ -140,156 +117,263 @@ const TableData = ({ data, columns }: Props) => {
                         <div className='grid grid-cols-3 gap-3'>
                           <button
                             onClick={() => {
-                              setSearchQuery('KLINIK GERIATRI')
-                              localStorage.setItem('PoliString', 'KLINIK GERIATRI')
+                              setSearchQuery('IGD PAGI')
+                              localStorage.setItem('PoliString', 'IGD.P')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
                           >
-                            KLINIK GERIATRI
+                            IGD PAGI
                           </button>
                           <button
                             onClick={() => {
-                              setSearchQuery('KLINIK SYARAF')
-                              localStorage.setItem('PoliString', 'KLINIK SYARAF')
+                              setSearchQuery('IGD SIANG')
+                              localStorage.setItem('PoliString', 'IGD.S')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
                           >
-                            KLINIK SYARAF
+                            IGD SIANG
                           </button>
                           <button
                             onClick={() => {
-                              setSearchQuery('KLINIK PENYAKIT DALAM')
-                              localStorage.setItem('PoliString', 'KLINIK PENYAKIT DALAM')
+                              setSearchQuery('IGD MALAM')
+                              localStorage.setItem('PoliString', 'IGD.M')
                               setIsOpen(false)
                             }}
                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
                           >
-                            KLINIK PENYAKIT DALAM
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('KLINIK JANTUNG')
-                              localStorage.setItem('PoliString', 'KLINIK JANTUNG')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            KLINIK JANTUNG
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('KLINIK GIGI')
-                              localStorage.setItem('PoliString', 'KLINIK GIGI')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            KLINIK GIGI & MULUT
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('KLINIK KANDUNGAN')
-                              localStorage.setItem('PoliString', 'KLINIK KANDUNGAN')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            KLINIK KANDUNGAN
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('KLINIK ANAK')
-                              localStorage.setItem('PoliString', 'KLINIK ANAK')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            KLINIK ANAK
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('KLINIK MATA')
-                              localStorage.setItem('PoliString', 'KLINIK MATA')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            KLINIK MATA
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('KLINIK JIWA')
-                              localStorage.setItem('PoliString', 'KLINIK JIWA')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            KLINIK JIWA
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('KLINIK KULIT & KELAMIN')
-                              localStorage.setItem('PoliString', 'KLINIK KULIT & KELAMIN')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            KLINIK KULIT & KELAMIN
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('KLINIK FISIOTERAPI')
-                              localStorage.setItem('PoliString', 'KLINIK FISIOTERAPI')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            KLINIK FISIOTERAPI
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('KLINIK BEDAH')
-                              localStorage.setItem('PoliString', 'KLINIK BEDAH')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            KLINIK BEDAH
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('IGD')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            IGD
+                            IGD MALAM
                           </button>
                         </div>
                       </div>
                     </div>
-                    {/* <button className='btn bg-[#55A46B]'>Terapkan Filter</button> */}
                   </div>
                 </>
               )}
             </div>
           </div>
+          <div className='flex justify-between'>
+            <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
+          </div>
+
+          <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
         </div>
-      </div>
-      <div className='flex justify-between'>
-        <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
-        {/* <input
+      ) : (
+        <>
+          <div className='flex items-center w-full pb-4'>
+            <div className='w-full'>
+              <span className='text-[10px] flex items-center gap-5 mb-3'>
+                <p className='font-bold'>Cari berdasarkan No. RM, Nama, atau Nomor Rawat</p>{' '}
+                <button onClick={() => window.location.reload()}>
+                  <ArrowPathIcon className='w-5 h-5' />
+                </button>
+              </span>
+              <div className='flex gap-2 '>
+                <div className='relative w-full'>
+                  {searchQuery ? (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('')
+                        localStorage.setItem('PoliString', '')
+                      }}
+                      className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]'
+                    >
+                      <XMarkIcon />
+                    </button>
+                  ) : (
+                    <MagnifyingGlassIcon className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]' />
+                  )}
+                  <input
+                    type='text'
+                    placeholder='Cari...'
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className='w-full input input-bordered'
+                  />
+                </div>
+                <div className='relative dropdown  dropdown-bottom dropdown-end'>
+                  <button
+                    onClick={() => setIsOpen(true)}
+                    className='flex btn w-72 text-white bg-[#55A46B]'
+                  >
+                    <FunnelIcon className='font-bold text-white h-[17px] w-[17px]' />
+                    Filter
+                  </button>
+                  <ChevronDownIcon className='absolute bottom-4 right-5 font-bold text-white h-[17px] w-[17px]' />
+                  {isOpen && (
+                    <>
+                      <div
+                        tabIndex={0}
+                        className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[482px] shadow-2xl border border-slate-300 '
+                      >
+                        <div className='w-full mt-3 p-3'>
+                          <div className='flex justify-between items-center mb-5'>
+                            <p className='pb-2 font-bold text-md mt-3'>POLI </p>
+                            <button
+                              onClick={() => {
+                                setSearchQuery('')
+                                localStorage.setItem('PoliString', '')
+                                setIsOpen(false)
+                              }}
+                            >
+                              <ArrowPathIcon className='mr-3 w-7 h-7' />
+                            </button>{' '}
+                          </div>
+                          <div>
+                            <div className='grid grid-cols-3 gap-3'>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK GERIATRI')
+                                  localStorage.setItem('PoliString', 'KLINIK GERIATRI')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK GERIATRI
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK SYARAF')
+                                  localStorage.setItem('PoliString', 'KLINIK SYARAF')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK SYARAF
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK PENYAKIT DALAM')
+                                  localStorage.setItem('PoliString', 'KLINIK PENYAKIT DALAM')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK PENYAKIT DALAM
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK JANTUNG')
+                                  localStorage.setItem('PoliString', 'KLINIK JANTUNG')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK JANTUNG
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK GIGI')
+                                  localStorage.setItem('PoliString', 'KLINIK GIGI')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK GIGI & MULUT
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK KANDUNGAN')
+                                  localStorage.setItem('PoliString', 'KLINIK KANDUNGAN')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK KANDUNGAN
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK ANAK')
+                                  localStorage.setItem('PoliString', 'KLINIK ANAK')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK ANAK
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK MATA')
+                                  localStorage.setItem('PoliString', 'KLINIK MATA')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK MATA
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK JIWA')
+                                  localStorage.setItem('PoliString', 'KLINIK JIWA')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK JIWA
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK KULIT & KELAMIN')
+                                  localStorage.setItem('PoliString', 'KLINIK KULIT & KELAMIN')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK KULIT & KELAMIN
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK FISIOTERAPI')
+                                  localStorage.setItem('PoliString', 'KLINIK FISIOTERAPI')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK FISIOTERAPI
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('KLINIK BEDAH')
+                                  localStorage.setItem('PoliString', 'KLINIK BEDAH')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                KLINIK BEDAH
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSearchQuery('IGD')
+                                  setIsOpen(false)
+                                }}
+                                className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                              >
+                                IGD
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        {/* <button className='btn bg-[#55A46B]'>Terapkan Filter</button> */}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='flex justify-between'>
+            <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
+            {/* <input
           type='date'
           onChange={handleChangeDate}
           value={selectedDate}
           className='input hover:bg-slate-300 border-slate-500'
         /> */}
-      </div>
+          </div>
 
-      <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
-      {/* {searchQuery === '' ? (
+          <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
+          {/* {searchQuery === '' ? (
         <div className='flex justify-between p-2'>
           <div>
             <p>
@@ -381,6 +465,8 @@ const TableData = ({ data, columns }: Props) => {
       ) : (
         <p className='font-bold text-lg text-center pt-5'>Cari Data ?</p>
       )} */}
+        </>
+      )}
     </div>
   )
 }

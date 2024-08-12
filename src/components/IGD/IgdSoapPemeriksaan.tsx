@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react'
-import { api } from '../../../services/api/config.api'
+import React, { useEffect, useState } from 'react'
+import { api } from '../../services/api/config.api'
 import { useParams } from 'react-router-dom'
 // import RiwayatSoap from './RiwayatSoap';
-import RiwayatSoapRalan from './ComponentsSoapPemeriksaan/RiwayatSoap'
+import RiwayatSoapIGD from './SoapPemeriksaan/RiwayatSoap'
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid'
-import InsertSoapRalan from './ComponentsSoapPemeriksaan/InsertSoap'
-import HeaderRalan from '../../Navbar/HeaderDetailRalan'
-import RiwayatDiagnosa from './ComponentsSoapPemeriksaan/RiwayatDiagnosa'
+import InsertSoapIgd from './SoapPemeriksaan/InsertSoap'
+import HeaderIgd from '../Navbar/HeaderDetailIGD'
 
 type userData = {
   no_rkm_medis: string
@@ -56,19 +55,14 @@ type userData = {
   nm_dokter: string
 }
 
-const RalanSoapPemeriksaan: React.FC = () => {
+const IgdSoapPemeriksaan: React.FC = () => {
   const { id } = useParams()
   const [personalData, setPersonalData] = useState<userData>()
   const [errResepMessage, setErrResepMessage] = useState('')
   const [trueFalseResep, setTrueFalseResep] = useState(false)
   const [riwayatObat, setRiwayatObat] = useState([])
   const [isReverse, setIsReverse] = useState(false)
-  const [activeTab, setActiveTab] = useState(1)
   // const [selectedTab, setSelectedTab] = useState('Riwayat Soap')
-
-  useEffect(() => {
-    console.log('Current Active Tab: ', activeTab)
-  }, [activeTab])
 
   useEffect(() => {
     const fetchPersonalData = async () => {
@@ -96,14 +90,9 @@ const RalanSoapPemeriksaan: React.FC = () => {
   const checkTrueFalseResep = (value: boolean) => {
     setTrueFalseResep(value)
   }
-
-  // const handleTabClick = (tabName) => {
-  //   setSelectedTab(tabName)
-  // }
-
   return (
     <div className='ml-3'>
-      <HeaderRalan />
+      <HeaderIgd />
       <div className='grid grid-cols-2  overflow-x-auto'>
         <div className={`flex flex-row w-max ${isReverse ? 'flex-row-reverse' : 'flex-row'} mt-4`}>
           <div className='w-[850px]'>
@@ -217,41 +206,13 @@ const RalanSoapPemeriksaan: React.FC = () => {
                 <>Loading...</>
               )}
             </div>
-
             <div>
-              <div role='tablist' className='tabs tabs-bordered mt-2'>
-                <a
-                  role='tab'
-                  className={`tab flex-1 text-center ${activeTab === 1 ? 'tab-active' : ''}`}
-                  onClick={() => setActiveTab(1)}
-                >
-                  Riwayat Soap
-                </a>
-                <a
-                  role='tab'
-                  className={`tab flex-1 text-center ${activeTab === 2 ? 'tab-active' : ''}`}
-                  onClick={() => setActiveTab(2)}
-                >
-                  Riwayat Diagnosa
-                </a>
-              </div>
-              <div className='w-full'>
-                {activeTab === 1 && (
-                  <div>
-                    <RiwayatSoapRalan
-                      onRiwayatObatChange={handleRiwayatObatChange}
-                      personalData={personalData}
-                      errResepMessage={handleResepMessage}
-                      trueFalseResep={checkTrueFalseResep}
-                    />
-                  </div>
-                )}
-                {activeTab === 2 && (
-                  <div>
-                    <RiwayatDiagnosa />
-                  </div>
-                )}
-              </div>
+              <RiwayatSoapIGD
+                onRiwayatObatChange={handleRiwayatObatChange}
+                personalData={personalData}
+                errResepMessage={handleResepMessage}
+                trueFalseResep={checkTrueFalseResep}
+              />
             </div>
           </div>
           <div
@@ -277,7 +238,7 @@ const RalanSoapPemeriksaan: React.FC = () => {
               <p className='text-disabled '>
                 Isi semua data dibawah ini untuk menambahkan SOAP baru kedalam daftar
               </p>
-              <InsertSoapRalan
+              <InsertSoapIgd
                 copyResep={riwayatObat}
                 resepMessage={errResepMessage}
                 trueFalseResep={trueFalseResep}
@@ -290,4 +251,4 @@ const RalanSoapPemeriksaan: React.FC = () => {
   )
 }
 
-export default RalanSoapPemeriksaan
+export default IgdSoapPemeriksaan

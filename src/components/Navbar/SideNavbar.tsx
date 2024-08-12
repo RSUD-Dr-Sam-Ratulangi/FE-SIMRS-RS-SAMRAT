@@ -53,6 +53,7 @@ const Navbar: React.FC = () => {
         <div className='flex flex-col gap-4 flex-2 text-slate-600'>
           {navLinks.map((linkItem) => (
             <NavLink
+              onClick={() => localStorage.setItem('PoliString', '')}
               key={linkItem.to}
               to={linkItem.to}
               className={({ isActive }) =>

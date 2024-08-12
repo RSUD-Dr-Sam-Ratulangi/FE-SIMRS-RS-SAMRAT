@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { api } from '../../../../services/api/config.api'
-import { errorCopyResep, spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
+import { api } from '../../../services/api/config.api'
+import { errorCopyResep, spesificError, spesificSuccess } from '../../../utils/ToastInfo'
 import { useParams } from 'react-router-dom'
 import { ClockIcon, CalendarDaysIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import { ToastContainer } from 'react-toastify'
-import ModalLaborHistory from '../Laboratorium/Modal/ModalLaborHistory'
+import ModalLaborHistory from '../../RawatJalan/RalanSOAP/Laboratorium/Modal/ModalLaborHistory'
 import { PopupActions } from 'reactjs-popup/dist/types'
-import ModalRadiologiHistory from '../Radiologi/Modal/ModalRadiologiHistory'
-import PdfComponent from '../Pdf/PrintSoapPDF'
+import ModalRadiologiHistory from '../../RawatJalan/RalanSOAP/Radiologi/Modal/ModalRadiologiHistory'
+import PdfComponent from '../../RawatJalan/RalanSOAP/Pdf/PrintSoapPDF'
 import LoadingBar from 'react-top-loading-bar'
 
 type userData = {
@@ -63,13 +63,13 @@ type userData = {
 
 type ApiData = userData[]
 
-interface RiwayatSoapRalanProps {
+interface RiwayatSoapIGDProps {
   onRiwayatObatChange: (riwayatObatData: any) => void
   personalData: any
   errResepMessage: (message: any) => void
   trueFalseResep: (boolean) => void
 }
-const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
+const RiwayatSoapIGD: React.FC<RiwayatSoapIGDProps> = ({
   onRiwayatObatChange,
   errResepMessage,
   trueFalseResep,
@@ -287,7 +287,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
           {riwayatSoap.map((riwayat, index) => (
             <div
               key={index}
-              className='min-w-fit bg-slate-100 rounded-xl mt-4 p-4 border border-slate-300'
+              className='w-auto  bg-slate-100 rounded-xl mt-4 p-4 border border-slate-300'
             >
               <div className='flex justify-between'>
                 <div>
@@ -386,7 +386,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                 <div className='mt-2'>
                   <div className='mt-2 p-2'>
                     <div className='flex justify-between items-center '>
-                      <label className='font-semibold text-slate-700 text-sm'>PLAN</label>
+                      <label className=' font-semibold text-slate-700 text-sm'>PLAN</label>
                       {role.includes('dokter') ? (
                         <button
                           className='btn btn-ghost hover:bg-slate-100'
@@ -470,4 +470,4 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   )
 }
 
-export default RiwayatSoapRalan
+export default RiwayatSoapIGD

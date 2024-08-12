@@ -11,6 +11,7 @@ import PageRalanRME from './pages/PageRalanRME/PageRalanRME'
 import PageSoapRalanPemeriksaan from './components/RawatJalan/RalanSOAP/RalanSoapPemeriksaan'
 import PageSoapRanapPemeriksaan from './components/RawatInap/RanapSoap/RanapSoapPemeriksaan'
 import PageAntrianRajal from './pages/PageAntrianRawatJalan/PageAntrianRajal'
+import IgdSoapPemeriksaan from './components/IGD/IgdSoapPemeriksaan'
 
 export const ROUTES = {
   HOME: '/',
@@ -26,6 +27,7 @@ export const ROUTES = {
   PAGE_RANAP_BERKAS_DIGITAL: '/rawat-inap/berkas-digital/:id',
   PAGE_RALAN_RME: '/rawat-jalan/rme/:id',
   PAGE_SOAP_RALAN: '/rawat-jalan/soap-pemeriksaan/:id',
+  PAGE_SOAP_IGD: '/pasien-igd/soap-pemeriksaan/:id',
   PAGE_RALAN_LAYANAN_OBAT: '/rawat-jalan/layanan-obat/:id',
   PAGE_RALAN_BERKAS_DIGITAL: '/rawat-jalan/berkas-digital/:id',
   PAGE_ANTRIAN_RALAN: '/antrian-ralan',
@@ -44,10 +46,11 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_RANAP_LAYANAN_OBAT]: 'Ranap Layanan & Obat',
   [ROUTES.PAGE_RANAP_BERKAS_DIGITAL]: 'Ranap Berkas Digital',
   [ROUTES.PAGE_RALAN_RME]: 'Ralan RME',
-  [ROUTES.PAGE_SOAP_RALAN]: 'Soap & Pemeriksaan',
+  [ROUTES.PAGE_SOAP_RALAN]: 'Ralan Soap & Pemeriksaan',
   [ROUTES.PAGE_RALAN_LAYANAN_OBAT]: 'Ralan Layanan & Obat',
   [ROUTES.PAGE_RALAN_LAYANAN_OBAT]: 'Ralan Layanan & Obat',
   [ROUTES.PAGE_ANTRIAN_RALAN]: 'Antrian Ralan',
+  [ROUTES.PAGE_SOAP_IGD]: 'IGD Soap & Pemeriksaan',
 }
 
 export const routerList = [
@@ -99,6 +102,10 @@ export const routerList = [
       {
         path: ROUTES.PAGE_ANTRIAN_RALAN,
         element: <PageAntrianRajal />,
+      },
+      {
+        path: ROUTES.PAGE_SOAP_IGD,
+        element: <IgdSoapPemeriksaan />,
       },
     ],
   },
