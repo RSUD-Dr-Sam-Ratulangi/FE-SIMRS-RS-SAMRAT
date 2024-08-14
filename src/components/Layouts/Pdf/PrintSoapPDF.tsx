@@ -1,10 +1,10 @@
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
-import logo from '../../../../assets/img/LOGORSREVISI4.png'
+import logo from '../../../assets/img/LOGORSREVISI4.png'
 // import QRCode from 'react-qr-code'
 // import { renderToString } from 'react-dom/server'
 // import { Canvg } from 'canvg'
-import { api } from '../../../../services/api/config.api'
+import { api } from '../../../services/api/config.api'
 
 const PdfComponent = async (
   noRawat: any,

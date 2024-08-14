@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 text-lg hover:bg-slate-200 p-2 rounded-xl  [&_div]:rounded-xl  [&_div]:p-2  [&_div]:shadow-soft ${
                   isActive
-                    ? 'bg-white shadow-soft [&_div]:bg-primary-500 [&_div]:text-white'
+                    ? 'bg-gray-300 shadow-soft [&_div]:bg-primary-500 [&_div]:text-white'
                     : '[&_div]:bg-white [&_div]:text-primary-500'
                 }`
               }

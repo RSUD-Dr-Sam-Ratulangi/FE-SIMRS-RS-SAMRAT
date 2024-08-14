@@ -3,23 +3,64 @@ import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { useNavigate } from 'react-router-dom'
+import { ArrowPathIcon } from '@heroicons/react/24/solid'
 
 export default function PageRawatInap() {
+  const tglSkrng = localStorage.getItem('tglSkrng')
   const [data, setData] = useState()
+  const [changeDate, setChangeDate] = useState(tglSkrng)
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
+    setIsLoading(true)
     const fetchData = async () => {
       try {
         const response = await api.get('/api/v1/getDataPasienRanap?statusPulang=-&bangsalName=')
         console.log(response.data)
-        setData(response.data)
+        const dataInap = response.data.reverse()
+        setData(dataInap)
+        setIsLoading(false)
       } catch (err) {
         console.log(err)
       }
     }
     fetchData()
   }, [])
+
+  const createContextMenu = (e, url) => {
+    e.preventDefault() // Prevent default context menu
+
+    const existingContextMenu = document.querySelector('.custom-context-menu')
+    if (existingContextMenu) {
+      console.log('Context menu exists. Removing...')
+      existingContextMenu.remove()
+    } else {
+      console.log('Context menu does not exist.')
+    }
+
+    const contextMenu = document.createElement('div')
+    contextMenu.className =
+      'custom-context-menu absolute z-10 bg-white border border-gray-200 rounded shadow'
+    contextMenu.innerHTML = `
+    <button class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left" onclick="window.open('${url}', '_blank')">BUKA DI TAB BARU</button>
+  `
+    document.body.appendChild(contextMenu)
+    contextMenu.style.cssText = `
+    top: ${e.clientY}px;
+    left: ${e.clientX}px;
+  `
+
+    const closeContextMenu = (event) => {
+      const isClickInsideContextMenu = contextMenu.contains(event.target)
+      if (!isClickInsideContextMenu) {
+        console.log('Closing context menu...')
+        contextMenu.remove() // Remove the context menu
+        document.removeEventListener('click', closeContextMenu) // Remove the event listener
+      }
+    }
+    document.addEventListener('click', closeContextMenu)
+  }
 
   type DataItem = {
     id: number
@@ -44,6 +85,14 @@ export default function PageRawatInap() {
     stts_pulang: string
   }
 
+  const handleDateChange = (event: any) => {
+    const dateValue = event.target.value
+    localStorage.setItem('tglSkrng', dateValue)
+    const getDate = localStorage.getItem('tglSkrng')
+
+    setChangeDate(getDate)
+  }
+
   const columns = [
     {
       name: 'No.RM',
@@ -51,52 +100,76 @@ export default function PageRawatInap() {
       sortable: true,
     },
     {
-      name: 'Nama Pasien',
-      selector: (row: DataItem) => row.nm_pasien,
+      name: 'NAMA PASIEN',
+      selector: (row: DataItem) => (
+        <a
+          className='font-semibold uppercase text-md hover:cursor-pointer'
+          onClick={async () => {
+            localStorage.setItem('no_rawat', row.no_rawat)
+            // localStorage.setItem('no_antrian', row.no_reg)
+            // localStorage.setItem('status_rawat', row.stts)
+            navigate(`/rawat-inap/soap-pemeriksaan/${row.no_rkm_medis}`, { state: { data: row } })
+          }}
+          onContextMenu={(e) =>
+            createContextMenu(
+              e,
+              `${window.location.origin}/rawat-jalan/soap-pemeriksaan/${row.no_rkm_medis}`,
+            )
+          }
+        >
+          {row.nm_pasien}
+        </a>
+      ),
       sortable: true,
-      width: '15rem',
     },
     {
       name: 'Bangsal/Kamar',
       selector: (row: DataItem) => row.nm_bangsal,
       sortable: true,
-      width: '15rem',
     },
-    { name: 'Dokter', selector: (row: DataItem) => row.nm_dokter, sortable: true, width: '15rem' },
+    { name: 'Dokter', selector: (row: DataItem) => row.nm_dokter, sortable: true },
     {
       name: 'Diagnosa Awal',
       selector: (row: DataItem) => row.diagnosa_awal,
       sortable: true,
-      width: '14rem',
     },
     {
-      name: 'Masuk/Keluar',
+      name: 'Tgl/Jam Masuk',
       selector: (row: DataItem) => `${row.tgl_masuk} ${row.jam_masuk}`,
       sortable: true,
-      width: '15rem',
     },
     {
       name: 'Antrian',
       selector: (row: DataItem) => row.nm_pasien,
       sortable: true,
-      width: '15rem',
-    },
-    {
-      name: '',
-      selector: (row: DataItem) => (
-        <button
-          className='btn btn-xs btn-ghost'
-          onClick={() => navigate(`/rawat-inap/rme/${row.no_rkm_medis}`, { state: { data: row } })}
-        >
-          Edit
-        </button>
-      ),
     },
   ]
   return (
-    <div>
-      <Breadcrumb />
-      <TableData data={data} columns={columns} />
-    </div>
+    <>
+      {isLoading ? (
+        <div className='flex flex-row justify-center items-center h-screen'>
+          <ArrowPathIcon width={85} height={85} className='animate-spin'></ArrowPathIcon>
+          <span>
+            Memuat Data <span className='text font-bold text-xl'>{changeDate}</span>
+          </span>
+        </div>
+      ) : (
+        <div>
+          <Breadcrumb />
+          <div className='mt-5'>
+            <div>
+              <label className='label font-bold'>Pilih Tanggal :</label>
+              <input
+                type='date'
+                className='input border-primary text-sm'
+                value={changeDate}
+                onChange={handleDateChange}
+              />
+            </div>
+            <TableData data={data} columns={columns} />
+          </div>
+        </div>
+      )}
+    </>
   )
 }

@@ -82,7 +82,6 @@ export default function PageRawatJalan() {
   const [isLoading, setIsLoading] = useState(false)
   const [changeDate, setChangeDate] = useState(tglSkrng)
 
-
   const navigate = useNavigate()
   const tokenValue = localStorage.getItem('token')
   const Kd = JSON.parse(tokenValue)
@@ -102,10 +101,12 @@ export default function PageRawatJalan() {
 
         if (role === 'dokter') {
           sortedData = responseData
-            .filter((item) => item.kd_dokter === kdDokter)
+            .filter((item) => item.kd_dokter === kdDokter && !item.nm_poli.includes('INSTALASI'))
             .sort((a, b) => a.no_reg.localeCompare(b.no_reg))
         } else if (role === 'petugas') {
-          sortedData = responseData.sort((a, b) => a.no_reg.localeCompare(b.no_reg))
+          sortedData = responseData
+            .filter((item) => !item.nm_poli.includes('INSTALASI'))
+            .sort((a, b) => a.no_reg.localeCompare(b.no_reg))
         }
 
         setData(sortedData)

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { api } from '../../services/api/config.api'
 import { useParams } from 'react-router-dom'
 // import RiwayatSoap from './RiwayatSoap';
-import RiwayatSoapIGD from './SoapPemeriksaan/RiwayatSoap'
+import RiwayatSoapRalan from '../Layouts/Riwayat/RiwayatSoap'
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid'
-import InsertSoapIgd from './SoapPemeriksaan/InsertSoap'
+import InsertSoapIgd from './ComponentsSoapPemeriksaan/InsertSoapIgd'
 import HeaderIgd from '../Navbar/HeaderDetailIGD'
+import RiwayatDiagnosa from '../Layouts/Riwayat/RiwayatDiagnosa'
 
 type userData = {
   no_rkm_medis: string
@@ -55,14 +56,21 @@ type userData = {
   nm_dokter: string
 }
 
-const IgdSoapPemeriksaan: React.FC = () => {
+const RalanSoapPemeriksaan: React.FC = () => {
   const { id } = useParams()
   const [personalData, setPersonalData] = useState<userData>()
   const [errResepMessage, setErrResepMessage] = useState('')
   const [trueFalseResep, setTrueFalseResep] = useState(false)
   const [riwayatObat, setRiwayatObat] = useState([])
+  const [diagnosaCopy, setDiagnosaCopy] = useState([])
   const [isReverse, setIsReverse] = useState(false)
+  const [activeTab, setActiveTab] = useState(1)
+  const [activeSubTab, setActiveSubTab] = useState(3)
   // const [selectedTab, setSelectedTab] = useState('Riwayat Soap')
+
+  useEffect(() => {
+    console.log('Current Active Tab: ', activeTab)
+  }, [activeTab])
 
   useEffect(() => {
     const fetchPersonalData = async () => {
@@ -90,6 +98,15 @@ const IgdSoapPemeriksaan: React.FC = () => {
   const checkTrueFalseResep = (value: boolean) => {
     setTrueFalseResep(value)
   }
+
+  const handleDataFetched = (riwayatDiagnosa: any) => {
+    setDiagnosaCopy(riwayatDiagnosa)
+  }
+
+  // const handleTabClick = (tabName) => {
+  //   setSelectedTab(tabName)
+  // }
+
   return (
     <div className='ml-3'>
       <HeaderIgd />
@@ -206,13 +223,87 @@ const IgdSoapPemeriksaan: React.FC = () => {
                 <>Loading...</>
               )}
             </div>
+
             <div>
-              <RiwayatSoapIGD
-                onRiwayatObatChange={handleRiwayatObatChange}
-                personalData={personalData}
-                errResepMessage={handleResepMessage}
-                trueFalseResep={checkTrueFalseResep}
-              />
+              <div role='tablist' className='tabs tabs-bordered mt-2'>
+                <a
+                  role='tab'
+                  className={`tab flex-1 text-center ${activeTab === 1 ? 'tab-active' : ''}`}
+                  onClick={() => setActiveTab(1)}
+                >
+                  Riwayat Soap
+                </a>
+                <a
+                  role='tab'
+                  className={`tab flex-1 text-center ${activeTab === 2 ? 'tab-active' : ''}`}
+                  onClick={() => setActiveTab(2)}
+                >
+                  Riwayat Diagnosa
+                </a>
+              </div>
+              <div className='w-full'>
+                {activeTab === 1 && (
+                  <div className='mt-5'>
+                    <div role='tablist' className='tabs tabs-lifted tabs-xs mt-2'>
+                      <a
+                        role='tab'
+                        className={`tab ${activeSubTab === 1 ? 'tab-active' : ''}`}
+                        onClick={() => setActiveSubTab(1)}
+                      >
+                        Rawat Jalan
+                      </a>
+                      <a
+                        role='tab'
+                        className={`tab ${activeSubTab === 2 ? 'tab-active' : ''}`}
+                        onClick={() => setActiveSubTab(2)}
+                      >
+                        Rawat Inap
+                      </a>
+                      <a
+                        role='tab'
+                        className={`tab ${activeSubTab === 3 ? 'tab-active' : ''}`}
+                        onClick={() => setActiveSubTab(3)}
+                      >
+                        IGD
+                      </a>
+                    </div>
+                    <div>
+                      {activeSubTab === 1 && (
+                        <RiwayatSoapRalan
+                          onRiwayatObatChange={handleRiwayatObatChange}
+                          personalData={personalData}
+                          errResepMessage={handleResepMessage}
+                          trueFalseResep={checkTrueFalseResep}
+                          checkSubTab={activeSubTab}
+                        />
+                      )}
+                      {activeSubTab === 2 && (
+                        <RiwayatSoapRalan
+                          onRiwayatObatChange={handleRiwayatObatChange}
+                          personalData={personalData}
+                          errResepMessage={handleResepMessage}
+                          trueFalseResep={checkTrueFalseResep}
+                          checkSubTab={activeSubTab}
+                        />
+                      )}
+                      {activeSubTab === 3 && (
+                        <RiwayatSoapRalan
+                          onRiwayatObatChange={handleRiwayatObatChange}
+                          personalData={personalData}
+                          errResepMessage={handleResepMessage}
+                          trueFalseResep={checkTrueFalseResep}
+                          checkSubTab={activeSubTab}
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
+                {activeTab === 2 && (
+                  <div>
+                    <RiwayatDiagnosa onDataFetched={handleDataFetched} />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div
@@ -242,6 +333,7 @@ const IgdSoapPemeriksaan: React.FC = () => {
                 copyResep={riwayatObat}
                 resepMessage={errResepMessage}
                 trueFalseResep={trueFalseResep}
+                copyDiagnosa={diagnosaCopy}
               />
             </div>
           </div>
@@ -251,4 +343,4 @@ const IgdSoapPemeriksaan: React.FC = () => {
   )
 }
 
-export default IgdSoapPemeriksaan
+export default RalanSoapPemeriksaan

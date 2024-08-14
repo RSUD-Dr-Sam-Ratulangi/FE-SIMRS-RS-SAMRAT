@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import LoadingBar from 'react-top-loading-bar'
 import { api } from '../../../../services/api/config.api'
-import { errorPostSoap, spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
+import { spesificError } from '../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+// import { AxiosResponse } from 'axios'
 import {
   ArchiveBoxArrowDownIcon,
   InformationCircleIcon,
   ArrowPathIcon,
+  ExclamationCircleIcon,
 } from '@heroicons/react/24/solid'
 import { useNavigate, useParams } from 'react-router-dom'
 import { formatSelectedDate, formatSelectedDateNow } from '../../../../utils/DateNow'
+import ModalLaborInput from '../../../Layouts/Laboratorium/Modal/ModalLaborInput'
+import { PopupActions } from 'reactjs-popup/dist/types'
+import ModalRadiologiInput from '../../../Layouts/Radiologi/Modal/ModalRadiologiInput'
+// import ToastInfo from '../../utils/ToastInfo'
 
 enum KesadaranOptions {
   defaultValue = 'Pilih Kesadaran',
@@ -25,6 +32,7 @@ enum KesadaranOptions {
 }
 
 type DataItem = {
+  jam_rawat: string
   kd_penyakit: string
   nm_penyakit: string
   ciri_ciri: string
@@ -61,8 +69,15 @@ interface Medicine {
 }
 
 // eslint-disable-next-line react/prop-types
-const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
+const InsertSoapRalan: React.FC<{
+  copyResep: any
+  resepMessage: any
+  trueFalseResep: boolean
+  copyDiagnosa: any
+}> = ({ copyResep, resepMessage, trueFalseResep, copyDiagnosa }) => {
   const [loading, setIsLoading] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [obatExist, setObatExist] = useState([])
   const [rtl, setRtl] = useState('')
   const [kdPenyakit, setKdPenyakit] = useState('')
   const [alasan, setAlasan] = useState('')
@@ -100,17 +115,24 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   const [jumlahObat, setJumlahObat] = useState<number>(0)
   const [dataSoap, setDataSoap] = useState<DataItem[]>([])
   const [selectedMedicines, setSelectedMedicines] = useState<{ [kode: string]: Medicine }>({})
-  const [simpanObatClick, setSimpanObatClick] = useState(false)
+  const [editedRowIndex, setEditedRowIndex] = useState(null)
+  const [laborData, setLaborData] = useState('')
+  const [radiologiData, setRadiologiData] = useState('')
+  const modalLaborRef = useRef<PopupActions>(null)
+  const modalRadiologiRef = useRef<PopupActions>(null)
 
   const navigate = useNavigate()
   const nmrRawat = localStorage.getItem('no_rawat')
-  const noAntrian = localStorage.getItem('no_antrian')
+  // const noAntrian = localStorage.getItem('no_antrian')
   const dateNow = formatSelectedDateNow()
   const tokenValue = localStorage.getItem('token')
   const Kd = JSON.parse(tokenValue)
   let nipCredentials = ''
   const role = Object.keys(Kd)[0]
   const { id } = useParams()
+
+  const date = new Date()
+  const showTime = date.getHours() + ':' + date.getMinutes()
 
   if (role === 'dokter') {
     nipCredentials = Kd.dokter.kd_dokter
@@ -129,6 +151,20 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     const formattedDate = formatSelectedDate(selectedDateValue)
     setSelectedDate(formattedDate)
   }
+
+  // copy diagnosa props function
+  const updateDiagnosaState = () => {
+    if (copyDiagnosa && copyDiagnosa.length > 0) {
+      const data = copyDiagnosa[0]
+      console.log('data Diagnosa', data?.nm_penyakit)
+      setPenilaian((prevValue) => `${prevValue}\n${data?.kd_penyakit}, ${data?.nm_penyakit}`)
+      setKdPenyakit(data?.kd_penyakit)
+    }
+  }
+
+  useEffect(() => {
+    updateDiagnosaState()
+  }, [copyDiagnosa])
 
   const setTimeAndDate = () => {
     const today = new Date()
@@ -166,22 +202,37 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   }
 
   const handleHapusObat = (kode: string) => {
-    // Update selectedMedicines state to remove the selected medicine
     setSelectedMedicines((prev) => {
       const newSelectedMedicines = { ...prev }
       delete newSelectedMedicines[kode]
+
+      const planString = generatePlanString(newSelectedMedicines)
+      setPlan(
+        `----------------------------------------\nWaktu Penyimpanan OBAT: ${showTime}\n---------------------------------------- \n${planString}`,
+      )
+
       return newSelectedMedicines
     })
   }
 
-  const handleEditObat = () => {
+  const handleEditObat = (index) => {
     setEditObat(true)
+    setEditedRowIndex(index)
+  }
+
+  const handleLaborData = (laborData) => {
+    console.log('Received labor data:', laborData)
+    setLaborData(laborData)
+  }
+
+  const handleRadiologiData = (radiologiData) => {
+    setRadiologiData(radiologiData)
   }
 
   useEffect(() => {
     const handleGetTindakan = async () => {
       try {
-        if (searchTermTindakan.trim().length >= 2) {
+        if (searchTermTindakan.trim().length >= 3) {
           const response = await api.get(`api/v1/searchJnsPerawatan?keyword=${searchTermTindakan}`)
           setListTindakan(response.data)
         } else {
@@ -198,7 +249,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   useEffect(() => {
     const handleGetPenyakit = async () => {
       try {
-        if (searchTerm.trim().length >= 2) {
+        if (searchTerm.trim().length >= 3) {
           const response = await api.get(`/api/v1/getAllPenyakit?searchString=${searchTerm}`)
           setListPenyakit(response.data)
         } else {
@@ -237,9 +288,8 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
           `api/v1/RiwayatSoapByNoRawat?noRkmMedis=${id}&noRawat=${nmrRawat}`,
         )
         setDataSoap(response.data)
-        console.log('data soap', response.data)
       } catch (err) {
-        console.log(err)
+        console.log('Error Taking Data Soap', err)
       }
     }
     fetchDataSoap()
@@ -266,11 +316,43 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     }
   }, [copyResep])
 
+  // Fetch Exist Obat
+  useEffect(() => {
+    const fetchExistObat = async () => {
+      try {
+        const response = await api.get(`/api/v1/getResepDokterDetails?noResep=${nmrResep}`)
+        setObatExist(response.data)
+      } catch (err) {
+        console.log('tidak ada obat yang sudah ada', err)
+      }
+    }
+
+    fetchExistObat()
+  }, [nmrResep]) // Add nmrResep to the dependency array
+
+  // Handle Exist Obat
+  useEffect(() => {
+    obatExist.forEach((item) => {
+      const mappedData = {
+        kode: item.kode_brng,
+        nama: item.nama_brng,
+        jumlahObat: item.jml,
+        aturanPakai: item.aturan_pakai,
+      }
+      console.log('mappedDataObat', mappedData)
+
+      handlePilihObat(
+        mappedData.kode,
+        mappedData.nama,
+        mappedData.jumlahObat,
+        mappedData.aturanPakai,
+      )
+    })
+  }, [obatExist])
+
   const checkExistDiagnosa = async () => {
     try {
-      const response = await api.get(
-        `http://rsudsamrat.site:8901/api/v1/getDiagnosaPasien?noRawat=${nmrRawat}`,
-      )
+      const response = await api.get(`/api/v1/getDiagnosaPasien?noRawat=${nmrRawat}`)
       if (response.data.length === 0) {
         console.log('TIDAK ADA DIAGNOSA.')
       } else {
@@ -282,13 +364,13 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     }
   }
 
-  // cek no rawat jika sudah ada
+  // cek no resep jika sudah ada
   const checkExistNoResep = async () => {
     try {
       const response = await api.get(
         `/api/v1/getPrescriptionNumbers?noRkmMedis=${id}&noRawat=${nmrRawat}`,
       )
-      console.log(response.data[0])
+      console.log('reseeppp', response.data)
       if (response.data.length === 0) {
         try {
           const data = {
@@ -310,6 +392,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
         console.log('tidak ada resep yang perlu ditambahkan.')
         setNmrResep(response.data[0])
         setHaveNoResep(true)
+        console.log()
       }
     } catch (err) {
       console.log('Tidak Ada no resep', err)
@@ -317,33 +400,19 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   }
 
   const postRencanKontrol = async () => {
-    const data = {
-      noRkmMedis: id,
-      diagnosa: penilaian,
-      terapi: 'Some Therapy',
-      alasan1: alasan,
-      alasan2: alasan,
-      rtl1: rtl,
-      rtl2: rtl,
-      tanggalDatang: selectedDate,
-      tanggalRujukan: dateNow,
-      noAntrian: noAntrian,
-      kdDokter: nipCredentials,
-      status: 'Menunggu',
-    }
-    try {
-      const response = await api.post('/api/v1/insertSkdpBpjs', data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      console.log('diagnosa', response.data)
+    if (!selectedDate) {
+      spesificError({ errMessage: 'Mohon Memilih Tanggal Rujukan' })
+    } else if (!alasan) {
+      spesificError({ errMessage: 'Mohon Memasukan Alasan.' })
+    } else if (!rtl) {
+      spesificError({ errMessage: 'Mohon Memasukan RTL.' })
+    } else {
       setDiagnosa(
-        `Kode: ${response.data.diagnosa}\nAlasan: ${response.data.alasan1}\nrtl: ${response.data.rtl1}\nTanggal Kembali: ${response.data.tanggal_rujukan}\n Tanggal Kembali${response.data.tanggal_datang}`,
+        (prevValue) =>
+          `${
+            prevValue ? prevValue + '\n' : ''
+          }-KONTROL KEMBALI-\nAlasan: ${alasan}\nRTL: ${rtl}\nTanggal Datang: ${dateNow}\nTanggal Rujukan: ${selectedDate}\n`,
       )
-      spesificSuccess({ doneMessage: 'Rencana Kontrol Berhasil Dikirim' })
-    } catch (err) {
-      errorPostSoap()
     }
   }
 
@@ -403,9 +472,15 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
         console.log('post resep error', err)
       }
     } else if (haveNoResep === true) {
+      const existingMedicines = obatExist.map((item) => item.kode_brng)
+
       for (const key in selectedMedicines) {
         const medicineData = selectedMedicines[key]
-        console.log(medicineData)
+
+        if (existingMedicines.includes(medicineData.kode)) {
+          console.log('Medicine already exists, skipping:', medicineData)
+          continue
+        }
 
         const resepDokterData = {
           noResep: nmrResep,
@@ -422,8 +497,9 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
           })
           console.log('Berhasil')
           console.log(res.data)
+          console.log('obat berhasil :', resepDokterData)
         } catch (err) {
-          console.log('obat :', resepDokterData)
+          console.log('obat error :', resepDokterData)
           console.log(err)
         }
       }
@@ -432,6 +508,26 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
   }
 
   const handlePostSoap = async () => {
+    // // EVALUSI STRING LOGIC
+    const [laborDataValue, radiologiDataValue, diagnosaValue, evaluasiValue, dataSoapValue] = [
+      laborData,
+      radiologiData,
+      diagnosa,
+      evaluasi,
+      dataSoap[0]?.evaluasi,
+    ]
+
+    const evaluasiToSend = [
+      laborDataValue,
+      radiologiDataValue,
+      diagnosaValue,
+      evaluasiValue,
+      dataSoapValue,
+    ]
+      .filter(Boolean)
+      .map((value) => value || '')
+      .join('\n')
+
     const dataPost = {
       noRawat: nmrRawat,
       suhuTubuh: suhu,
@@ -450,7 +546,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       lingkar_perut: '-',
       penilaian: dataSoap[0]?.penilaian || penilaian,
       rtl: plan || rtl,
-      evaluasi: evaluasi || diagnosa,
+      evaluasi: evaluasi || diagnosa || evaluasiToSend,
       instruksi: instruksi,
       nip: nipCredentials,
     }
@@ -474,9 +570,10 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       pemeriksaan: objectPemeriksaan || dataSoap[0]?.pemeriksaan,
       nip: nipCredentials,
       rtl: plan || rtl || dataSoap[0]?.rtl,
-      evaluasi: evaluasi || diagnosa || dataSoap[0]?.evaluasi,
+      evaluasi: evaluasiToSend || dataSoap[0]?.evaluasi,
     }
     try {
+      setProgress(20)
       const response = await api.get(`/api/v1/checkPemeriksaanRalan?noRawat=${nmrRawat}`)
       const message = response.data.message
 
@@ -498,25 +595,37 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             spesificError({ errMessage: 'Masukan Data SPO2' })
           } else if (!alergi) {
             spesificError({ errMessage: 'Masukan Data alergi.' })
+          } else if (!tindakan && !subjektif) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Subjektif.' })
+          } else if (!objectPemeriksaan) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
           } else {
-            try {
-              const response = await api.post(
-                '/api/v1/postPemeriksaanRalan',
-                JSON.stringify(dataPost),
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+            const isDataCorrect = window.confirm(
+              'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
+            )
+            if (isDataCorrect) {
+              try {
+                const response = await api.post(
+                  '/api/v1/postPemeriksaanRalan',
+                  JSON.stringify(dataPost),
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
                   },
-                },
-              )
-              console.log('BERHASIL MENGIRIM ,POST response:', response.data)
-              await handleChangeStatusFirstSend()
-            } catch (error) {
-              console.log('error petugas post', error)
-              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-            } finally {
-              navigate('/rawat-jalan/')
-              window.location.reload()
+                )
+                console.log('BERHASIL MENGIRIM ,POST response:', response.data)
+                setProgress(100)
+                await handleChangeStatusFirstSend()
+              } catch (error) {
+                console.log('error petugas post', error)
+                spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
+              } finally {
+                navigate('/rawat-jalan/')
+                window.location.reload()
+              }
+            } else {
+              spesificError({ errMessage: 'Batal Mengirim.' })
             }
           }
         } else if (role.includes('dokter')) {
@@ -526,36 +635,53 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
           } else if (!penilaian) {
             spesificError({ errMessage: 'Mohon Memasukan Data Assesmen.' })
-          } else if (Object.keys(selectedMedicines).length === 0) {
-            spesificError({
-              errMessage: 'Tidak Ada Obat yang dipilih. Mohon Untuk Memasukan Obat.',
-            })
+            // } else if (Object.keys(selectedMedicines).length === 0) {
+            //   spesificError({
+            //     errMessage: 'Tidak Ada Obat yang dipilih. Mohon Untuk Memasukan Obat.',
+            //   })
+          } else if (!dataSoap[0]?.rtl && !plan) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Plan' })
           } else if (!instruksi) {
             spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
           } else {
-            try {
-              const response = await api.post(
-                '/api/v1/postPemeriksaanRalan',
-                JSON.stringify(dataPost),
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+            const isDataCorrect = window.confirm(
+              'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
+            )
+            if (isDataCorrect) {
+              try {
+                const response = await api.post(
+                  '/api/v1/postPemeriksaanRalan',
+                  JSON.stringify(dataPost),
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
                   },
-                },
-              )
-              setIsLoading(true)
-              console.log('BERHASIL MENGIRIM(dokter) ,POST response:', response.data)
-              await postResep()
-              await postDiagnosa()
-              await handleChangeStatusFirstSend()
-              navigate('/rawat-jalan/')
-              window.location.reload()
-            } catch (error) {
-              console.log('error dokter post', error)
-              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-            } finally {
-              navigate('/rawat-jalan/')
-              window.location.reload()
+                )
+                setIsLoading(true)
+
+                console.log('BERHASIL MENGIRIM(dokter) ,POST response:', response.data)
+                setProgress(60)
+                await postResep()
+                setProgress(70)
+                await postDiagnosa()
+                setProgress(80)
+                await handleChangeStatusFirstSend()
+                // navigate('/rawat-jalan/')
+                // window.location.reload()
+                setProgress(100)
+              } catch (error) {
+                console.log('error dokter post', error)
+                spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
+                setProgress(100)
+              } finally {
+                setProgress(100)
+                navigate('/rawat-jalan/')
+                window.location.reload()
+                console.log('okok')
+              }
+            } else {
+              spesificError({ errMessage: 'Batal Mengirim.' })
             }
           }
         }
@@ -577,72 +703,99 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             spesificError({ errMessage: 'Masukan Data SPO2' })
           } else if (!alergi) {
             spesificError({ errMessage: 'Masukan Data alergi.' })
+          } else if (!dataSoap[0].keluhan && (!subjektif || !tindakan)) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Subjektif..' })
+          } else if (!dataSoap[0]?.pemeriksaan && !objectPemeriksaan) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
           } else {
-            try {
-              const response = await api.put(
-                '/api/v1/updatePemeriksaanRalan',
-                JSON.stringify(dataPut),
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+            const isDataCorrect = window.confirm(
+              'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
+            )
+
+            if (isDataCorrect) {
+              try {
+                const response = await api.put(
+                  '/api/v1/updatePemeriksaanRalan',
+                  JSON.stringify(dataPut),
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
                   },
-                },
-              )
-              setIsLoading(true)
-              await handleChangeStatusSecondSend()
-              console.log(response)
-            } catch (err) {
-              console.log('err petugas put', err)
-              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-            } finally {
-              navigate('/rawat-jalan/')
-              window.location.reload()
+                )
+                setProgress(70)
+                setIsLoading(true)
+                setProgress(86)
+                await handleChangeStatusSecondSend()
+                console.log(response)
+                setProgress(100)
+              } catch (err) {
+                console.log('err petugas put', err)
+                spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
+              } finally {
+                setProgress(100)
+                navigate('/rawat-jalan/')
+                window.location.reload()
+              }
+            } else {
+              spesificError({ errMessage: 'Batal Mengirim.' })
             }
           }
         } else if (role.includes('dokter')) {
-          if (!subjektif && !tindakan) {
+          //           if (!dataSoap[0].keluhan && (!subjektif || !tindakan))
+          if (!dataSoap[0].keluhan && (!subjektif || !tindakan)) {
             spesificError({ errMessage: 'Mohon Memasukan Data Subjektif..' })
           } else if (!dataSoap[0]?.pemeriksaan && !objectPemeriksaan) {
             spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
           } else if (!dataSoap[0]?.penilaian && !penilaian) {
             spesificError({ errMessage: 'Mohon Memasukan Data Assesmen.' })
-          } else if (Object.keys(selectedMedicines).length === 0) {
-            spesificError({
-              errMessage: 'Tidak Ada Obat yang dipilih. Mohon Untuk Memasukan Obat.',
-            })
-          } else if (simpanObatClick === false) {
-            spesificError({
-              errMessage: 'Tidak Ada Obat yang Disimpan. Mohon simpan obat yang dipilih. ',
-            })
           } else if (!dataSoap[0]?.instruksi && !instruksi) {
             spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
+          } else if (!dataSoap[0]?.rtl && !plan) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Plan' })
           } else {
-            try {
-              const response = await api.put(
-                '/api/v1/updatePemeriksaanRalan',
-                JSON.stringify(dataPut),
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
+            const isDataCorrect = window.confirm(
+              'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
+            )
+
+            if (isDataCorrect) {
+              try {
+                const response = await api.put(
+                  '/api/v1/updatePemeriksaanRalan',
+                  JSON.stringify(dataPut),
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
                   },
-                },
-              )
-              setIsLoading(true)
-              console.log('BERHASIL MENGIRIM(dokter):', response.data)
-              await postResep()
-              await postDiagnosa()
-              await handleChangeStatusSecondSend()
-            } catch (error) {
-              console.log('error dokter put', error)
-              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
-            } finally {
-              navigate('/rawat-jalan/')
-              window.location.reload()
+                )
+
+                setIsLoading(true)
+                console.log('BERHASIL MENGIRIM(dokter):', response.data)
+                setProgress(70)
+                await postResep()
+                setProgress(80)
+                await postDiagnosa()
+                setProgress(86)
+                await handleChangeStatusSecondSend()
+                setProgress(100)
+              } catch (error) {
+                console.log('error dokter put', error)
+                spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
+                setProgress(100)
+              } finally {
+                setProgress(100)
+                navigate('/rawat-jalan/')
+                window.location.reload()
+              }
+            } else {
+              spesificError({ errMessage: 'Aborted' })
             }
           }
         }
       }
     } catch (err) {
+      setProgress(100)
       console.log('ini error apa?', err)
     }
   }
@@ -653,30 +806,9 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     setPenilaian((prevValue) => `${prevValue}\n${kode}, ${nama}`)
   }
 
-  const handlePilihObat = (kode: string, nama: string, jumlahObat: any, aturanPakai: string) => {
-    setSelectedMedicines((prev) => {
-      const newSelectedMedicines = { ...prev }
-
-      if (newSelectedMedicines[kode] || copyResep) {
-        // If medicine is already selected, increase the quantity
-        newSelectedMedicines[kode] = {
-          ...newSelectedMedicines[kode],
-          nama: nama,
-          jumlahObat: jumlahObat,
-          aturanPakai: aturanPakai,
-          kode: kode,
-        }
-      } else {
-        // If medicine is selected for the first time, add it to the state
-        newSelectedMedicines[kode] = { nama, aturanPakai, jumlahObat, kode }
-      }
-      return newSelectedMedicines
-    })
-  }
-
   const handlePilihTindakan = async (kode, nmPerawatan) => {
-    setSubjektif((prevValue) => `${prevValue}\n${kode}, ${nmPerawatan}`)
-    setTindakan((prevValue) => `${prevValue}\n${kode}, ${nmPerawatan}`)
+    setSubjektif((prevValue) => `${prevValue}${kode}, ${nmPerawatan}\n`)
+    setTindakan((prevValue) => `${prevValue}${kode}, ${nmPerawatan}\n`)
     setListTindakan([])
     const data = {
       noRawat: nmrRawat,
@@ -708,6 +840,30 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
     }
   }
 
+  const handlePilihObat = (kode: string, nama: string, jumlahObat: any, aturanPakai: string) => {
+    setSelectedMedicines((prev) => {
+      const newSelectedMedicines = { ...prev }
+
+      if (newSelectedMedicines[kode] || copyResep) {
+        newSelectedMedicines[kode] = {
+          ...newSelectedMedicines[kode],
+          nama: nama,
+          jumlahObat: jumlahObat,
+          aturanPakai: aturanPakai,
+          kode: kode,
+        }
+      } else {
+        newSelectedMedicines[kode] = { nama, aturanPakai, jumlahObat, kode }
+      }
+
+      const planString = generatePlanString(newSelectedMedicines)
+      setPlan(
+        `----------------------------------------\nWaktu Penyimpanan Pertama: ${showTime}\n---------------------------------------- \n${planString}`,
+      )
+      return newSelectedMedicines
+    })
+  }
+
   const generatePlanString = (selectedMedicines: any) => {
     const planArray = []
 
@@ -716,23 +872,41 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
       const planItem = `${nama} ${kode} - Jumlah: ${jumlahObat}, Aturan Pakai: ${aturanPakai}.`
       planArray.push(planItem)
     }
-
-    // Join the array into a single string
     return planArray.join('\n')
   }
 
-  const testSimpan = async () => {
-    const planString = generatePlanString(selectedMedicines)
-    setPlan(planString)
-    setAturanPakai('')
-    setListObat([])
-    console.log(planString)
-    console.log(selectedMedicines)
-    setSimpanObatClick(true)
+  const modalLaborInputOpen = () => {
+    if (modalLaborRef.current) {
+      modalLaborRef.current.open()
+    }
+  }
+
+  const modalLaborInputClose = () => {
+    if (modalLaborRef.current) {
+      modalLaborRef.current.close()
+    }
+  }
+
+  const modalRadiologiInputOpen = () => {
+    if (modalRadiologiRef.current) {
+      modalRadiologiRef.current.open()
+    }
+  }
+
+  const modalRadiologiInputClose = () => {
+    if (modalRadiologiRef.current) {
+      modalRadiologiRef.current.close()
+    }
   }
 
   return (
-    <div className='max-w-7xl mt-4'>
+    <div className='min-w-fit mt-4'>
+      <LoadingBar
+        color='#55a46b'
+        progress={progress}
+        onLoaderFinished={() => setProgress(0)}
+        height={7}
+      ></LoadingBar>
       <div>
         <p className=' font-bold text-xl text-[#121713]'>Pemeriksaan</p>
         <p className=' font-bold text-xl text-[#121713]'>No Resep: {nmrResep}</p>
@@ -797,7 +971,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.suhu_tubuh : 'Loading'}
                     defaultValue={dataSoap[0]?.suhu_tubuh || suhu}
                     onChange={(e) => setSuhu(e.target.value)}
@@ -811,7 +985,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.tensi : 'Loading'}
                     defaultValue={dataSoap[0]?.tensi || tensi}
                     onChange={(e) => setTensi(e.target.value)}
@@ -825,7 +999,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.nadi : 'Loading'}
                     defaultValue={dataSoap[0]?.nadi || nadi}
                     onChange={(e) => setNadi(e.target.value)}
@@ -839,7 +1013,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.respirasi : 'Loading'}
                     defaultValue={dataSoap[0]?.respirasi || rr}
                     onChange={(e) => setRr(e.target.value)}
@@ -853,7 +1027,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.tinggi : 'Loading'}
                     defaultValue={dataSoap[0]?.tinggi || tinggi}
                     onChange={(e) => setTinggi(e.target.value)}
@@ -867,7 +1041,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     // value={dataSoap ? dataSoap[0]?.berat : 'Loading'}
                     defaultValue={dataSoap[0]?.berat || berat}
                     onChange={(e) => setBerat(e.target.value)}
@@ -881,7 +1055,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     defaultValue={dataSoap[0]?.spo2 || spo2}
                     onChange={(e) => setSpo2(e.target.value)}
                     disabled={role.includes('dokter')}
@@ -894,7 +1068,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     defaultValue={dataSoap[0]?.gcs || gcs}
                     onChange={(e) => setGcs(e.target.value)}
                     disabled={role.includes('dokter')}
@@ -907,7 +1081,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <input
                     type='Text'
                     placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     defaultValue={dataSoap[0]?.alergi || alergi}
                     onChange={(e) => setAlergi(e.target.value)}
                     disabled={role.includes('dokter')}
@@ -918,7 +1092,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                     <span>Kesadaran</span>
                   </label>
                   <select
-                    className='input input-bordered text-sm rounded-2xl border-disabled w-full'
+                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
                     defaultValue={dataSoap[0]?.kesadaran || kesadaran}
                     onChange={(e) => setSelectedKesadaran(e.target.value)}
                     disabled={role.includes('dokter')}
@@ -947,10 +1121,8 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <textarea
                     placeholder='-'
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-                    // defaultValue={dataSoap[0]?.keluhan || tindakan || subjektif}
                     value={subjektif || tindakan || dataSoap[0]?.keluhan}
                     onChange={(e) => setSubjektif(e.target.value)}
-                    disabled={role.includes('petugas')}
                   />
                 </div>
                 {/* {dataSoap[0]?.keluhan || tindakan ? (
@@ -1000,7 +1172,6 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                               <td className=''>{data?.kd_poli || '-'}</td>
                               <td className=''>
                                 <button
-                                  disabled={role.includes('petugas')}
                                   className='underline'
                                   onClick={() =>
                                     handlePilihTindakan(data?.kd_jenis_prw, data?.nm_perawatan)
@@ -1029,7 +1200,6 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   defaultValue={dataSoap[0]?.pemeriksaan || objectPemeriksaan}
                   className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
                   onChange={(e) => setObjectPemeriksaan(e.target.value)}
-                  disabled={role.includes('petugas')}
                 />
               </div>
             </div>
@@ -1046,8 +1216,8 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             </div>
             <textarea
               placeholder='-'
-              value={penilaian || dataSoap[0]?.penilaian}
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+              defaultValue={penilaian || dataSoap[0]?.penilaian}
+              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
               onChange={(e) => setPenilaian(e.target.value)}
               disabled={role.includes('petugas')}
             />
@@ -1058,8 +1228,9 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
               <input
                 type='text'
                 value={searchTerm}
+                disabled={role.includes('petugas')}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className='w-full px-3 py-2 border rounded-2xl focus:outline-none focus:border-blue-500'
+                className='w-full px-3 py-2 border rounded-2xl  disabled:bg-slate-200 disabled:text-black'
                 placeholder='Kanker'
               />
             </div>
@@ -1121,7 +1292,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             </label>
             <textarea
               placeholder='-'
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
               // value={plan}
               value={plan || dataSoap[0]?.rtl}
               disabled={role.includes('petugas')}
@@ -1133,15 +1304,24 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             <div className='flex relative mt-1'>
               <input
                 type='text'
+                disabled={role.includes('petugas')}
                 onChange={(e) => setSearchTermObat(e.target.value)}
-                className='w-full px-3 py-2 border rounded-2xl focus:outline-none focus:border-blue-500'
+                className='w-full px-3 py-2 border rounded-2xl disabled:bg-slate-200 disabled:text-black'
                 placeholder='Paracetamol'
               />
+              {listObat.length > 0 ? (
+                <button
+                  onClick={() => setListObat([])}
+                  className='btn w-10 h-5 bg-slate-100 hover:bg-slate-100 border-none text-lg font-bold'
+                >
+                  X
+                </button>
+              ) : null}
             </div>
             {listObat.length > 0 ? (
               <>
-                <div className='mt-4 pt-4 h-full overflow-auto'>
-                  <table className='w-full'>
+                <div className='mt-4 pt-4 h-full'>
+                  <table className='table table-lg w-full'>
                     <thead>
                       <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 '>
                         <th className='text-start'>NO</th>
@@ -1150,14 +1330,6 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                         <th className='text-start'>JUMLAH</th>
                         <th className='text-start'>ATURAN PAKAI</th>
                         <th className='text-start'>AKSI</th>
-                        <th>
-                          <button
-                            onClick={() => setListObat([])}
-                            className='btn w-10 h-5 bg-slate-100 hover:bg-slate-100 border-none text-lg font-bold'
-                          >
-                            X
-                          </button>
-                        </th>
                       </tr>
                     </thead>
                     <tbody className='overflow-auto'>
@@ -1183,6 +1355,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                   const button = document.getElementById(`button_${index}`)
                                   if (button) {
                                     button.click()
+                                    setListObat([])
                                   }
                                 }
                               }}
@@ -1191,21 +1364,40 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                             />
                           </td>
                           <td>
-                            <input
-                              id={`input_aturan_pakai_${index}`}
-                              type='text'
-                              onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault()
-                                  const button = document.getElementById(`button_${index}`)
-                                  if (button) {
-                                    button.click()
+                            {data.nama_brng.includes('Racikan') ? (
+                              <textarea
+                                id={`input_aturan_pakai_${index}`}
+                                onChange={(e) => setAturanPakai(e.target.value)}
+                                className='textarea textarea-bordered w-96'
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' && e.shiftKey === false) {
+                                    e.preventDefault()
+                                    const button = document.getElementById(`button_${index}`)
+                                    if (button) {
+                                      button.click()
+                                      setListObat([])
+                                    }
                                   }
-                                }
-                              }}
-                              onChange={(e) => setAturanPakai(e.target.value)}
-                              className='text-center w-20 input input-bordered'
-                            />
+                                }}
+                              />
+                            ) : (
+                              <input
+                                id={`input_aturan_pakai_${index}`}
+                                type='text'
+                                onKeyPress={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault()
+                                    const button = document.getElementById(`button_${index}`)
+                                    if (button) {
+                                      button.click()
+                                      setListObat([])
+                                    }
+                                  }
+                                }}
+                                onChange={(e) => setAturanPakai(e.target.value)}
+                                className='input input-bordered w-32'
+                              />
+                            )}
                           </td>
                           <td>
                             <button
@@ -1252,16 +1444,16 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   <label className='label'>
                     <span>Daftar Obat yang ditambahkan :</span>
                   </label>
-                  <div className='pt-4'>
-                    <table className='w-full'>
+                  <div className='pt-4 w-full h-full'>
+                    <table className='table w-full'>
                       <thead className='text-xs text-gray-400 font-bold border-b-2 border-gray-200 pb-2'>
                         <tr>
-                          <th className='w-1/6'>NO</th>
-                          <th className='w-1/6'>KODE OBAT</th>
-                          <th className='w-1/6'>NAMA OBAT</th>
-                          <th className='w-1/6'>JUMLAH</th>
-                          <th className='w-1/6'>ATURAN PAKAI</th>
-                          <th className='w-1/6'>AKSI</th>
+                          <th>NO</th>
+                          <th>KODE OBAT</th>
+                          <th>NAMA OBAT</th>
+                          <th>JUMLAH</th>
+                          <th>ATURAN PAKAI</th>
+                          <th>AKSI</th>
                         </tr>
                       </thead>
                       <tbody className='overflow-y-auto'>
@@ -1273,14 +1465,25 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                             <td className='text-center'>{index + 1}</td>
                             <td className='text-center'>{kode}</td>
                             <td className='text-center'>{data.nama}</td>
-                            {editObat ? (
+                            {editObat && editedRowIndex === index ? (
                               <>
                                 <td className='text-center'>
                                   <input
                                     id={`input_obat_${index}`}
                                     type='number'
                                     onChange={(e) => setJumlahObat(parseFloat(e.target.value))}
-                                    className='w-20 h-8 input input-bordered'
+                                    defaultValue={data.jumlahObat || jumlahObat}
+                                    className='w-20 h-10 input input-bordered'
+                                    onKeyPress={(e) => {
+                                      if (e.key === 'Enter') {
+                                        e.preventDefault()
+                                        const button = document.getElementById(`button__${index}`)
+                                        if (button) {
+                                          button.click()
+                                          setListObat([])
+                                        }
+                                      }
+                                    }}
                                   />
                                 </td>
                                 <td className='text-center'>
@@ -1288,8 +1491,19 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                     <input
                                       id={`input_aturan_pakai_${index}`}
                                       type='text'
+                                      defaultValue={data.aturanPakai || aturanPakai}
                                       onChange={(e) => setAturanPakai(e.target.value)}
-                                      className='w-20 h-8 input input-bordered'
+                                      className='w-32 h-10 input input-bordered'
+                                      onKeyPress={(e) => {
+                                        if (e.key === 'Enter') {
+                                          e.preventDefault()
+                                          const button = document.getElementById(`button__${index}`)
+                                          if (button) {
+                                            button.click()
+                                            setListObat([])
+                                          }
+                                        }
+                                      }}
                                     />
                                   </div>
                                 </td>
@@ -1297,7 +1511,11 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                             ) : (
                               <>
                                 <td className='text-center'>
-                                  <div className='border-[#E2E8F0] border-2 rounded flex justify-center'>
+                                  {/* <input
+                                    className='input-ghost w-20 text-center'
+                                    value={jumlahObat || data.jumlahObat}
+                                  /> */}
+                                  <div className='rounded flex justify-center'>
                                     {data.jumlahObat}
                                     <p className='text-disabled'>x</p>
                                   </div>
@@ -1305,13 +1523,22 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                 <td className='text-center'>{data.aturanPakai}</td>
                               </>
                             )}
-                            {editObat ? (
-                              <td className='flex justify-center gap-3'>
+                            {editObat && editedRowIndex === index ? (
+                              <td className='flex justify-center items-center gap-3'>
                                 <button
                                   onClick={() => {
-                                    handlePilihObat(data.kode, data.nama, jumlahObat, aturanPakai)
+                                    handlePilihObat(
+                                      data.kode,
+                                      data.nama,
+                                      jumlahObat || data.jumlahObat,
+                                      aturanPakai || data.aturanPakai,
+                                    )
                                     setEditObat(false)
+                                    setJumlahObat(0)
+                                    setAturanPakai('')
+                                    trueFalseResep = false
                                   }}
+                                  id={`button__${index}`}
                                 >
                                   <p className='text-green-500'>Simpan</p>
                                 </button>
@@ -1320,8 +1547,8 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                                 </button>
                               </td>
                             ) : (
-                              <td className='flex justify-center gap-3'>
-                                <button onClick={() => handleEditObat()}>
+                              <td className='flex items-center justify-center gap-3'>
+                                <button onClick={() => handleEditObat(index)}>
                                   <p className='text-blue-500'>Edit</p>
                                 </button>
                                 <button onClick={() => handleHapusObat(kode)}>
@@ -1334,11 +1561,23 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                       </tbody>
                     </table>
                   </div>
+                  {trueFalseResep ? (
+                    <>
+                      <div className='grid animate-pulse mt-1'>
+                        <label className='label text-red-500'>PERINGATAN :</label>
+                        <div className='flex'>
+                          <ExclamationCircleIcon width={30} height={23} color='#f02f00' />{' '}
+                          <p className='flex text-center pl-2 text-red-500'>
+                            {resepMessage} <p className='font-bold pl-1'> TIDAK ADA</p>
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  ) : null}
                 </div>
               </>
             ) : null}
-
-            {selectedMedicines && Object.keys(selectedMedicines).length > 0 ? (
+            {/* {selectedMedicines && Object.keys(selectedMedicines).length > 0 ? (
               <div className='mt-3 flex justify-end'>
                 <button
                   disabled={role.includes('petugas')}
@@ -1348,7 +1587,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
                   Simpan
                 </button>
               </div>
-            ) : null}
+            ) : null} */}
           </div>
         </div>
         <div className='border border-slate-300 rounded-lg p-3'>
@@ -1358,7 +1597,7 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             </label>
             <textarea
               placeholder='-'
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
               // value={dataSoap ? dataSoap[0]?.instruksi : instruksi}
               defaultValue={dataSoap[0]?.instruksi || instruksi}
               onChange={(e) => setInstruksi(e.target.value)}
@@ -1374,8 +1613,11 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             <textarea
               placeholder='-'
               disabled={role.includes('petugas')}
-              defaultValue={dataSoap[0]?.evaluasi || evaluasi || diagnosa}
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+              value={[laborData, radiologiData, diagnosa, evaluasi, dataSoap[0]?.evaluasi]
+                .filter(Boolean)
+                .map((value) => value || '')
+                .join('\n')}
+              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
               onChange={(e) => setEvaluasi(e.target.value)}
             />
           </div>
@@ -1383,49 +1625,48 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             <div>
               <label className='label'>Tanggal Balik</label>
               <input
-                type='date'
-                className='input border border-slate-400'
-                onChange={handleDateChange}
                 disabled={role.includes('petugas')}
+                type='date'
+                className='input border border-disabled disabled:bg-slate-200 disabled:text-black'
+                onChange={handleDateChange}
               />
             </div>
             <div>
               <label className='label'>Alasan</label>
               <input
                 type='text'
-                className='input border border-slate-400'
-                onChange={(e) => setAlasan(e.target.value)}
                 disabled={role.includes('petugas')}
+                className='input border  border-disabled disabled:bg-slate-200 disabled:text-black'
+                onChange={(e) => setAlasan(e.target.value)}
               />
             </div>
             <div>
               <label className='label'>RTL</label>
               <input
                 type='text'
-                className='input border border-slate-400'
-                onChange={(e) => setRtl(e.target.value)}
                 disabled={role.includes('petugas')}
+                className='input border  border-disabled disabled:bg-slate-200 disabled:text-black'
+                onChange={(e) => setRtl(e.target.value)}
               />
             </div>
           </div>
-          <div className='flex justify-end'>
+          <div className='flex justify-end mr-3'>
             <button
-              className='btn btn-md bg-primary text-white'
-              disabled={!rtl || !alasan}
+              disabled={role.includes('petugas')}
+              className='btn btn-[8px] bg-primary text-white'
               onClick={postRencanKontrol}
             >
-              Kirim
+              Simpan
             </button>
           </div>
         </div>
-        <p>{selectedDate}</p>
         <div className=' w-auto mt-4'>
-          <div className='flex text-base text-[#121713] items-center font-bold font-sans my-[20px]'>
-            <InformationCircleIcon width={20} height={20} />
-            <p className='ml-[6px]'>Informasi</p>
+          <div className='flex text-base text-[#121713] items-center font-bold font-sans my-[10px] ml-2'>
+            <InformationCircleIcon width={25} height={25} />
+            <p className='ml-[4px]'>Informasi</p>
           </div>
-          <p className='w-full font-sans text-red-400 animate-pulse text-base font-normal leading-5'>
-            Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam
+          <p className='w-full text-center font-sans text-red-400 animate-pulse font-normal leading-5 text-[20px]'>
+            Mohon pastikan data yang di Input sudah benar sebelum melanjutkan. Kesalahan dalam
             pengisian data dapat berdampak pada perawatan pasien.
           </p>
           <button
@@ -1445,10 +1686,38 @@ const InsertSoapRanap: React.FC<{ copyResep: any }> = ({ copyResep }) => {
             )}
           </button>
         </div>
+        <div>
+          {role.includes('petugas') ? null : (
+            <div className='flex justify-between gap-3'>
+              <button
+                className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
+                onClick={modalLaborInputOpen}
+              >
+                PERMINTAAN LABORATORIUM
+              </button>
+              <button
+                className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
+                onClick={modalRadiologiInputOpen}
+              >
+                PERMINTAAN RADIOLOGI
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <ToastContainer />
+      <ModalLaborInput
+        ref={modalLaborRef}
+        onClose={modalLaborInputClose}
+        onLaborData={handleLaborData}
+      />
+      <ModalRadiologiInput
+        ref={modalRadiologiRef}
+        onClose={modalRadiologiInputClose}
+        onRadiologiData={handleRadiologiData}
+      />
     </div>
   )
 }
 
-export default InsertSoapRanap
+export default InsertSoapRalan

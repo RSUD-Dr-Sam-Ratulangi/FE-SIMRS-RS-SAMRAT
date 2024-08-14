@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { api } from '../../../services/api/config.api'
 import { useParams } from 'react-router-dom'
 // import RiwayatSoap from './RiwayatSoap';
-import RiwayatSoapRalan from './ComponentsSoapPemeriksaan/RiwayatSoap'
+import RiwayatSoapRalan from '../../Layouts/Riwayat/RiwayatSoap'
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid'
-import InsertSoapRalan from './ComponentsSoapPemeriksaan/InsertSoap'
+import InsertSoapRalan from './ComponentsSoapPemeriksaan/InsertSoapRalan'
 import HeaderRalan from '../../Navbar/HeaderDetailRalan'
-import RiwayatDiagnosa from './ComponentsSoapPemeriksaan/RiwayatDiagnosa'
+import RiwayatDiagnosa from '../../Layouts/Riwayat/RiwayatDiagnosa'
 
 type userData = {
   no_rkm_medis: string
@@ -62,8 +62,10 @@ const RalanSoapPemeriksaan: React.FC = () => {
   const [errResepMessage, setErrResepMessage] = useState('')
   const [trueFalseResep, setTrueFalseResep] = useState(false)
   const [riwayatObat, setRiwayatObat] = useState([])
+  const [diagnosaCopy, setDiagnosaCopy] = useState([])
   const [isReverse, setIsReverse] = useState(false)
   const [activeTab, setActiveTab] = useState(1)
+  const [activeSubTab, setActiveSubTab] = useState(1)
   // const [selectedTab, setSelectedTab] = useState('Riwayat Soap')
 
   useEffect(() => {
@@ -95,6 +97,10 @@ const RalanSoapPemeriksaan: React.FC = () => {
 
   const checkTrueFalseResep = (value: boolean) => {
     setTrueFalseResep(value)
+  }
+
+  const handleDataFetched = (riwayatDiagnosa: any) => {
+    setDiagnosaCopy(riwayatDiagnosa)
   }
 
   // const handleTabClick = (tabName) => {
@@ -223,7 +229,10 @@ const RalanSoapPemeriksaan: React.FC = () => {
                 <a
                   role='tab'
                   className={`tab flex-1 text-center ${activeTab === 1 ? 'tab-active' : ''}`}
-                  onClick={() => setActiveTab(1)}
+                  onClick={() => {
+                    setActiveTab(1)
+                    setActiveSubTab(1) // Reset sub-tab when switching to Tab 1
+                  }}
                 >
                   Riwayat Soap
                 </a>
@@ -237,18 +246,64 @@ const RalanSoapPemeriksaan: React.FC = () => {
               </div>
               <div className='w-full'>
                 {activeTab === 1 && (
-                  <div>
-                    <RiwayatSoapRalan
-                      onRiwayatObatChange={handleRiwayatObatChange}
-                      personalData={personalData}
-                      errResepMessage={handleResepMessage}
-                      trueFalseResep={checkTrueFalseResep}
-                    />
+                  <div className='mt-5'>
+                    <div role='tablist' className='tabs tabs-lifted tabs-xs mt-2'>
+                      <a
+                        role='tab'
+                        className={`tab ${activeSubTab === 1 ? 'tab-active' : ''}`}
+                        onClick={() => setActiveSubTab(1)}
+                      >
+                        Rawat Jalan
+                      </a>
+                      <a
+                        role='tab'
+                        className={`tab ${activeSubTab === 2 ? 'tab-active' : ''}`}
+                        onClick={() => setActiveSubTab(2)}
+                      >
+                        Rawat Inap
+                      </a>
+                      <a
+                        role='tab'
+                        className={`tab ${activeSubTab === 3 ? 'tab-active' : ''}`}
+                        onClick={() => setActiveSubTab(3)}
+                      >
+                        IGD
+                      </a>
+                    </div>
+                    <div>
+                      {activeSubTab === 1 && (
+                        <RiwayatSoapRalan
+                          onRiwayatObatChange={handleRiwayatObatChange}
+                          personalData={personalData}
+                          errResepMessage={handleResepMessage}
+                          trueFalseResep={checkTrueFalseResep}
+                          checkSubTab={activeSubTab}
+                        />
+                      )}
+                      {activeSubTab === 2 && (
+                        <RiwayatSoapRalan
+                          onRiwayatObatChange={handleRiwayatObatChange}
+                          personalData={personalData}
+                          errResepMessage={handleResepMessage}
+                          trueFalseResep={checkTrueFalseResep}
+                          checkSubTab={activeSubTab}
+                        />
+                      )}
+                      {activeSubTab === 3 && (
+                        <RiwayatSoapRalan
+                          onRiwayatObatChange={handleRiwayatObatChange}
+                          personalData={personalData}
+                          errResepMessage={handleResepMessage}
+                          trueFalseResep={checkTrueFalseResep}
+                          checkSubTab={activeSubTab}
+                        />
+                      )}
+                    </div>
                   </div>
                 )}
                 {activeTab === 2 && (
                   <div>
-                    <RiwayatDiagnosa />
+                    <RiwayatDiagnosa onDataFetched={handleDataFetched} />
                   </div>
                 )}
               </div>
@@ -281,6 +336,7 @@ const RalanSoapPemeriksaan: React.FC = () => {
                 copyResep={riwayatObat}
                 resepMessage={errResepMessage}
                 trueFalseResep={trueFalseResep}
+                copyDiagnosa={diagnosaCopy}
               />
             </div>
           </div>

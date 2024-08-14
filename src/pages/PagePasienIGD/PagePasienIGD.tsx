@@ -108,6 +108,14 @@ export default function PageRawatJalan() {
           sortedData = responseData
             .filter((item) => item.kd_dokter === kdDokter)
             .sort((a, b) => a.no_reg.localeCompare(b.no_reg))
+          if (isPasienIgd) {
+            sortedData = sortedData.filter((item) => {
+              const string = item.nm_poli
+              const result = string.includes('INSTALASI') ? 'INSTALASI' : ''
+              console.log('result', result)
+              return result
+            })
+          }
         } else if (role === 'petugas') {
           sortedData = responseData
             .filter((item) => {

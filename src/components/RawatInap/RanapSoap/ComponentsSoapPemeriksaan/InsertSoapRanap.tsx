@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react'
 import LoadingBar from 'react-top-loading-bar'
-import { api } from '../../../services/api/config.api'
-import { spesificError } from '../../../utils/ToastInfo'
+import { api } from '../../../../services/api/config.api'
+import { spesificError } from '../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-// import { AxiosResponse } from 'axios'
 import {
   ArchiveBoxArrowDownIcon,
   InformationCircleIcon,
@@ -12,11 +11,10 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/solid'
 import { useNavigate, useParams } from 'react-router-dom'
-import { formatSelectedDate, formatSelectedDateNow } from '../../../utils/DateNow'
-import ModalLaborInput from '../../RawatJalan/RalanSOAP/Laboratorium/Modal/ModalLaborInput'
+import { formatSelectedDate, formatSelectedDateNow } from '../../../../utils/DateNow'
+import ModalLaborInput from '../../../Layouts/Laboratorium/Modal/ModalLaborInput'
 import { PopupActions } from 'reactjs-popup/dist/types'
-import ModalRadiologiInput from '../../RawatJalan/RalanSOAP/Radiologi/Modal/ModalRadiologiInput'
-// import ToastInfo from '../../utils/ToastInfo'
+import ModalRadiologiInput from '../../../Layouts/Radiologi/Modal/ModalRadiologiInput'
 
 enum KesadaranOptions {
   defaultValue = 'Pilih Kesadaran',
@@ -69,11 +67,12 @@ interface Medicine {
 }
 
 // eslint-disable-next-line react/prop-types
-const InsertSoapIgd: React.FC<{ copyResep: any; resepMessage: any; trueFalseResep: boolean }> = ({
-  copyResep,
-  resepMessage,
-  trueFalseResep,
-}) => {
+const InsertSoapRanap: React.FC<{
+  copyResep: any
+  resepMessage: any
+  trueFalseResep: boolean
+  copyDiagnosa: any
+}> = ({ copyResep, resepMessage, trueFalseResep, copyDiagnosa }) => {
   const [loading, setIsLoading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [obatExist, setObatExist] = useState([])
@@ -150,6 +149,20 @@ const InsertSoapIgd: React.FC<{ copyResep: any; resepMessage: any; trueFalseRese
     const formattedDate = formatSelectedDate(selectedDateValue)
     setSelectedDate(formattedDate)
   }
+
+  // copy diagnosa props function
+  const updateDiagnosaState = () => {
+    if (copyDiagnosa && copyDiagnosa.length > 0) {
+      const data = copyDiagnosa[0]
+      console.log('data Diagnosa', data?.nm_penyakit)
+      setPenilaian((prevValue) => `${prevValue}\n${data?.kd_penyakit}, ${data?.nm_penyakit}`)
+      setKdPenyakit(data?.kd_penyakit)
+    }
+  }
+
+  useEffect(() => {
+    updateDiagnosaState()
+  }, [copyDiagnosa])
 
   const setTimeAndDate = () => {
     const today = new Date()
@@ -1705,4 +1718,4 @@ const InsertSoapIgd: React.FC<{ copyResep: any; resepMessage: any; trueFalseRese
   )
 }
 
-export default InsertSoapIgd
+export default InsertSoapRanap

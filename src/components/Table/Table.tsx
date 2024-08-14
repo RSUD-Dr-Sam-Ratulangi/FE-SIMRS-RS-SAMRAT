@@ -1,3 +1,478 @@
+// import DataTable from 'react-data-table-component'
+// import { useState, useEffect } from 'react'
+// import {
+//   MagnifyingGlassIcon,
+//   ChevronDownIcon,
+//   FunnelIcon,
+//   ArrowPathIcon,
+//   XMarkIcon,
+// } from '@heroicons/react/24/solid'
+// import { useLocation } from 'react-router-dom'
+
+// type templateObject = {
+//   [key: string]: any
+// }
+
+// type Props = {
+//   data: templateObject[]
+//   columns: any[]
+// }
+
+// const TableData = ({ data, columns }: Props) => {
+//   const location = useLocation()
+//   // const [currentPage, setCurrentPage] = useState(1)
+//   // const [rowsPerPage, setRowsPerPage] = useState(15)
+//   const PoliString = localStorage.getItem('PoliString')
+//   const [searchQuery, setSearchQuery] = useState(PoliString)
+//   const [filteredData, setFilteredData] = useState(data)
+//   const [isOpen, setIsOpen] = useState(false)
+//   const [filterJumlahPasien, setFilterJumlahPasien] = useState(0)
+
+//   // if pasien igd page
+//   const isPasienIgd = location.pathname.includes('pasien-igd')
+
+//   useEffect(() => {
+//     const newFilteredData = data
+//       ? data.filter((item) => {
+//           if (searchQuery === '') {
+//             return true
+//           } else {
+//             const lowerCasedSearchQuery = searchQuery.toLowerCase()
+//             return Object.values(item).some((value) => {
+//               if (typeof value === 'string') {
+//                 return value.toLowerCase().includes(lowerCasedSearchQuery)
+//               }
+//               return false
+//             })
+//           }
+//         })
+//       : null
+
+//     setFilteredData(newFilteredData)
+
+//     if (newFilteredData) {
+//       console.log('Filtered Data Length:', newFilteredData.length)
+//       setFilterJumlahPasien(newFilteredData.length)
+//     } else {
+//       console.log('Filtered Data is null or undefined.')
+//       setFilterJumlahPasien(0)
+//     }
+//   }, [searchQuery, data, columns])
+
+//   const paginatedData = filteredData ? filteredData : []
+
+//   return (
+//     <div>
+//       {isPasienIgd ? (
+//         <div>
+//           <div className='flex gap-2 '>
+//             <div className='relative w-full mb-2'>
+//               {searchQuery ? (
+//                 <button
+//                   onClick={() => setSearchQuery('')}
+//                   className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]'
+//                 >
+//                   <XMarkIcon />
+//                 </button>
+//               ) : (
+//                 <MagnifyingGlassIcon className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]' />
+//               )}
+//               <input
+//                 type='text'
+//                 placeholder='Cari...'
+//                 value={searchQuery}
+//                 onChange={(e) => setSearchQuery(e.target.value)}
+//                 className='w-full input input-bordered'
+//               />
+//             </div>
+//             <div className='relative dropdown  dropdown-bottom dropdown-end'>
+//               <button
+//                 onClick={() => setIsOpen(true)}
+//                 className='flex btn w-72 text-white bg-[#55A46B]'
+//               >
+//                 <FunnelIcon className='font-bold text-white h-[17px] w-[17px]' />
+//                 Filter
+//               </button>
+//               <ChevronDownIcon className='absolute bottom-4 right-5 font-bold text-white h-[17px] w-[17px]' />
+//               {isOpen && (
+//                 <>
+//                   <div
+//                     tabIndex={0}
+//                     className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[482px] shadow-2xl border border-slate-300 '
+//                   >
+//                     <div className='w-full mt-3 p-3'>
+//                       <div className='flex justify-between items-center mb-5'>
+//                         <p className='pb-2 font-bold text-md mt-3'>POLI </p>
+//                         <button
+//                           onClick={() => {
+//                             setSearchQuery('')
+//                             localStorage.setItem('PoliString', '')
+//                             setIsOpen(false)
+//                           }}
+//                         >
+//                           <ArrowPathIcon className='mr-3 w-7 h-7' />
+//                         </button>{' '}
+//                       </div>
+//                       <div>
+//                         <div className='grid grid-cols-3 gap-3'>
+//                           <button
+//                             onClick={() => {
+//                               setSearchQuery('IGD PAGI')
+//                               localStorage.setItem('PoliString', 'IGD.P')
+//                               setIsOpen(false)
+//                             }}
+//                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//                           >
+//                             IGD PAGI
+//                           </button>
+//                           <button
+//                             onClick={() => {
+//                               setSearchQuery('IGD SIANG')
+//                               localStorage.setItem('PoliString', 'IGD.S')
+//                               setIsOpen(false)
+//                             }}
+//                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//                           >
+//                             IGD SIANG
+//                           </button>
+//                           <button
+//                             onClick={() => {
+//                               setSearchQuery('IGD MALAM')
+//                               localStorage.setItem('PoliString', 'IGD.M')
+//                               setIsOpen(false)
+//                             }}
+//                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//                           >
+//                             IGD MALAM
+//                           </button>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </>
+//               )}
+//             </div>
+//           </div>
+//           <div className='flex justify-between'>
+//             <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
+//           </div>
+
+//           <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
+//         </div>
+//       ) : (
+//         <>
+//           <div className='flex items-center w-full pb-4'>
+//             <div className='w-full'>
+//               <span className='text-[10px] flex items-center gap-5 mb-3'>
+//                 <p className='font-bold'>Cari berdasarkan No. RM, Nama, atau Nomor Rawat</p>{' '}
+//                 <button onClick={() => window.location.reload()}>
+//                   <ArrowPathIcon className='w-5 h-5' />
+//                 </button>
+//               </span>
+//               <div className='flex gap-2 '>
+//                 <div className='relative w-full'>
+//                   {searchQuery ? (
+//                     <button
+//                       onClick={() => {
+//                         setSearchQuery('')
+//                         localStorage.setItem('PoliString', '')
+//                       }}
+//                       className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]'
+//                     >
+//                       <XMarkIcon />
+//                     </button>
+//                   ) : (
+//                     <MagnifyingGlassIcon className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]' />
+//                   )}
+//                   <input
+//                     type='text'
+//                     placeholder='Cari...'
+//                     value={searchQuery}
+//                     onChange={(e) => setSearchQuery(e.target.value)}
+//                     className='w-full input input-bordered'
+//                   />
+//                 </div>
+//                 <div className='relative dropdown  dropdown-bottom dropdown-end'>
+//                   <button
+//                     onClick={() => setIsOpen(true)}
+//                     className='flex btn w-72 text-white bg-[#55A46B]'
+//                   >
+//                     <FunnelIcon className='font-bold text-white h-[17px] w-[17px]' />
+//                     Filter
+//                   </button>
+//                   <ChevronDownIcon className='absolute bottom-4 right-5 font-bold text-white h-[17px] w-[17px]' />
+// {isOpen && (
+//   <>
+//     <div
+//       tabIndex={0}
+//       className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[482px] shadow-2xl border border-slate-300 '
+//     >
+//       <div className='w-full mt-3 p-3'>
+//         <div className='flex justify-between items-center mb-5'>
+//           <p className='pb-2 font-bold text-md mt-3'>POLI </p>
+//           <button
+//             onClick={() => {
+//               setSearchQuery('')
+//               localStorage.setItem('PoliString', '')
+//               setIsOpen(false)
+//             }}
+//           >
+//             <ArrowPathIcon className='mr-3 w-7 h-7' />
+//           </button>{' '}
+//         </div>
+//         <div>
+//           <div className='grid grid-cols-3 gap-3'>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK GERIATRI')
+//                 localStorage.setItem('PoliString', 'KLINIK GERIATRI')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK GERIATRI
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK SYARAF')
+//                 localStorage.setItem('PoliString', 'KLINIK SYARAF')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK SYARAF
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK PENYAKIT DALAM')
+//                 localStorage.setItem('PoliString', 'KLINIK PENYAKIT DALAM')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK PENYAKIT DALAM
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK JANTUNG')
+//                 localStorage.setItem('PoliString', 'KLINIK JANTUNG')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK JANTUNG
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK GIGI')
+//                 localStorage.setItem('PoliString', 'KLINIK GIGI')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK GIGI & MULUT
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK KANDUNGAN')
+//                 localStorage.setItem('PoliString', 'KLINIK KANDUNGAN')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK KANDUNGAN
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK ANAK')
+//                 localStorage.setItem('PoliString', 'KLINIK ANAK')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK ANAK
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK MATA')
+//                 localStorage.setItem('PoliString', 'KLINIK MATA')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK MATA
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK JIWA')
+//                 localStorage.setItem('PoliString', 'KLINIK JIWA')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK JIWA
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK KULIT & KELAMIN')
+//                 localStorage.setItem('PoliString', 'KLINIK KULIT & KELAMIN')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK KULIT & KELAMIN
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK FISIOTERAPI')
+//                 localStorage.setItem('PoliString', 'KLINIK FISIOTERAPI')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK FISIOTERAPI
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('KLINIK BEDAH')
+//                 localStorage.setItem('PoliString', 'KLINIK BEDAH')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               KLINIK BEDAH
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setSearchQuery('IGD')
+//                 setIsOpen(false)
+//               }}
+//               className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+//             >
+//               IGD
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//       {/* <button className='btn bg-[#55A46B]'>Terapkan Filter</button> */}
+//     </div>
+//   </>
+// )}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//           <div className='flex justify-between'>
+//             <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
+//             {/* <input
+//           type='date'
+//           onChange={handleChangeDate}
+//           value={selectedDate}
+//           className='input hover:bg-slate-300 border-slate-500'
+//         /> */}
+//           </div>
+
+//           <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
+//           {/* {searchQuery === '' ? (
+//         <div className='flex justify-between p-2'>
+//           <div>
+//             <p>
+//               Halaman <span className='font-bold'>{currentPage}</span> dari{' '}
+//               <span className='font-bold'>{data ? Math.ceil(data.length / rowsPerPage) : []}</span>
+//             </p>
+//           </div>
+//           <div>
+//             <div className='flex gap-4'>
+//               <div className='space-x-2'>
+//                 <button
+//                   className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
+//                   onClick={() => handlePageChange(currentPage - 1)}
+//                   disabled={currentPage === 1}
+//                 >
+//                   {' '}
+//                   <ChevronDoubleLeftIcon />{' '}
+//                 </button>
+//                 <button
+//                   className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
+//                   onClick={() => handlePageChange(currentPage - 1)}
+//                   disabled={currentPage === 1}
+//                 >
+//                   {' '}
+//                   <ChevronLeftIcon />{' '}
+//                 </button>
+//               </div>
+//               <div className='flex items-center gap-3'>
+//                 <p>Pergi Ke Halaman: </p>
+//                 {data && (
+//                   <input
+//                     className='input input-sm w-20 bg-[#E2E8F0] shadow'
+//                     type='number'
+//                     min='1'
+//                     max={Math.ceil(data.length / rowsPerPage)}
+//                     value={currentPage}
+//                     onChange={(e) => {
+//                       const pageNumber = parseInt(e.target.value, 10)
+//                       if (pageNumber >= 1 && pageNumber <= Math.ceil(data.length / rowsPerPage)) {
+//                         handlePageChange(pageNumber)
+//                       }
+//                     }}
+//                   />
+//                 )}
+//                 <div className='dropdown'>
+//                   <label tabIndex={0} className='btn w-full bg-[#E2E8F0]'>
+//                     menampilkan
+//                   </label>
+//                   <ul
+//                     tabIndex={0}
+//                     className='dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full'
+//                   >
+//                     <li>
+//                       <a onClick={() => handleRowsPerPageChange(15)}>15</a>
+//                     </li>
+//                     <li>
+//                       <a onClick={() => handleRowsPerPageChange(30)}>30</a>
+//                     </li>
+//                   </ul>
+//                 </div>
+//               </div>
+//               <div className='space-x-2'>
+//                 <button
+//                   className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
+//                   onClick={() => {
+//                     if (data && currentPage < Math.ceil(data.length / rowsPerPage)) {
+//                       handlePageChange(currentPage + 1)
+//                     }
+//                   }}
+//                   disabled={!data || currentPage === Math.ceil(data.length / rowsPerPage)}
+//                 >
+//                   <ChevronRightIcon />
+//                 </button>
+//                 <button
+//                   className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
+//                   onClick={() => {
+//                     if (data) {
+//                       handlePageChange(Math.ceil(data.length / rowsPerPage))
+//                     }
+//                   }}
+//                   disabled={!data || currentPage === Math.ceil(data.length / rowsPerPage)}
+//                 >
+//                   <ChevronDoubleRightIcon />
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       ) : (
+//         <p className='font-bold text-lg text-center pt-5'>Cari Data ?</p>
+//       )} */}
+//         </>
+//       )}
+//     </div>
+//   )
+// }
+
+// export default TableData
+
 import DataTable from 'react-data-table-component'
 import { useState, useEffect } from 'react'
 import {
@@ -30,6 +505,7 @@ const TableData = ({ data, columns }: Props) => {
 
   // if pasien igd page
   const isPasienIgd = location.pathname.includes('pasien-igd')
+  const isPasienRanap = location.pathname.includes('rawat-inap')
 
   useEffect(() => {
     const newFilteredData = data
@@ -63,8 +539,9 @@ const TableData = ({ data, columns }: Props) => {
 
   return (
     <div>
-      {isPasienIgd ? (
+      {isPasienIgd && !isPasienRanap ? (
         <div>
+          {/* Content for isPasienIgd */}
           <div className='flex gap-2 '>
             <div className='relative w-full mb-2'>
               {searchQuery ? (
@@ -85,7 +562,7 @@ const TableData = ({ data, columns }: Props) => {
                 className='w-full input input-bordered'
               />
             </div>
-            <div className='relative dropdown  dropdown-bottom dropdown-end'>
+            <div className='relative dropdown dropdown-bottom dropdown-end'>
               <button
                 onClick={() => setIsOpen(true)}
                 className='flex btn w-72 text-white bg-[#55A46B]'
@@ -95,95 +572,223 @@ const TableData = ({ data, columns }: Props) => {
               </button>
               <ChevronDownIcon className='absolute bottom-4 right-5 font-bold text-white h-[17px] w-[17px]' />
               {isOpen && (
-                <>
-                  <div
-                    tabIndex={0}
-                    className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[482px] shadow-2xl border border-slate-300 '
-                  >
-                    <div className='w-full mt-3 p-3'>
-                      <div className='flex justify-between items-center mb-5'>
-                        <p className='pb-2 font-bold text-md mt-3'>POLI </p>
+                <div
+                  tabIndex={0}
+                  className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[482px] shadow-2xl border border-slate-300 '
+                >
+                  <div className='w-full mt-3 p-3'>
+                    <div className='flex justify-between items-center mb-5'>
+                      <p className='pb-2 font-bold text-md mt-3'>POLI</p>
+                      <button
+                        onClick={() => {
+                          setSearchQuery('')
+                          localStorage.setItem('PoliString', '')
+                          setIsOpen(false)
+                        }}
+                      >
+                        <ArrowPathIcon className='mr-3 w-7 h-7' />
+                      </button>
+                    </div>
+                    <div>
+                      <div className='grid grid-cols-3 gap-3'>
                         <button
                           onClick={() => {
-                            setSearchQuery('')
-                            localStorage.setItem('PoliString', '')
+                            setSearchQuery('PAGI')
+                            localStorage.setItem('PoliString', 'PAGI')
                             setIsOpen(false)
                           }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
                         >
-                          <ArrowPathIcon className='mr-3 w-7 h-7' />
-                        </button>{' '}
-                      </div>
-                      <div>
-                        <div className='grid grid-cols-3 gap-3'>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('IGD PAGI')
-                              localStorage.setItem('PoliString', 'IGD.P')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            IGD PAGI
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('IGD SIANG')
-                              localStorage.setItem('PoliString', 'IGD.S')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            IGD SIANG
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSearchQuery('IGD MALAM')
-                              localStorage.setItem('PoliString', 'IGD.M')
-                              setIsOpen(false)
-                            }}
-                            className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
-                          >
-                            IGD MALAM
-                          </button>
-                        </div>
+                          IGD PAGI
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('SIANG')
+                            localStorage.setItem('PoliString', 'SIANG')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          IGD SIANG
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('MALAM')
+                            localStorage.setItem('PoliString', 'MALAM')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          IGD MALAM
+                        </button>
                       </div>
                     </div>
                   </div>
-                </>
+                </div>
               )}
             </div>
           </div>
           <div className='flex justify-between'>
             <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
           </div>
-
+          <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
+        </div>
+      ) : isPasienRanap && !isPasienIgd ? (
+        <div>
+          {/* Content for isPasienRanap */}
+          <div className='flex gap-2 '>
+            <div className='relative w-full mb-2'>
+              <input
+                type='text'
+                placeholder='Cari...'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className='w-full input input-bordered'
+              />
+            </div>
+            <div className='relative dropdown dropdown-bottom dropdown-end'>
+              <button
+                onClick={() => setIsOpen(true)}
+                className='flex btn w-72 text-white bg-[#55A46B]'
+              >
+                <FunnelIcon className='font-bold text-white h-[17px] w-[17px]' />
+                Filter
+              </button>
+              <ChevronDownIcon className='absolute bottom-4 right-5 font-bold text-white h-[17px] w-[17px]' />
+              {isOpen && (
+                <div
+                  tabIndex={0}
+                  className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[482px] shadow-2xl border border-slate-300 '
+                >
+                  <div className='w-full mt-3 p-3'>
+                    <div className='flex justify-between items-center mb-5'>
+                      <p className='pb-2 font-bold text-md mt-3'>POLI</p>
+                      <button
+                        onClick={() => {
+                          setSearchQuery('')
+                          localStorage.setItem('PoliString', '')
+                          setIsOpen(false)
+                        }}
+                      >
+                        <ArrowPathIcon className='mr-3 w-7 h-7' />
+                      </button>
+                    </div>
+                    <div>
+                      <div className='grid grid-cols-3 gap-3'>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('ICU')
+                            localStorage.setItem('PoliString', 'ICU')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          ICU
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('ISOLASI')
+                            localStorage.setItem('PoliString', 'ISOLASI')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          ISOLASI
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('OPERASI')
+                            localStorage.setItem('PoliString', 'OPERASI')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          KMR OPERASI
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('ANAK')
+                            localStorage.setItem('PoliString', 'ANAK')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          ANAK
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('BEDAH')
+                            localStorage.setItem('PoliString', 'BEDAH')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          BEDAH
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('MUJAIR')
+                            localStorage.setItem('PoliString', 'MUJAIR')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          MUJAIR
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('NEONATI')
+                            localStorage.setItem('PoliString', 'NEONATI')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          NEONATI
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('PAYANGKA')
+                            localStorage.setItem('PoliString', 'PAYANGKA')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          PAYANGKA
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchQuery('TRANSIT')
+                            localStorage.setItem('PoliString', 'TRANSIT')
+                            setIsOpen(false)
+                          }}
+                          className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+                        >
+                          TRANSIT
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className='flex justify-between'>
+            <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
+          </div>
           <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
         </div>
       ) : (
-        <>
+        <div>
           <div className='flex items-center w-full pb-4'>
             <div className='w-full'>
               <span className='text-[10px] flex items-center gap-5 mb-3'>
-                <p className='font-bold'>Cari berdasarkan No. RM, Nama, atau Nomor Rawat</p>{' '}
+                <p className='font-bold'>Cari berdasarkan No. RM, Nama, atau Nomor Rawat</p>
                 <button onClick={() => window.location.reload()}>
                   <ArrowPathIcon className='w-5 h-5' />
                 </button>
               </span>
               <div className='flex gap-2 '>
                 <div className='relative w-full'>
-                  {searchQuery ? (
-                    <button
-                      onClick={() => {
-                        setSearchQuery('')
-                        localStorage.setItem('PoliString', '')
-                      }}
-                      className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]'
-                    >
-                      <XMarkIcon />
-                    </button>
-                  ) : (
-                    <MagnifyingGlassIcon className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]' />
-                  )}
                   <input
                     type='text'
                     placeholder='Cari...'
@@ -192,7 +797,7 @@ const TableData = ({ data, columns }: Props) => {
                     className='w-full input input-bordered'
                   />
                 </div>
-                <div className='relative dropdown  dropdown-bottom dropdown-end'>
+                <div className='relative dropdown dropdown-bottom dropdown-end'>
                   <button
                     onClick={() => setIsOpen(true)}
                     className='flex btn w-72 text-white bg-[#55A46B]'
@@ -364,110 +969,417 @@ const TableData = ({ data, columns }: Props) => {
           </div>
           <div className='flex justify-between'>
             <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
-            {/* <input
-          type='date'
-          onChange={handleChangeDate}
-          value={selectedDate}
-          className='input hover:bg-slate-300 border-slate-500'
-        /> */}
           </div>
-
           <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
-          {/* {searchQuery === '' ? (
-        <div className='flex justify-between p-2'>
-          <div>
-            <p>
-              Halaman <span className='font-bold'>{currentPage}</span> dari{' '}
-              <span className='font-bold'>{data ? Math.ceil(data.length / rowsPerPage) : []}</span>
-            </p>
-          </div>
-          <div>
-            <div className='flex gap-4'>
-              <div className='space-x-2'>
-                <button
-                  className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  {' '}
-                  <ChevronDoubleLeftIcon />{' '}
-                </button>
-                <button
-                  className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  {' '}
-                  <ChevronLeftIcon />{' '}
-                </button>
-              </div>
-              <div className='flex items-center gap-3'>
-                <p>Pergi Ke Halaman: </p>
-                {data && (
-                  <input
-                    className='input input-sm w-20 bg-[#E2E8F0] shadow'
-                    type='number'
-                    min='1'
-                    max={Math.ceil(data.length / rowsPerPage)}
-                    value={currentPage}
-                    onChange={(e) => {
-                      const pageNumber = parseInt(e.target.value, 10)
-                      if (pageNumber >= 1 && pageNumber <= Math.ceil(data.length / rowsPerPage)) {
-                        handlePageChange(pageNumber)
-                      }
-                    }}
-                  />
-                )}
-                <div className='dropdown'>
-                  <label tabIndex={0} className='btn w-full bg-[#E2E8F0]'>
-                    menampilkan
-                  </label>
-                  <ul
-                    tabIndex={0}
-                    className='dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full'
-                  >
-                    <li>
-                      <a onClick={() => handleRowsPerPageChange(15)}>15</a>
-                    </li>
-                    <li>
-                      <a onClick={() => handleRowsPerPageChange(30)}>30</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className='space-x-2'>
-                <button
-                  className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
-                  onClick={() => {
-                    if (data && currentPage < Math.ceil(data.length / rowsPerPage)) {
-                      handlePageChange(currentPage + 1)
-                    }
-                  }}
-                  disabled={!data || currentPage === Math.ceil(data.length / rowsPerPage)}
-                >
-                  <ChevronRightIcon />
-                </button>
-                <button
-                  className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
-                  onClick={() => {
-                    if (data) {
-                      handlePageChange(Math.ceil(data.length / rowsPerPage))
-                    }
-                  }}
-                  disabled={!data || currentPage === Math.ceil(data.length / rowsPerPage)}
-                >
-                  <ChevronDoubleRightIcon />
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
-      ) : (
-        <p className='font-bold text-lg text-center pt-5'>Cari Data ?</p>
-      )} */}
-        </>
       )}
     </div>
+    // <div>
+    //   {isPasienIgd ? (
+    //     <div>
+    //       <div className='flex gap-2 '>
+    //         <div className='relative w-full mb-2'>
+    //           {searchQuery ? (
+    //             <button
+    //               onClick={() => setSearchQuery('')}
+    //               className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]'
+    //             >
+    //               <XMarkIcon />
+    //             </button>
+    //           ) : (
+    //             <MagnifyingGlassIcon className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]' />
+    //           )}
+    //           <input
+    //             type='text'
+    //             placeholder='Cari...'
+    //             value={searchQuery}
+    //             onChange={(e) => setSearchQuery(e.target.value)}
+    //             className='w-full input input-bordered'
+    //           />
+    //         </div>
+    //         <div className='relative dropdown  dropdown-bottom dropdown-end'>
+    //           <button
+    //             onClick={() => setIsOpen(true)}
+    //             className='flex btn w-72 text-white bg-[#55A46B]'
+    //           >
+    //             <FunnelIcon className='font-bold text-white h-[17px] w-[17px]' />
+    //             Filter
+    //           </button>
+    //           <ChevronDownIcon className='absolute bottom-4 right-5 font-bold text-white h-[17px] w-[17px]' />
+    //           {isOpen && (
+    //             <>
+    //               <div
+    //                 tabIndex={0}
+    //                 className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[482px] shadow-2xl border border-slate-300 '
+    //               >
+    //                 <div className='w-full mt-3 p-3'>
+    //                   <div className='flex justify-between items-center mb-5'>
+    //                     <p className='pb-2 font-bold text-md mt-3'>POLI </p>
+    //                     <button
+    //                       onClick={() => {
+    //                         setSearchQuery('')
+    //                         localStorage.setItem('PoliString', '')
+    //                         setIsOpen(false)
+    //                       }}
+    //                     >
+    //                       <ArrowPathIcon className='mr-3 w-7 h-7' />
+    //                     </button>{' '}
+    //                   </div>
+    //                   <div>
+    //                     <div className='grid grid-cols-3 gap-3'>
+    //                       <button
+    //                         onClick={() => {
+    //                           setSearchQuery('IGD PAGI')
+    //                           localStorage.setItem('PoliString', 'IGD.P')
+    //                           setIsOpen(false)
+    //                         }}
+    //                         className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                       >
+    //                         IGD PAGI
+    //                       </button>
+    //                       <button
+    //                         onClick={() => {
+    //                           setSearchQuery('IGD SIANG')
+    //                           localStorage.setItem('PoliString', 'IGD.S')
+    //                           setIsOpen(false)
+    //                         }}
+    //                         className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                       >
+    //                         IGD SIANG
+    //                       </button>
+    //                       <button
+    //                         onClick={() => {
+    //                           setSearchQuery('IGD MALAM')
+    //                           localStorage.setItem('PoliString', 'IGD.M')
+    //                           setIsOpen(false)
+    //                         }}
+    //                         className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                       >
+    //                         IGD MALAM
+    //                       </button>
+    //                     </div>
+    //                   </div>
+    //                 </div>
+    //               </div>
+    //             </>
+    //           )}
+    //         </div>
+    //       </div>
+    //       <div className='flex justify-between'>
+    //         <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
+    //       </div>
+
+    //       <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
+    //     </div>
+    //   ) : (
+    //     <>
+    //       <div className='flex items-center w-full pb-4'>
+    //         <div className='w-full'>
+    //           <span className='text-[10px] flex items-center gap-5 mb-3'>
+    //             <p className='font-bold'>Cari berdasarkan No. RM, Nama, atau Nomor Rawat</p>{' '}
+    //             <button onClick={() => window.location.reload()}>
+    //               <ArrowPathIcon className='w-5 h-5' />
+    //             </button>
+    //           </span>
+    //           <div className='flex gap-2 '>
+    //             <div className='relative w-full'>
+    //               {searchQuery ? (
+    //                 <button
+    //                   onClick={() => {
+    //                     setSearchQuery('')
+    //                     localStorage.setItem('PoliString', '')
+    //                   }}
+    //                   className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]'
+    //                 >
+    //                   <XMarkIcon />
+    //                 </button>
+    //               ) : (
+    //                 <MagnifyingGlassIcon className='absolute right-5 bottom-3 h-[25.02px] w-[25.02px] bg-none text-[#55A46B]' />
+    //               )}
+    //               <input
+    //                 type='text'
+    //                 placeholder='Cari...'
+    //                 value={searchQuery}
+    //                 onChange={(e) => setSearchQuery(e.target.value)}
+    //                 className='w-full input input-bordered'
+    //               />
+    //             </div>
+    //             <div className='relative dropdown  dropdown-bottom dropdown-end'>
+    //               <button
+    //                 onClick={() => setIsOpen(true)}
+    //                 className='flex btn w-72 text-white bg-[#55A46B]'
+    //               >
+    //                 <FunnelIcon className='font-bold text-white h-[17px] w-[17px]' />
+    //                 Filter
+    //               </button>
+    //               <ChevronDownIcon className='absolute bottom-4 right-5 font-bold text-white h-[17px] w-[17px]' />
+    //               {isOpen && (
+    //                 <>
+    //                   <div
+    //                     tabIndex={0}
+    //                     className='dropdown-content z-[1] menu p-3 bg-base-100 rounded-lg w-[482px] shadow-2xl border border-slate-300 '
+    //                   >
+    //                     <div className='w-full mt-3 p-3'>
+    //                       <div className='flex justify-between items-center mb-5'>
+    //                         <p className='pb-2 font-bold text-md mt-3'>POLI </p>
+    //                         <button
+    //                           onClick={() => {
+    //                             setSearchQuery('')
+    //                             localStorage.setItem('PoliString', '')
+    //                             setIsOpen(false)
+    //                           }}
+    //                         >
+    //                           <ArrowPathIcon className='mr-3 w-7 h-7' />
+    //                         </button>{' '}
+    //                       </div>
+    //                       <div>
+    //                         <div className='grid grid-cols-3 gap-3'>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK GERIATRI')
+    //                               localStorage.setItem('PoliString', 'KLINIK GERIATRI')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK GERIATRI
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK SYARAF')
+    //                               localStorage.setItem('PoliString', 'KLINIK SYARAF')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK SYARAF
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK PENYAKIT DALAM')
+    //                               localStorage.setItem('PoliString', 'KLINIK PENYAKIT DALAM')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK PENYAKIT DALAM
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK JANTUNG')
+    //                               localStorage.setItem('PoliString', 'KLINIK JANTUNG')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK JANTUNG
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK GIGI')
+    //                               localStorage.setItem('PoliString', 'KLINIK GIGI')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK GIGI & MULUT
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK KANDUNGAN')
+    //                               localStorage.setItem('PoliString', 'KLINIK KANDUNGAN')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK KANDUNGAN
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK ANAK')
+    //                               localStorage.setItem('PoliString', 'KLINIK ANAK')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK ANAK
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK MATA')
+    //                               localStorage.setItem('PoliString', 'KLINIK MATA')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK MATA
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK JIWA')
+    //                               localStorage.setItem('PoliString', 'KLINIK JIWA')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK JIWA
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK KULIT & KELAMIN')
+    //                               localStorage.setItem('PoliString', 'KLINIK KULIT & KELAMIN')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK KULIT & KELAMIN
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK FISIOTERAPI')
+    //                               localStorage.setItem('PoliString', 'KLINIK FISIOTERAPI')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK FISIOTERAPI
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('KLINIK BEDAH')
+    //                               localStorage.setItem('PoliString', 'KLINIK BEDAH')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             KLINIK BEDAH
+    //                           </button>
+    //                           <button
+    //                             onClick={() => {
+    //                               setSearchQuery('IGD')
+    //                               setIsOpen(false)
+    //                             }}
+    //                             className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'
+    //                           >
+    //                             IGD
+    //                           </button>
+    //                         </div>
+    //                       </div>
+    //                     </div>
+    //                     {/* <button className='btn bg-[#55A46B]'>Terapkan Filter</button> */}
+    //                   </div>
+    //                 </>
+    //               )}
+    //             </div>
+    //           </div>
+    //         </div>
+    //       </div>
+    //       <div className='flex justify-between'>
+    //         <p className='p-1 font-bold text-xl'>{filterJumlahPasien} Pasien</p>
+    //         {/* <input
+    //       type='date'
+    //       onChange={handleChangeDate}
+    //       value={selectedDate}
+    //       className='input hover:bg-slate-300 border-slate-500'
+    //     /> */}
+    //       </div>
+
+    //       <DataTable columns={columns} data={paginatedData} pagination={false} persistTableHead />
+    //       {/* {searchQuery === '' ? (
+    //     <div className='flex justify-between p-2'>
+    //       <div>
+    //         <p>
+    //           Halaman <span className='font-bold'>{currentPage}</span> dari{' '}
+    //           <span className='font-bold'>{data ? Math.ceil(data.length / rowsPerPage) : []}</span>
+    //         </p>
+    //       </div>
+    //       <div>
+    //         <div className='flex gap-4'>
+    //           <div className='space-x-2'>
+    //             <button
+    //               className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
+    //               onClick={() => handlePageChange(currentPage - 1)}
+    //               disabled={currentPage === 1}
+    //             >
+    //               {' '}
+    //               <ChevronDoubleLeftIcon />{' '}
+    //             </button>
+    //             <button
+    //               className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
+    //               onClick={() => handlePageChange(currentPage - 1)}
+    //               disabled={currentPage === 1}
+    //             >
+    //               {' '}
+    //               <ChevronLeftIcon />{' '}
+    //             </button>
+    //           </div>
+    //           <div className='flex items-center gap-3'>
+    //             <p>Pergi Ke Halaman: </p>
+    //             {data && (
+    //               <input
+    //                 className='input input-sm w-20 bg-[#E2E8F0] shadow'
+    //                 type='number'
+    //                 min='1'
+    //                 max={Math.ceil(data.length / rowsPerPage)}
+    //                 value={currentPage}
+    //                 onChange={(e) => {
+    //                   const pageNumber = parseInt(e.target.value, 10)
+    //                   if (pageNumber >= 1 && pageNumber <= Math.ceil(data.length / rowsPerPage)) {
+    //                     handlePageChange(pageNumber)
+    //                   }
+    //                 }}
+    //               />
+    //             )}
+    //             <div className='dropdown'>
+    //               <label tabIndex={0} className='btn w-full bg-[#E2E8F0]'>
+    //                 menampilkan
+    //               </label>
+    //               <ul
+    //                 tabIndex={0}
+    //                 className='dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full'
+    //               >
+    //                 <li>
+    //                   <a onClick={() => handleRowsPerPageChange(15)}>15</a>
+    //                 </li>
+    //                 <li>
+    //                   <a onClick={() => handleRowsPerPageChange(30)}>30</a>
+    //                 </li>
+    //               </ul>
+    //             </div>
+    //           </div>
+    //           <div className='space-x-2'>
+    //             <button
+    //               className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
+    //               onClick={() => {
+    //                 if (data && currentPage < Math.ceil(data.length / rowsPerPage)) {
+    //                   handlePageChange(currentPage + 1)
+    //                 }
+    //               }}
+    //               disabled={!data || currentPage === Math.ceil(data.length / rowsPerPage)}
+    //             >
+    //               <ChevronRightIcon />
+    //             </button>
+    //             <button
+    //               className='btn btn-sm bg-[#55A46B] text-white w-11 h-11'
+    //               onClick={() => {
+    //                 if (data) {
+    //                   handlePageChange(Math.ceil(data.length / rowsPerPage))
+    //                 }
+    //               }}
+    //               disabled={!data || currentPage === Math.ceil(data.length / rowsPerPage)}
+    //             >
+    //               <ChevronDoubleRightIcon />
+    //             </button>
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   ) : (
+    //     <p className='font-bold text-lg text-center pt-5'>Cari Data ?</p>
+    //   )} */}
+    //     </>
+    //   )}
+    // </div>
   )
 }
 

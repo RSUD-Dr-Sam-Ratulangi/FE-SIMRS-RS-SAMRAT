@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Production
 export const api = axios.create({
-  baseURL: 'http://43.99.33.8:8901/',
+  baseURL: 'http://rsudsamrat.site:8901/',
   timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
@@ -10,7 +10,7 @@ export const api = axios.create({
 })
 
 export const apiLabor = axios.create({
-  baseURL: 'http://43.99.33.8:8901/',
+  baseURL: 'http://rsudsamrat.site:8901/',
   timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
@@ -18,7 +18,7 @@ export const apiLabor = axios.create({
 })
 
 export const apiRadiologi = axios.create({
-  baseURL: 'http://43.99.33.8:8901/',
+  baseURL: 'http://rsudsamrat.site:8901/',
   timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
