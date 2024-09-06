@@ -16,7 +16,7 @@ import { formatSelectedDate, formatSelectedDateNow } from '../../../utils/DateNo
 import ModalLaborInput from '../../Layouts/Laboratorium/Modal/ModalLaborInput'
 import { PopupActions } from 'reactjs-popup/dist/types'
 import ModalRadiologiInput from '../../Layouts/Radiologi/Modal/ModalRadiologiInput'
-// import ToastInfo from '../../utils/ToastInfo'
+import ValidationModal from '../../../utils/ValidationModal'
 
 enum KesadaranOptions {
   defaultValue = 'Pilih Kesadaran',
@@ -120,6 +120,8 @@ const InsertSoapIgd: React.FC<{
   const [radiologiData, setRadiologiData] = useState('')
   const modalLaborRef = useRef<PopupActions>(null)
   const modalRadiologiRef = useRef<PopupActions>(null)
+  const modalRefValidation = useRef<PopupActions>(null)
+  const [activeIndexAccordion, setActiveIndexAccordion] = useState<number | null>(null)
 
   const navigate = useNavigate()
   const nmrRawat = localStorage.getItem('no_rawat')
@@ -599,6 +601,16 @@ const InsertSoapIgd: React.FC<{
             spesificError({ errMessage: 'Mohon Memasukan Data Subjektif.' })
           } else if (!objectPemeriksaan) {
             spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
+          } else if (!dataSoap[0]?.rtl && !plan) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Plan' })
+          } else if (!instruksi) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
+          } else if (!penilaian) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Assesmen.' })
+            // } else if (Object.keys(selectedMedicines).length === 0) {
+            //   spesificError({
+            //     errMessage: 'Tidak Ada Obat yang dipilih. Mohon Untuk Memasukan Obat.',
+            //   })
           } else {
             const isDataCorrect = window.confirm(
               'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
@@ -621,7 +633,7 @@ const InsertSoapIgd: React.FC<{
                 console.log('error petugas post', error)
                 spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
               } finally {
-                navigate('/rawat-jalan/')
+                navigate('/pasien-igd/')
                 window.location.reload()
               }
             } else {
@@ -629,7 +641,23 @@ const InsertSoapIgd: React.FC<{
             }
           }
         } else if (role.includes('dokter')) {
-          if (!tindakan && !subjektif) {
+          if (!suhu) {
+            spesificError({ errMessage: 'Masukan Data Suhu Tubuh.' })
+          } else if (!tensi) {
+            spesificError({ errMessage: 'Masukan Data Tensi.' })
+          } else if (!nadi) {
+            spesificError({ errMessage: 'Masukan Data nadi' })
+          } else if (!rr) {
+            spesificError({ errMessage: 'Masukan Data RR.' })
+          } else if (!tinggi) {
+            spesificError({ errMessage: 'Masukan Data Tinggi Pasien.' })
+          } else if (!berat) {
+            spesificError({ errMessage: 'Masukan Data Berat Pasien.' })
+          } else if (!spo2) {
+            spesificError({ errMessage: 'Masukan Data SPO2' })
+          } else if (!alergi) {
+            spesificError({ errMessage: 'Masukan Data alergi.' })
+          } else if (!tindakan && !subjektif) {
             spesificError({ errMessage: 'Mohon Memasukan Data Subjektif.' })
           } else if (!objectPemeriksaan) {
             spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
@@ -676,7 +704,7 @@ const InsertSoapIgd: React.FC<{
                 setProgress(100)
               } finally {
                 setProgress(100)
-                navigate('/rawat-jalan/')
+                navigate('/pasien-igd/')
                 window.location.reload()
                 console.log('okok')
               }
@@ -707,6 +735,12 @@ const InsertSoapIgd: React.FC<{
             spesificError({ errMessage: 'Mohon Memasukan Data Subjektif..' })
           } else if (!dataSoap[0]?.pemeriksaan && !objectPemeriksaan) {
             spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
+          } else if (!dataSoap[0]?.penilaian && !penilaian) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Assesmen.' })
+          } else if (!dataSoap[0]?.instruksi && !instruksi) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Instruksi.' })
+          } else if (!dataSoap[0]?.rtl && !plan) {
+            spesificError({ errMessage: 'Mohon Memasukan Data Plan' })
           } else {
             const isDataCorrect = window.confirm(
               'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
@@ -734,7 +768,7 @@ const InsertSoapIgd: React.FC<{
                 spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, error.' })
               } finally {
                 setProgress(100)
-                navigate('/rawat-jalan/')
+                navigate('/pasien-igd/')
                 window.location.reload()
               }
             } else {
@@ -743,7 +777,23 @@ const InsertSoapIgd: React.FC<{
           }
         } else if (role.includes('dokter')) {
           //           if (!dataSoap[0].keluhan && (!subjektif || !tindakan))
-          if (!dataSoap[0].keluhan && (!subjektif || !tindakan)) {
+          if (!suhu) {
+            spesificError({ errMessage: 'Masukan Data Suhu Tubuh.' })
+          } else if (!tensi) {
+            spesificError({ errMessage: 'Masukan Data Tensi.' })
+          } else if (!nadi) {
+            spesificError({ errMessage: 'Masukan Data nadi' })
+          } else if (!rr) {
+            spesificError({ errMessage: 'Masukan Data RR.' })
+          } else if (!tinggi) {
+            spesificError({ errMessage: 'Masukan Data Tinggi Pasien.' })
+          } else if (!berat) {
+            spesificError({ errMessage: 'Masukan Data Berat Pasien.' })
+          } else if (!spo2) {
+            spesificError({ errMessage: 'Masukan Data SPO2' })
+          } else if (!alergi) {
+            spesificError({ errMessage: 'Masukan Data alergi.' })
+          } else if (!dataSoap[0].keluhan && (!subjektif || !tindakan)) {
             spesificError({ errMessage: 'Mohon Memasukan Data Subjektif..' })
           } else if (!dataSoap[0]?.pemeriksaan && !objectPemeriksaan) {
             spesificError({ errMessage: 'Mohon Memasukan Data Object.' })
@@ -760,18 +810,13 @@ const InsertSoapIgd: React.FC<{
 
             if (isDataCorrect) {
               try {
-                const response = await api.put(
-                  '/api/v1/updatePemeriksaanRalan',
-                  JSON.stringify(dataPut),
-                  {
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
+                await api.put('/api/v1/updatePemeriksaanRalan', JSON.stringify(dataPut), {
+                  headers: {
+                    'Content-Type': 'application/json',
                   },
-                )
+                })
 
                 setIsLoading(true)
-                console.log('BERHASIL MENGIRIM(dokter):', response.data)
                 setProgress(70)
                 await postResep()
                 setProgress(80)
@@ -785,7 +830,7 @@ const InsertSoapIgd: React.FC<{
                 setProgress(100)
               } finally {
                 setProgress(100)
-                navigate('/rawat-jalan/')
+                navigate('/pasien-igd/')
                 window.location.reload()
               }
             } else {
@@ -897,6 +942,26 @@ const InsertSoapIgd: React.FC<{
     if (modalRadiologiRef.current) {
       modalRadiologiRef.current.close()
     }
+  }
+
+  const handleOpenModalValidation = () => {
+    modalRefValidation.current?.open()
+  }
+
+  const handleCloseModalValidation = () => {
+    modalRefValidation.current?.close()
+  }
+
+  const handleAddNewSoap = () => {
+    handleCloseModalValidation()
+  }
+
+  const handleUpdateSoap = () => {
+    handleCloseModalValidation()
+  }
+
+  const toggleAccordion = (index: number) => {
+    setActiveIndexAccordion((prevIndex) => (prevIndex === index ? null : index))
   }
 
   return (
@@ -1112,6 +1177,47 @@ const InsertSoapIgd: React.FC<{
                 </div>
               </div>
             </div>
+            <div
+              className={`p-2 gap-2 ${
+                activeIndexAccordion === null ? 'flex justify-evenly' : 'flex flex-col'
+              }`}
+            >
+              <div className='w-full bg-slate-100 rounded-xl p-3 mt-1 border border-slate-300'>
+                <div
+                  className='text-md text-center font-medium cursor-pointer p-2'
+                  onClick={() => toggleAccordion(0)}
+                >
+                  TRIASE SEKUNDER
+                </div>
+                {activeIndexAccordion === 0 && (
+                  <div className='p-2'>
+                    <p>TRIASE SEKUNDER</p>
+                    <p>TRIASE SEKUNDER</p>
+                    <p>TRIASE SEKUNDER</p>
+                    <p>TRIASE SEKUNDER</p>
+                  </div>
+                )}
+              </div>
+              <div className='w-full bg-slate-100 rounded-xl p-3 mt-1 border border-slate-300'>
+                <div
+                  className='text-md text-center font-medium cursor-pointer p-2'
+                  onClick={() => toggleAccordion(1)}
+                >
+                  TRIASE PRIMER
+                </div>
+                {activeIndexAccordion === 1 && (
+                  <div className='p-2'>
+                    <p>TRIASE PRIMER</p>
+                    <p>TRIASE PRIMER</p>
+                    <p>TRIASE PRIMER</p>
+                    <p>TRIASE PRIMER</p>
+                    <p>TRIASE PRIMER</p>
+                    <p>TRIASE PRIMER</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div>
               <div className='mt-3 border border-slate-300 p-3 rounded-lg'>
                 <div className='form-control'>
@@ -1687,22 +1793,26 @@ const InsertSoapIgd: React.FC<{
           </button>
         </div>
         <div>
-          {role.includes('petugas') ? null : (
-            <div className='flex justify-between gap-3'>
-              <button
-                className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
-                onClick={modalLaborInputOpen}
-              >
-                PERMINTAAN LABORATORIUM
-              </button>
-              <button
-                className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
-                onClick={modalRadiologiInputOpen}
-              >
-                PERMINTAAN RADIOLOGI
-              </button>
-            </div>
-          )}
+          <div className='flex justify-between gap-3'>
+            <button
+              className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
+              onClick={modalLaborInputOpen}
+            >
+              PERMINTAAN LABORATORIUM
+            </button>
+            <button
+              className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
+              onClick={modalRadiologiInputOpen}
+            >
+              PERMINTAAN RADIOLOGI
+            </button>
+            <button
+              className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary-500 rounded-xl hover:opacity-80'
+              onClick={handleOpenModalValidation}
+            >
+              test aga
+            </button>
+          </div>
         </div>
       </div>
       <ToastContainer />
@@ -1715,6 +1825,13 @@ const InsertSoapIgd: React.FC<{
         ref={modalRadiologiRef}
         onClose={modalRadiologiInputClose}
         onRadiologiData={handleRadiologiData}
+      />
+      <ValidationModal
+        ref={modalRefValidation}
+        onYes={handleAddNewSoap}
+        onNo={handleUpdateSoap}
+        buttonOne='Kirim Soap Baru'
+        buttonTwo='Update Soap'
       />
     </div>
   )

@@ -13,6 +13,8 @@
     "apexcharts": "^3.43.0",
     "axios": "^1.5.1",
     "canvg": "^4.0.2",
+    "crypto-browserify": "^3.12.0",
+    "crypto-js": "^4.1.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
     "react": "^18.2.0",

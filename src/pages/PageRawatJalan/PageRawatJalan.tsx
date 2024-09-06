@@ -4,6 +4,7 @@ import { api } from '../../services/api/config.api'
 import { useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { ArrowPathIcon } from '@heroicons/react/24/solid'
+import { makeRequestsSequentiallyKirimAntrian } from '../../utils/KirimAntrian'
 // import CustomTTSComponent from '../../utils/TtsSound'
 
 type DataItem = {
@@ -76,10 +77,21 @@ type DataItem = {
   attn: string
 }
 
+interface Column {
+  name: string
+  selector?: (row: DataItem) => string | number | JSX.Element
+  cell?: (row: DataItem) => JSX.Element
+  sortable: boolean
+  ignoreRowClick?: boolean
+  allowOverflow?: boolean
+  button?: boolean
+}
+
 export default function PageRawatJalan() {
   const tglSkrng = localStorage.getItem('tglSkrng')
   const [data, setData] = useState()
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingJKN, setIsLoadingJKN] = useState(false)
   const [changeDate, setChangeDate] = useState(tglSkrng)
 
   const navigate = useNavigate()
@@ -87,6 +99,7 @@ export default function PageRawatJalan() {
   const Kd = JSON.parse(tokenValue)
   const kdDokter = Kd.dokter?.kd_dokter
   const role = Object.keys(Kd)[0]
+  const nip = localStorage.getItem('nip')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,7 +142,7 @@ export default function PageRawatJalan() {
   }
 
   const createContextMenu = (e, url) => {
-    e.preventDefault() // Prevent default context menu
+    e.preventDefault()
 
     const existingContextMenu = document.querySelector('.custom-context-menu')
     if (existingContextMenu) {
@@ -155,14 +168,18 @@ export default function PageRawatJalan() {
       const isClickInsideContextMenu = contextMenu.contains(event.target)
       if (!isClickInsideContextMenu) {
         console.log('Closing context menu...')
-        contextMenu.remove() // Remove the context menu
-        document.removeEventListener('click', closeContextMenu) // Remove the event listener
+        contextMenu.remove()
+        document.removeEventListener('click', closeContextMenu)
       }
     }
     document.addEventListener('click', closeContextMenu)
   }
 
-  const columns = [
+  const kirimAntrian = (noRawat) => {
+    makeRequestsSequentiallyKirimAntrian(noRawat, setIsLoadingJKN)
+  }
+
+  const columns: Column[] = [
     { name: 'NO.REG', selector: (row: DataItem) => row.no_reg, sortable: true },
     { name: 'NO.RM', selector: (row: DataItem) => row.no_rkm_medis, sortable: true },
     {
@@ -219,12 +236,29 @@ export default function PageRawatJalan() {
       ),
       sortable: true,
     },
-    {
-      name: 'STATUS LANJUT',
-      selector: (row: DataItem) => row.status_lanjut,
-      sortable: true,
-    },
   ]
+
+  if (nip === 'IT007') {
+    columns.push({
+      name: 'KIRIM ANTRIAN',
+      cell: (row: DataItem) => (
+        <button className='btn btn-sm bg-[#55A46B]' onClick={() => kirimAntrian(row.no_rawat)}>
+          {isLoadingJKN ? (
+            <p className='flex items-center justify-center gap-1'>
+              <span> Mengirim</span>
+              <ArrowPathIcon width={15} height={15} className='animate-spin' />
+            </p>
+          ) : (
+            <p>KIRIM</p>
+          )}
+        </button>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      sortable: false, // Buttons don't need to be sortable
+    })
+  }
 
   return (
     <>

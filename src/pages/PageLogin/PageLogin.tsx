@@ -38,6 +38,13 @@ export default function PageLogin() {
             const kdDokter = token?.dokter?.kd_dokter
             localStorage.setItem('tglSkrng', tglSkrng)
             localStorage.setItem('PoliString', '')
+            if (data.petugas) {
+              const nip = data.petugas.nip
+              localStorage.setItem('nip', nip)
+            } else if (data.dokter) {
+              const kdDokter = data.dokter.kd_dokter
+              localStorage.setItem('kd_dokter', kdDokter)
+            }
             try {
               const response = await api.get(`/api/v1/getJadwalDokter?kdDokter=${kdDokter}`)
               const kode = response.data
