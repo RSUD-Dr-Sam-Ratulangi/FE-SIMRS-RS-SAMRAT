@@ -11,7 +11,6 @@ export default function PageDashboard() {
   const keys = Object.keys(credentialsInfo)
   let name = null
   let kodePekerja = null
-  console.log('info', credentialsInfo)
 
   const currentDate = new Date()
   const currentYear = currentDate.getFullYear()
@@ -122,7 +121,6 @@ export default function PageDashboard() {
         `/api/v1/doctor-yearly-statistics?doctorId=${kodePekerja}&year=${year}`,
       )
       setTotalPatientThisYear(responseTotalPatientThisYear.data[0].total_patients)
-      console.log('testing', responseTotalPatientThisYear.data)
     } catch (err) {
       console.log(err)
     }

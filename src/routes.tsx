@@ -116,4 +116,7 @@ export const routerList = [
   },
 ]
 
+// export const router = createBrowserRouter(routerList, {
+//   basename: '/simrs',
+// })
 export const router = createBrowserRouter(routerList)

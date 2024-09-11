@@ -17,7 +17,6 @@ export default function PageRawatInap() {
     const fetchData = async () => {
       try {
         const response = await api.get('/api/v1/getDataPasienRanap?statusPulang=-&bangsalName=')
-        console.log(response.data)
         const dataInap = response.data.reverse()
         setData(dataInap)
         setIsLoading(false)
@@ -33,10 +32,9 @@ export default function PageRawatInap() {
 
     const existingContextMenu = document.querySelector('.custom-context-menu')
     if (existingContextMenu) {
-      console.log('Context menu exists. Removing...')
       existingContextMenu.remove()
     } else {
-      console.log('Context menu does not exist.')
+      null
     }
 
     const contextMenu = document.createElement('div')
@@ -54,7 +52,6 @@ export default function PageRawatInap() {
     const closeContextMenu = (event) => {
       const isClickInsideContextMenu = contextMenu.contains(event.target)
       if (!isClickInsideContextMenu) {
-        console.log('Closing context menu...')
         contextMenu.remove() // Remove the context menu
         document.removeEventListener('click', closeContextMenu) // Remove the event listener
       }

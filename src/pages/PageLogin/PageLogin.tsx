@@ -13,10 +13,11 @@ export default function PageLogin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const apiUrl = process.env.REACT_APP_API_URL + '/api/v1/login'
 
   const loginUser = async () => {
     try {
-      const response = await fetch('http://rsudsamrat.site:8901/api/v1/login', {
+      const response = await fetch(`${apiUrl}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -31,7 +32,6 @@ export default function PageLogin() {
         } else {
           localStorage.setItem('token', JSON.stringify(data))
           navigate('/dashboard')
-          console.log('Response from backend:', data)
           const fetchJadwal = async () => {
             const tokenString = localStorage.getItem('token')
             const token = JSON.parse(tokenString)

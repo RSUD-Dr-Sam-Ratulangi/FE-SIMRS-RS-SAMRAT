@@ -4,7 +4,9 @@ import { api } from '../../services/api/config.api'
 import { useNavigate } from 'react-router-dom'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { ArrowPathIcon } from '@heroicons/react/24/solid'
-import { makeRequestsSequentiallyKirimAntrian } from '../../utils/KirimAntrian'
+import KirimAntrian from '../../utils/KirimAntrian'
+import KirimAntrianSemua from '../../utils/KirimAntrianSemua'
+
 // import CustomTTSComponent from '../../utils/TtsSound'
 
 type DataItem = {
@@ -89,10 +91,14 @@ interface Column {
 
 export default function PageRawatJalan() {
   const tglSkrng = localStorage.getItem('tglSkrng')
-  const [data, setData] = useState()
+  const [data, setData] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [isLoadingJKN, setIsLoadingJKN] = useState(false)
   const [changeDate, setChangeDate] = useState(tglSkrng)
+  const [openPopup, setOpenPopup] = useState<boolean>(false)
+  const [openPopupAll, setOpenPopupAll] = useState<boolean>(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedNoRawat, setSelectedNoRawat] = useState<string>('')
+  const [selectedNmPasien, setSelectedNmPasien] = useState<string>('')
 
   const navigate = useNavigate()
   const tokenValue = localStorage.getItem('token')
@@ -141,6 +147,16 @@ export default function PageRawatJalan() {
     setChangeDate(getDate)
   }
 
+  const handleSendAntrian = (noRawat: string, nmPasien: string) => {
+    setSelectedNoRawat(noRawat)
+    setSelectedNmPasien(nmPasien)
+    setOpenPopup(true)
+  }
+
+  const handleSendAllAntrian = () => {
+    setOpenPopupAll(true)
+  }
+
   const createContextMenu = (e, url) => {
     e.preventDefault()
 
@@ -173,10 +189,6 @@ export default function PageRawatJalan() {
       }
     }
     document.addEventListener('click', closeContextMenu)
-  }
-
-  const kirimAntrian = (noRawat) => {
-    makeRequestsSequentiallyKirimAntrian(noRawat, setIsLoadingJKN)
   }
 
   const columns: Column[] = [
@@ -221,8 +233,6 @@ export default function PageRawatJalan() {
       selector: (row: DataItem) => row.stts,
       sortable: true,
     },
-    // { name: 'PENJAMIN', selector: (row: DataItem) => row.png_jawab, sortable: true },
-    // { name: 'NO ASURANSI', selector: (row: DataItem) => row.no_peserta, sortable: true },
     { name: 'TANGGAL KUNJUNGAN', selector: (row: DataItem) => row.tgl_registrasi, sortable: true },
     {
       name: 'STATUS BAYAR',
@@ -238,30 +248,39 @@ export default function PageRawatJalan() {
     },
   ]
 
-  if (nip === 'IT007') {
+  if (
+    nip === 'IT007' ||
+    nip === 'IT008' ||
+    nip === 'IT006' ||
+    nip === 'IT009' ||
+    nip === ' IT010'
+  ) {
     columns.push({
       name: 'KIRIM ANTRIAN',
       cell: (row: DataItem) => (
-        <button className='btn btn-sm bg-[#55A46B]' onClick={() => kirimAntrian(row.no_rawat)}>
-          {isLoadingJKN ? (
-            <p className='flex items-center justify-center gap-1'>
-              <span> Mengirim</span>
-              <ArrowPathIcon width={15} height={15} className='animate-spin' />
-            </p>
-          ) : (
-            <p>KIRIM</p>
-          )}
+        <button
+          className='btn btn-sm bg-[#55A46B]'
+          onClick={() => handleSendAntrian(row.no_rawat, row.nm_pasien)}
+        >
+          KIRIM
         </button>
       ),
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
-      sortable: false, // Buttons don't need to be sortable
+      sortable: false,
     })
   }
 
   return (
     <>
+      <KirimAntrian
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+        noRawat={selectedNoRawat}
+        nmPasien={selectedNmPasien}
+      />
+      <KirimAntrianSemua openPopup={openPopupAll} setOpenPopup={setOpenPopupAll} />
       {isLoading ? (
         <div className='flex flex-row justify-center items-center h-screen'>
           <ArrowPathIcon width={85} height={85} className='animate-spin'></ArrowPathIcon>
@@ -283,12 +302,26 @@ export default function PageRawatJalan() {
             <div className='mt-5'>
               <div>
                 <label className='label font-bold'>Pilih Tanggal :</label>
-                <input
-                  type='date'
-                  className='input border-primary text-sm'
-                  value={changeDate}
-                  onChange={handleDateChange}
-                />
+                <div className='flex items-center justify-between p-2'>
+                  <input
+                    type='date'
+                    className='input border-primary text-sm'
+                    value={changeDate}
+                    onChange={handleDateChange}
+                  />
+                  {nip === 'IT007' ||
+                  nip === 'IT008' ||
+                  nip === 'IT006' ||
+                  nip === 'IT009' ||
+                  nip === ' IT010' ? (
+                    <button
+                      onClick={handleSendAllAntrian}
+                      className='btn btn-md hover:bg-gray-200 hover:border-primary border-primary bg-white'
+                    >
+                      KIRIM SEMUA ANTRIAN
+                    </button>
+                  ) : null}
+                </div>
               </div>
               <TableData data={data} columns={columns} />
             </div>
