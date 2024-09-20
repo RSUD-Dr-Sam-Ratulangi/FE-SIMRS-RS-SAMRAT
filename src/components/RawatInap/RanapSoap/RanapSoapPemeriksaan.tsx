@@ -5,7 +5,7 @@ const RanapSoapPemeriksaan: React.FC = () => {
     <div className='ml-3'>
       <HeaderRanap />
       <div>
-        <p>Hello World</p>
+        <p>Hello dunia</p>
       </div>
     </div>
   )

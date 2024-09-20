@@ -13,11 +13,11 @@ export default function PageLogin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
-  const apiUrl = process.env.REACT_APP_API_URL + '/api/v1/login'
+  const apiUrl =  'http://rsudsamrat.site:8901/api/v1/login'
 
   const loginUser = async () => {
     try {
-      const response = await fetch(`${apiUrl}`, {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
