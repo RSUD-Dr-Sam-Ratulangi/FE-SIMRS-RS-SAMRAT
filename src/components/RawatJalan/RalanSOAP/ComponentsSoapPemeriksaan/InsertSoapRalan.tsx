@@ -16,7 +16,6 @@ import { formatSelectedDate, formatSelectedDateNow } from '../../../../utils/Dat
 import ModalLaborInput from '../../../Layouts/Laboratorium/Modal/ModalLaborInput'
 import { PopupActions } from 'reactjs-popup/dist/types'
 import ModalRadiologiInput from '../../../Layouts/Radiologi/Modal/ModalRadiologiInput'
-// import ToastInfo from '../../utils/ToastInfo'
 
 enum KesadaranOptions {
   defaultValue = 'Pilih Kesadaran',

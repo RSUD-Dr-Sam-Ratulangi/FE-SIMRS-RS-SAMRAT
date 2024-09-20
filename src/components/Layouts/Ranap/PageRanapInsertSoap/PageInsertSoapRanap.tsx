@@ -12,9 +12,9 @@ import {
 } from '@heroicons/react/24/solid'
 import { useNavigate, useParams } from 'react-router-dom'
 import { formatSelectedDate, formatSelectedDateNow } from '../../../../utils/DateNow'
-import ModalLaborInput from '../../../Layouts/Laboratorium/Modal/ModalLaborInput'
+import ModalLaborInput from '../../Laboratorium/Modal/ModalLaborInput'
 import { PopupActions } from 'reactjs-popup/dist/types'
-import ModalRadiologiInput from '../../../Layouts/Radiologi/Modal/ModalRadiologiInput'
+import ModalRadiologiInput from '../../Radiologi/Modal/ModalRadiologiInput'
 
 enum KesadaranOptions {
   defaultValue = 'Pilih Kesadaran',

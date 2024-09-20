@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import TableData from '../../components/Table/Table'
 import { api } from '../../services/api/config.api'
 import Breadcrumb from '../../components/BreadCrumb/Breadcrumb'
 import { useNavigate } from 'react-router-dom'
 import { ArrowPathIcon } from '@heroicons/react/24/solid'
+import { PopupActions } from 'reactjs-popup/dist/types'
+import ModalPulangRanap from '../../components/Layouts/Ranap/ModalPulang'
 
 export default function PageRawatInap() {
+  const modalPulangRef = useRef<PopupActions>(null)
   const tglSkrng = localStorage.getItem('tglSkrng')
   const [data, setData] = useState()
   const [changeDate, setChangeDate] = useState(tglSkrng)
@@ -57,6 +60,18 @@ export default function PageRawatInap() {
       }
     }
     document.addEventListener('click', closeContextMenu)
+  }
+
+  const modalPulangRanapOpen = () => {
+    if (modalPulangRef.current) {
+      modalPulangRef.current.open()
+    }
+  }
+
+  const modalPulangRanapClose = () => {
+    if (modalPulangRef.current) {
+      modalPulangRef.current.close()
+    }
   }
 
   type DataItem = {
@@ -140,6 +155,22 @@ export default function PageRawatInap() {
       selector: (row: DataItem) => row.nm_pasien,
       sortable: true,
     },
+    {
+      name: 'Action',
+      selector: (row: DataItem) => (
+        <>
+          <div className='flex gap-2 p-1'>
+            <button className='btn' onClick={modalPulangRanapOpen}>
+              Pulang
+            </button>
+            <button className='btn' onClick={() => console.log(row.nm_bangsal)}>
+              Pindah
+            </button>
+          </div>
+        </>
+      ),
+      sortable: true,
+    },
   ]
   return (
     <>
@@ -167,6 +198,7 @@ export default function PageRawatInap() {
           </div>
         </div>
       )}
+      <ModalPulangRanap ref={modalPulangRef} onClose={modalPulangRanapClose} />
     </>
   )
 }

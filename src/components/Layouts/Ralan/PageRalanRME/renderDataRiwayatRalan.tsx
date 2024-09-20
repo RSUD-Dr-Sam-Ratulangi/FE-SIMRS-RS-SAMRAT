@@ -1,6 +1,6 @@
-import TabelDiagnosaPenyakit from '../../components/Table/tableDiagnosaPenyakit'
-import RenderDataPemeriksaan from '../../components/RalanEdit/pemeriksaanComponent'
-import TindakanPerawatan from '../../components/RalanEdit/tindakanPerawatanComponent'
+import TabelDiagnosaPenyakit from '../../../Table/tableDiagnosaPenyakit'
+import RenderDataPemeriksaan from '../../../RalanEdit/pemeriksaanComponent'
+import TindakanPerawatan from '../../../RalanEdit/tindakanPerawatanComponent'
 import { Props } from 'react-apexcharts'
 
 const columnDiagnosa = [

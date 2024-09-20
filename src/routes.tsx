@@ -6,12 +6,15 @@ import PageRawatJalan from './pages/PageRawatJalan/PageRawatJalan'
 import PagePasienIGD from './pages/PagePasienIGD/PagePasienIGD'
 import AuthLayout from './utils/AuthLayout'
 import PageLogin from './pages/PageLogin/PageLogin'
-import PageRanapRME from './pages/PageRanapRME/PageRanapRME'
-import PageRalanRME from './pages/PageRalanRME/PageRalanRME'
+import PageRanapRME from './components/Layouts/Ranap/PageRanapRME/PageRanapRME'
+import PageRalanRME from './components/Layouts/Ralan/PageRalanRME/PageRalanRME'
 import PageSoapRalanPemeriksaan from './components/RawatJalan/RalanSOAP/RalanSoapPemeriksaan'
 import PageSoapRanapPemeriksaan from './components/RawatInap/RanapSoap/RanapSoapPemeriksaan'
 import PageAntrianRajal from './pages/PageAntrianRawatJalan/PageAntrianRajal'
 import IgdSoapPemeriksaan from './components/IGD/IgdSoapPemeriksaan'
+import PageRanapAssessmenAwal from './components/Layouts/Ranap/PageRanapAssessmenAwal/PageRanapAssessmenAwal'
+import PageRanapAssessmenDokter from './components/Layouts/Ranap/PageRanapAssessmenDokter/PageRanapAssessmenDokter'
+import PageRanapPenunjang from './components/Layouts/Ranap/PageRanapPenunjang/PageRanapPenunjang'
 
 export const ROUTES = {
   HOME: '/',
@@ -23,7 +26,10 @@ export const ROUTES = {
   PAGE_PASIEN_IGD: '/pasien-igd',
   PAGE_RANAP_RME: '/rawat-inap/rme/:id',
   PAGE_RANAP_SOAP_PEMERIKSAAN: '/rawat-inap/soap-pemeriksaan/:id',
+  PAGE_RANAP_ASSESSMEN_AWAL: '/rawat-inap/assesmen-awal/:id',
+  PAGE_RANAP_ASSESSMEN_DOKTER: '/rawat-inap/assesmen-dokter/:id',
   PAGE_RANAP_LAYANAN_OBAT: '/rawat-inap/layanan-obat/:id',
+  PAGE_RANAP_PENUNJANG: '/rawat-inap/penunjang/:id',
   PAGE_RANAP_BERKAS_DIGITAL: '/rawat-inap/berkas-digital/:id',
   PAGE_RALAN_RME: '/rawat-jalan/rme/:id',
   PAGE_SOAP_RALAN: '/rawat-jalan/soap-pemeriksaan/:id',
@@ -43,6 +49,9 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_PASIEN_IGD]: 'Pasien IGD',
   [ROUTES.PAGE_RANAP_RME]: 'Ranap RME',
   [ROUTES.PAGE_RANAP_SOAP_PEMERIKSAAN]: 'Ranap SOAP & Pemeriksaan',
+  [ROUTES.PAGE_RANAP_ASSESSMEN_AWAL]: 'Ranap Assesmen Awal',
+  [ROUTES.PAGE_RANAP_ASSESSMEN_DOKTER]: 'Ranap Assesmen Dokter',
+  [ROUTES.PAGE_RANAP_PENUNJANG]: 'Ranap Penunjang',
   [ROUTES.PAGE_RANAP_LAYANAN_OBAT]: 'Ranap Layanan & Obat',
   [ROUTES.PAGE_RANAP_BERKAS_DIGITAL]: 'Ranap Berkas Digital',
   [ROUTES.PAGE_RALAN_RME]: 'Ralan RME',
@@ -78,6 +87,18 @@ export const routerList = [
       {
         path: ROUTES.PAGE_RANAP_RME,
         element: <PageRanapRME />,
+      },
+      {
+        path: ROUTES.PAGE_RANAP_ASSESSMEN_AWAL,
+        element: <PageRanapAssessmenAwal />,
+      },
+      {
+        path: ROUTES.PAGE_RANAP_ASSESSMEN_DOKTER,
+        element: <PageRanapAssessmenDokter />,
+      },
+      {
+        path: ROUTES.PAGE_RANAP_PENUNJANG,
+        element: <PageRanapPenunjang />,
       },
       {
         path: ROUTES.PAGE_RANAP_SOAP_PEMERIKSAAN,

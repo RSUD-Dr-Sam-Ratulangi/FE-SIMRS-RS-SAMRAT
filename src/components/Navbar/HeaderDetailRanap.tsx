@@ -10,7 +10,27 @@ const HeaderRanap: React.FC = () => {
 
   const links = [
     {
+      name: 'Assesment Awal',
+      link: `/rawat-inap/assesmen-awal/${id}`,
+    },
+    {
+      name: 'Assesment Dokter',
+      link: `/rawat-inap/assesmen-dokter/${id}`,
+    },
+    {
+      name: 'CPPT/SOAP',
+      link: `/rawat-inap/soap-pemeriksaan/${id}`,
+    },
+    {
+      name: 'Penunjang',
+      link: `/rawat-inap/penunjang/${id}`,
+    },
+    {
       name: 'SOAP & Pemeriksaan',
+      link: `/rawat-inap/soap-pemeriksaan/${id}`,
+    },
+    {
+      name: 'Layanan & Obat',
       link: `/rawat-inap/soap-pemeriksaan/${id}`,
     },
   ]

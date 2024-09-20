@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { api } from '../../services/api/config.api'
+import { api } from '../../../../services/api/config.api'
 import { ArchiveBoxArrowDownIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/solid'
 import RenderDataRiwayatRalan from './renderDataRiwayatRalan'
-import HeaderRalan from '../../components/Navbar/HeaderDetailRalan'
+import HeaderRalan from '../../../Navbar/HeaderDetailRalan'
 
 type userData = {
   no_rkm_medis: string
