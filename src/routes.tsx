@@ -15,6 +15,7 @@ import IgdSoapPemeriksaan from './components/IGD/IgdSoapPemeriksaan'
 import PageRanapAssessmenAwal from './components/Layouts/Ranap/PageRanapAssessmenAwal/PageRanapAssessmenAwal'
 import PageRanapAssessmenDokter from './components/Layouts/Ranap/PageRanapAssessmenDokter/PageRanapAssessmenDokter'
 import PageRanapPenunjang from './components/Layouts/Ranap/PageRanapPenunjang/PageRanapPenunjang'
+import PageRanapLayananObat from './components/Layouts/Ranap/PageRanapLayananObat/PageRanapLayananObat'
 
 export const ROUTES = {
   HOME: '/',
@@ -103,6 +104,10 @@ export const routerList = [
       {
         path: ROUTES.PAGE_RANAP_SOAP_PEMERIKSAAN,
         element: <PageSoapRanapPemeriksaan />,
+      },
+      {
+        path: ROUTES.PAGE_RANAP_LAYANAN_OBAT,
+        element: <PageRanapLayananObat />,
       },
       {
         path: ROUTES.PAGE_RAWAT_JALAN,

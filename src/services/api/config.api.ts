@@ -1,29 +1,29 @@
 import axios from 'axios'
 
 // Production http
-// export const api = axios.create({
-//   baseURL: 'http://rsudsamrat.site:8901/',
-//   timeout: 120000,
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-// })
+export const api = axios.create({
+  baseURL: 'http://rsudsamrat.site:8901/',
+  timeout: 120000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
 
-// export const apiLabor = axios.create({
-//   baseURL: 'http://rsudsamrat.site:8901/',
-//   timeout: 120000,
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-// })
+export const apiLabor = axios.create({
+  baseURL: 'http://rsudsamrat.site:8901/',
+  timeout: 120000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
 
-// export const apiRadiologi = axios.create({
-//   baseURL: 'http://rsudsamrat.site:8901/',
-//   timeout: 120000,
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-// })
+export const apiRadiologi = axios.create({
+  baseURL: 'http://rsudsamrat.site:8901/',
+  timeout: 120000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
 
 // const apiUrl = process.env.REACT_APP_API_URL
 
@@ -53,26 +53,26 @@ import axios from 'axios'
 // })
 
 // Dev
-export const api = axios.create({
-  baseURL: 'http://rsudsamrat.site:8991/',
-  timeout: 120000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
+// export const api = axios.create({
+//   baseURL: 'http://rsudsamrat.site:8991/',
+//   timeout: 120000,
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+// })
 
-export const apiLabor = axios.create({
-  baseURL: 'http://rsudsamrat.site:8991/',
-  timeout: 120000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
+// export const apiLabor = axios.create({
+//   baseURL: 'http://rsudsamrat.site:8991/',
+//   timeout: 120000,
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+// })
 
-export const apiRadiologi = axios.create({
-  baseURL: 'http://rsudsamrat.site:8991/',
-  timeout: 120000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
+// export const apiRadiologi = axios.create({
+//   baseURL: 'http://rsudsamrat.site:8991/',
+//   timeout: 120000,
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+// })
