@@ -22,7 +22,7 @@ enum KesadaranOptions {
 const PageInsertSoapRanap = () => {
   return (
     <div className='p-1'>
-      <p className='font-inter font-bold text-xl text-[#121713]'>SOAP & Pemeriksaan</p>
+      <p className='font-inter font-bold text-xl text-[#121713]'>CPPT / SOAP</p>
       <div className='flex w-full h-full bg-white mt-3 p-2'>
         <div className='w-full'>
           <div className=''>
