@@ -29,6 +29,14 @@ const HeaderRanap: React.FC = () => {
       name: 'Layanan & Obat',
       link: `/rawat-inap/layanan-obat/${id}`,
     },
+    {
+      name: 'Tindakan',
+      link: `/rawat-inap/tindakan/${id}`,
+    },
+    {
+      name: 'Selesai',
+      link: `/rawat-inap/selesai/${id}`,
+    },
   ]
 
   return (

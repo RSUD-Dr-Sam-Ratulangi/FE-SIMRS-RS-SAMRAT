@@ -16,6 +16,8 @@ import PageRanapAssessmenAwal from './components/Layouts/Ranap/PageRanapAssessme
 import PageRanapAssessmenDokter from './components/Layouts/Ranap/PageRanapAssessmenDokter/PageRanapAssessmenDokter'
 import PageRanapPenunjang from './components/Layouts/Ranap/PageRanapPenunjang/PageRanapPenunjang'
 import PageRanapLayananObat from './components/Layouts/Ranap/PageRanapLayananObat/PageRanapLayananObat'
+import PageRanapTindakan from './components/Layouts/Ranap/PageRanapTindakan/PageRanapTindakan'
+import PageRanapSelesai from './components/Layouts/Ranap/PageRanapSelesai/PageRanapSelesai'
 
 export const ROUTES = {
   HOME: '/',
@@ -31,6 +33,8 @@ export const ROUTES = {
   PAGE_RANAP_ASSESSMEN_DOKTER: '/rawat-inap/assesmen-dokter/:id',
   PAGE_RANAP_LAYANAN_OBAT: '/rawat-inap/layanan-obat/:id',
   PAGE_RANAP_PENUNJANG: '/rawat-inap/penunjang/:id',
+  PAGE_RANAP_TINDAKAN: '/rawat-inap/tindakan/:id',
+  PAGE_RANAP_SELESAI: '/rawat-inap/selesai/:id',
   PAGE_RANAP_BERKAS_DIGITAL: '/rawat-inap/berkas-digital/:id',
   PAGE_RALAN_RME: '/rawat-jalan/rme/:id',
   PAGE_SOAP_RALAN: '/rawat-jalan/soap-pemeriksaan/:id',
@@ -52,7 +56,9 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_RANAP_SOAP_PEMERIKSAAN]: 'Ranap SOAP & Pemeriksaan',
   [ROUTES.PAGE_RANAP_ASSESSMEN_AWAL]: 'Ranap Assesmen Awal',
   [ROUTES.PAGE_RANAP_ASSESSMEN_DOKTER]: 'Ranap Assesmen Dokter',
+  [ROUTES.PAGE_RANAP_TINDAKAN]: 'Ranap Tindakan',
   [ROUTES.PAGE_RANAP_PENUNJANG]: 'Ranap Penunjang',
+  [ROUTES.PAGE_RANAP_SELESAI]: 'Ranap Selesai',
   [ROUTES.PAGE_RANAP_LAYANAN_OBAT]: 'Ranap Layanan & Obat',
   [ROUTES.PAGE_RANAP_BERKAS_DIGITAL]: 'Ranap Berkas Digital',
   [ROUTES.PAGE_RALAN_RME]: 'Ralan RME',
@@ -102,12 +108,20 @@ export const routerList = [
         element: <PageRanapPenunjang />,
       },
       {
+        path: ROUTES.PAGE_RANAP_TINDAKAN,
+        element: <PageRanapTindakan />,
+      },
+      {
         path: ROUTES.PAGE_RANAP_SOAP_PEMERIKSAAN,
         element: <PageSoapRanapPemeriksaan />,
       },
       {
         path: ROUTES.PAGE_RANAP_LAYANAN_OBAT,
         element: <PageRanapLayananObat />,
+      },
+      {
+        path: ROUTES.PAGE_RANAP_SELESAI,
+        element: <PageRanapSelesai />,
       },
       {
         path: ROUTES.PAGE_RAWAT_JALAN,
