@@ -237,7 +237,7 @@ const PageIgdAssesmenDokter = () => {
               </label>
               <div className='flex justify-center items-center gap-3'>
                 <div className='w-full'>
-                  <label className='text text-xl font-bold label'>Diagnosa Kerja</label>
+                  <label className='text text-xl font-bold label'>Terapi</label>
                   <textarea
                     placeholder='-'
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
@@ -263,35 +263,35 @@ const PageIgdAssesmenDokter = () => {
               </div>
               <div className='grid grid-cols-2 gap-3'>
                 <div className='w-full'>
-                  <label className='text text-xl font-bold label'>Diagnosa Kerja</label>
+                  <label className='text text-xl font-bold label'>Ruangan</label>
                   <textarea
                     placeholder='-'
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
                   />
                 </div>
                 <div className='w-full'>
-                  <label className='text text-xl font-bold label'>Diagnosa Kerja</label>
+                  <label className='text text-xl font-bold label'>Meninggal</label>
                   <textarea
                     placeholder='-'
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
                   />
                 </div>
                 <div className='w-full'>
-                  <label className='text text-xl font-bold label'>Diagnosa Kerja</label>
+                  <label className='text text-xl font-bold label'>Dipulangkan</label>
                   <textarea
                     placeholder='-'
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
                   />
                 </div>
                 <div className='w-full'>
-                  <label className='text text-xl font-bold label'>Diagnosa Kerja</label>
+                  <label className='text text-xl font-bold label'>Minggat</label>
                   <textarea
                     placeholder='-'
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
                   />
                 </div>
                 <div className='w-full'>
-                  <label className='text text-xl font-bold label'>Diagnosa Kerja</label>
+                  <label className='text text-xl font-bold label'>Pulang Paksa</label>
                   <textarea
                     placeholder='-'
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
