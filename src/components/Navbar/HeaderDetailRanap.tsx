@@ -10,6 +10,10 @@ const HeaderRanap: React.FC = () => {
 
   const links = [
     {
+      name: 'Assesment Dokter',
+      link: `/rawat-inap/assesmen-dokter/${id}`,
+    },
+    {
       name: 'CPPT/SOAP',
       link: `/rawat-inap/soap-pemeriksaan/${id}`,
     },
