@@ -10,14 +10,6 @@ const HeaderRanap: React.FC = () => {
 
   const links = [
     {
-      name: 'Assesment Awal',
-      link: `/rawat-inap/assesmen-awal/${id}`,
-    },
-    {
-      name: 'Assesment Dokter',
-      link: `/rawat-inap/assesmen-dokter/${id}`,
-    },
-    {
       name: 'CPPT/SOAP',
       link: `/rawat-inap/soap-pemeriksaan/${id}`,
     },
@@ -34,7 +26,7 @@ const HeaderRanap: React.FC = () => {
       link: `/rawat-inap/tindakan/${id}`,
     },
     {
-      name: 'Selesai',
+      name: 'Resume Pulang',
       link: `/rawat-inap/selesai/${id}`,
     },
   ]

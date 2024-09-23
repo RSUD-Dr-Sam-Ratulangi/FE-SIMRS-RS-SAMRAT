@@ -11,13 +11,19 @@ import PageRalanRME from './components/Layouts/Ralan/PageRalanRME/PageRalanRME'
 import PageSoapRalanPemeriksaan from './components/RawatJalan/RalanSOAP/RalanSoapPemeriksaan'
 import PageSoapRanapPemeriksaan from './components/RawatInap/RanapSoap/RanapSoapPemeriksaan'
 import PageAntrianRajal from './pages/PageAntrianRawatJalan/PageAntrianRajal'
-import IgdSoapPemeriksaan from './components/IGD/IgdSoapPemeriksaan'
 import PageRanapAssessmenAwal from './components/Layouts/Ranap/PageRanapAssessmenAwal/PageRanapAssessmenAwal'
 import PageRanapAssessmenDokter from './components/Layouts/Ranap/PageRanapAssessmenDokter/PageRanapAssessmenDokter'
 import PageRanapPenunjang from './components/Layouts/Ranap/PageRanapPenunjang/PageRanapPenunjang'
 import PageRanapLayananObat from './components/Layouts/Ranap/PageRanapLayananObat/PageRanapLayananObat'
 import PageRanapTindakan from './components/Layouts/Ranap/PageRanapTindakan/PageRanapTindakan'
 import PageRanapSelesai from './components/Layouts/Ranap/PageRanapSelesai/PageRanapSelesai'
+import PageIgdAssesmenAwal from './components/Layouts/igd/PageIgdAssesmenAwal/PageIgdAssesmenAwal'
+import PageIgdAssesmenDokter from './components/Layouts/igd/PageIgdAssesmenDokter/PageIgdAssesmentDokter'
+import PageInsertSoapIgd from './components/Layouts/igd/PageIgdInsertSoap/PageInsertSoapIgd'
+import PageIgdPenunjang from './components/Layouts/igd/PageIgdPenunjang/PageIgdPenunjang'
+import PageIgdLayananObat from './components/Layouts/igd/PageIgdLayananObat/PageIgdLayananObat'
+import PageIgdTindakan from './components/Layouts/igd/PageIgdTindakan/PageIgdTindakan'
+import PageIgdSelesai from './components/Layouts/igd/PageIgdSelesai/PageIgdSelesai'
 
 export const ROUTES = {
   HOME: '/',
@@ -39,6 +45,12 @@ export const ROUTES = {
   PAGE_RALAN_RME: '/rawat-jalan/rme/:id',
   PAGE_SOAP_RALAN: '/rawat-jalan/soap-pemeriksaan/:id',
   PAGE_SOAP_IGD: '/pasien-igd/soap-pemeriksaan/:id',
+  PAGE_IGD_ASSESSMEN_AWAL: '/pasien-igd/assesmen-awal/:id',
+  PAGE_IGD_ASSESSMEN_DOKTER: 'pasien-igd/assesmen-dokter/:id',
+  PAGE_IGD_PENUNJANG: '/pasien-igd/penunjang/:id',
+  PAGE_IGD_TINDAKAN: '/pasien-igd/tindakan/:id',
+  PAGE_IGD_SELESAI: '/pasien-igd/selesai/:id',
+  PAGE_IGD_LAYANAN_OBAT: '/pasien-igd/layanan-obat/:id',
   PAGE_RALAN_LAYANAN_OBAT: '/rawat-jalan/layanan-obat/:id',
   PAGE_RALAN_BERKAS_DIGITAL: '/rawat-jalan/berkas-digital/:id',
   PAGE_ANTRIAN_RALAN: '/antrian-ralan',
@@ -67,6 +79,12 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_RALAN_LAYANAN_OBAT]: 'Ralan Layanan & Obat',
   [ROUTES.PAGE_ANTRIAN_RALAN]: 'Antrian Ralan',
   [ROUTES.PAGE_SOAP_IGD]: 'IGD Soap & Pemeriksaan',
+  [ROUTES.PAGE_IGD_ASSESSMEN_AWAL]: 'IGD Assesmen Awal',
+  [ROUTES.PAGE_IGD_ASSESSMEN_DOKTER]: 'IGD Assesmen Dokter',
+  [ROUTES.PAGE_IGD_TINDAKAN]: 'IGD Tindakan',
+  [ROUTES.PAGE_IGD_PENUNJANG]: 'IGD Penunjang',
+  [ROUTES.PAGE_IGD_SELESAI]: 'IGD Selesai',
+  [ROUTES.PAGE_IGD_LAYANAN_OBAT]: 'IGD layanan & Obat',
 }
 
 export const routerList = [
@@ -145,7 +163,31 @@ export const routerList = [
       },
       {
         path: ROUTES.PAGE_SOAP_IGD,
-        element: <IgdSoapPemeriksaan />,
+        element: <PageInsertSoapIgd />,
+      },
+      {
+        path: ROUTES.PAGE_IGD_ASSESSMEN_AWAL,
+        element: <PageIgdAssesmenAwal />,
+      },
+      {
+        path: ROUTES.PAGE_IGD_ASSESSMEN_DOKTER,
+        element: <PageIgdAssesmenDokter />,
+      },
+      {
+        path: ROUTES.PAGE_IGD_PENUNJANG,
+        element: <PageIgdPenunjang />,
+      },
+      {
+        path: ROUTES.PAGE_IGD_LAYANAN_OBAT,
+        element: <PageIgdLayananObat />,
+      },
+      {
+        path: ROUTES.PAGE_IGD_TINDAKAN,
+        element: <PageIgdTindakan />,
+      },
+      {
+        path: ROUTES.PAGE_IGD_SELESAI,
+        element: <PageIgdSelesai />,
       },
     ],
   },

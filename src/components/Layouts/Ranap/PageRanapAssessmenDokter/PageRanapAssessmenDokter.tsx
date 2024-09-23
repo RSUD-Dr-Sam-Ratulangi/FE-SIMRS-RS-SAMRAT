@@ -1,4 +1,4 @@
-import { ArchiveBoxArrowDownIcon, ArchiveBoxIcon } from '@heroicons/react/24/solid'
+import { ArchiveBoxArrowDownIcon, ArchiveBoxIcon, ClockIcon } from '@heroicons/react/24/solid'
 import HeaderRanap from '../../../Navbar/HeaderDetailRanap'
 
 const PageRanapAssessmenDokter = () => {
@@ -114,45 +114,40 @@ const PageRanapAssessmenDokter = () => {
               className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
             />
           </div>
+          <div>
+            <label className='text text-xl font-bold label'>Riwayat Penyakit Sekarang</label>
+            <textarea
+              placeholder='-'
+              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+            />
+          </div>
           <div className='flex gap-3'>
-            <div className='form-control w-full'>
-              <label className='label font-semibold text-slate-700 text-md'>
-                <span>Riwayat Penyakit Sekarang</span>
-              </label>
-              <textarea
-                placeholder='-'
-                className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black'
-              />
-              <div className='flex justify-evenly mt-2'>
-                <button className='btn btn-md w-20 bg-primary rounded-xl hover:opacity-80'>
-                  Hipertensi
-                </button>
-                <button className='btn btn-md w-20 bg-primary rounded-xl hover:opacity-80'>
-                  Ginjal
-                </button>
-              </div>
-            </div>
             <div className='form-control w-full'>
               <label className='label font-semibold text-slate-700 text-md'>
                 <span>Riwayat Penyakit Dahulu</span>
               </label>
-              <textarea
-                placeholder='-'
-                className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black'
-              />
-              <div className='flex justify-evenly mt-2'>
-                <button className='btn btn-md w-20 bg-primary rounded-xl hover:opacity-80'>
-                  Hipertensi
-                </button>
-                <button className='btn btn-md w-20 bg-primary rounded-xl hover:opacity-80'>
-                  Ginjal
-                </button>
-              </div>
+              <select className='select select-bordered w-full'>
+                <option disabled selected>
+                  Riwayat Penyakit Dahulu
+                </option>
+                <option>Hipertensi</option>
+                <option>Penyakit Ginjal</option>
+                <option>DM</option>
+                <option>Kanker</option>
+                <option>Jantung</option>
+                <option>PPOK</option>
+                <option>Hepatitis</option>
+                <option>Gangguan Jiwa</option>
+                <option>Asma</option>
+                <option>Ulkus</option>
+                <option>TB</option>
+                <option>Lorem</option>
+              </select>
             </div>
           </div>
           <div className='flex items-center gap-3 w-full'>
-            <div className='grid gap-3'>
-              <div className='form-control w-full'>
+            <div className='grid items-center gap-3'>
+              <div className='form-control'>
                 <label className='label font-semibold text-slate-700 text-md'>
                   <span>TP/PB</span>
                 </label>
@@ -179,7 +174,7 @@ const PageRanapAssessmenDokter = () => {
               <div className='grid w-full'>
                 <div className='w-full'>
                   <label className='label font-bold'>Alkohol :</label>
-                  <select className='select select-bordered w-full max-w-xs'>
+                  <select className='select select-bordered w-full'>
                     <option disabled selected>
                       tidak
                     </option>
@@ -189,7 +184,7 @@ const PageRanapAssessmenDokter = () => {
                 </div>
                 <div className='w-full'>
                   <label className='label font-bold'>Merokok :</label>
-                  <select className='select select-bordered w-full max-w-xs'>
+                  <select className='select select-bordered w-full'>
                     <option disabled selected>
                       tidak
                     </option>
@@ -209,47 +204,29 @@ const PageRanapAssessmenDokter = () => {
                 <label className='label font-semibold text-slate-700 text-md'>
                   <span>Normal</span>
                 </label>
-                <textarea
-                  placeholder='-'
-                  className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black'
-                />
-                <div className='grid grid-cols-2 items-center mt-2'>
-                  <button className='btn btn-md w-24 bg-primary rounded-xl hover:opacity-80'>
-                    Gigi & Mulut
-                  </button>
-                  <button className='btn btn-md w-24 bg-primary rounded-xl hover:opacity-80'>
-                    Mata
-                  </button>
-                  <button className='btn btn-md w-24 bg-primary rounded-xl hover:opacity-80'>
-                    Tenggorokan
-                  </button>
-                  <button className='btn btn-md w-24 bg-primary rounded-xl hover:opacity-80'>
-                    Telinga
-                  </button>
-                </div>
+                <select className='select select-bordered w-full'>
+                  <option disabled selected>
+                    Normal
+                  </option>
+                  <option>Gigi & mulut</option>
+                  <option>Mata</option>
+                  <option>Tenggorokan</option>
+                  <option>Telinga</option>
+                </select>
               </div>
               <div className='form-control w-full'>
                 <label className='label font-semibold text-slate-700 text-md'>
-                  <span>Abnormal</span>
+                  <span>AbNormal</span>
                 </label>
-                <textarea
-                  placeholder='-'
-                  className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black'
-                />
-                <div className='grid grid-cols-2 items-center mt-2'>
-                  <button className='btn btn-md w-24 bg-primary rounded-xl hover:opacity-80'>
-                    Gigi & Mulut
-                  </button>
-                  <button className='btn btn-md w-24 bg-primary rounded-xl hover:opacity-80'>
-                    Mata
-                  </button>
-                  <button className='btn btn-md w-24 bg-primary rounded-xl hover:opacity-80'>
-                    Tenggorokan
-                  </button>
-                  <button className='btn btn-md w-24 bg-primary rounded-xl hover:opacity-80'>
-                    Telinga
-                  </button>
-                </div>
+                <select className='select select-bordered w-full'>
+                  <option disabled selected>
+                    Abnormal
+                  </option>
+                  <option>Gigi & mulut</option>
+                  <option>Mata</option>
+                  <option>Tenggorokan</option>
+                  <option>Telinga</option>
+                </select>
               </div>
             </div>
           </div>
@@ -486,6 +463,12 @@ const PageRanapAssessmenDokter = () => {
           <p className='flex justify-center items-center'>
             <ArchiveBoxArrowDownIcon className='mr-3' width={25} height={25} />
             Mengirim
+          </p>
+        </button>
+        <button className='flex justify-center items-center font-semibold text-gray-500 border-2 text-base w-full h-[50px] py-2 mt-[20px] bg-white rounded-xl hover:opacity-80'>
+          <p className='flex justify-center items-center'>
+            <ClockIcon className='mr-3' width={25} height={25} />
+            RIWAYAT
           </p>
         </button>
         <button className='flex justify-center items-center font-semibold text-base w-full h-[50px] py-2 mt-[20px] bg-gray-100 border text-black rounded-xl hover:opacity-80'>

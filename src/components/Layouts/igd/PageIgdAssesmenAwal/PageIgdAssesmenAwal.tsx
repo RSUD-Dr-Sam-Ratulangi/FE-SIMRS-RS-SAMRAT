@@ -1,10 +1,10 @@
 import { ArchiveBoxArrowDownIcon, BellIcon, CheckIcon, ClockIcon } from '@heroicons/react/24/solid'
-import HeaderRanap from '../../../Navbar/HeaderDetailRanap'
+import HeaderIgd from '../../../Navbar/HeaderDetailIGD'
 
-const PageRanapAssessmenAwal = () => {
+const PageIgdAssesmenAwal = () => {
   return (
     <>
-      <HeaderRanap />
+      <HeaderIgd />
       <div className='p-1'>
         <p className='font-inter font-bold text-xl text-[#121713]'>ASSESMEN AWAL</p>
         <div className='flex'></div>
@@ -720,4 +720,4 @@ const PageRanapAssessmenAwal = () => {
   )
 }
 
-export default PageRanapAssessmenAwal
+export default PageIgdAssesmenAwal

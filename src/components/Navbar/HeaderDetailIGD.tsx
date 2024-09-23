@@ -10,8 +10,32 @@ const HeaderIgd: React.FC = () => {
 
   const links = [
     {
-      name: 'IGD SOAP & Pemeriksaan',
+      name: 'Assesmen Awal',
+      link: `/pasien-igd/assesmen-awal/${id}`,
+    },
+    {
+      name: 'Assesmen Dokter',
+      link: `/pasien-igd/assesmen-dokter/${id}`,
+    },
+    {
+      name: 'CPPT/SOAP',
       link: `/pasien-igd/soap-pemeriksaan/${id}`,
+    },
+    {
+      name: 'Penunjang',
+      link: `/pasien-igd/penunjang/${id}`,
+    },
+    {
+      name: 'Layanan & Obat',
+      link: `/pasien-igd/layanan-obat/${id}`,
+    },
+    {
+      name: 'Tindakan',
+      link: `/pasien-igd/tindakan/${id}`,
+    },
+    {
+      name: 'Resume Pulang',
+      link: `/pasien-igd/selesai/${id}`,
     },
   ]
 
