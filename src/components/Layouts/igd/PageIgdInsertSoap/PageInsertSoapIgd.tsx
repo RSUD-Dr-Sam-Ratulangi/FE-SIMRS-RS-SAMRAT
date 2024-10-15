@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ArchiveBoxArrowDownIcon,
   InformationCircleIcon,
@@ -5,27 +6,137 @@ import {
   CheckIcon,
   ClockIcon,
 } from '@heroicons/react/24/solid'
-import HeaderIgd from '../../../Navbar/HeaderDetailIGD'
-
-enum KesadaranOptions {
-  defaultValue = 'Pilih Kesadaran',
-  ComposMentis = 'Compos Mentis',
-  Somnolence = 'Somnolence',
-  Sopor = 'Sopor',
-  Coma = 'Coma',
-  Alert = 'Alert',
-  Confusion = 'Confusion',
-  Voice = 'Voice',
-  Pain = 'Pain',
-  Unresponsive = 'Unresponsive',
-}
+import PemeriksaanCppt from './component/PemeriksaanCppt'
+import RincianRiwayatCppt from './component/RincianRiwayatCppt'
+import { useEffect, useState } from 'react'
+import { api } from '../../../../services/api/config.api'
+import { useParams } from 'react-router-dom'
 
 const PageInsertSoapIgd = () => {
+  const nmrRawat = localStorage.getItem('no_rawat')
+  const [jam, setJam] = useState<string>('')
+  const [tanggal, setTanggal] = useState<string>('')
+  const [suhuTubuh, setSuhuTubuh] = useState<string>('')
+  const [tensi, setTensi] = useState<string>('')
+  const [nadi, setNadi] = useState<string>('')
+  const [respirasi, setRespirasi] = useState<string>('')
+  const [tinggi, setTinggi] = useState<string>('')
+  const [berat, setBerat] = useState<string>('')
+  const [spo2, setSpo2] = useState<string>('')
+  const [gcs, setGcs] = useState<string>('')
+  const [kesadaran, setKesadaran] = useState<string>('')
+  const [keluhan, setKeluhan] = useState<string>('')
+  const [pemeriksaan, setPemeriksaan] = useState<string>('')
+  const [alergi, setAlergi] = useState<string>('')
+  const [lingkarPerut, setLingkarPerut] = useState<string>('')
+  const [rtl, setRtl] = useState<string>('')
+  const [penilaian, setPenilaian] = useState<string>('')
+  const [instruksi, setInstruksi] = useState<string>('')
+  const [evaluasi, setEvaluasi] = useState<string>('')
+
+  const { id } = useParams()
+  const storedRow = localStorage.getItem('dataRow')
+  const dataRow = storedRow ? JSON.parse(storedRow) : null
+  const tokenValue = localStorage.getItem('token')
+  const Kd = JSON.parse(tokenValue)
+  const role = Object.keys(Kd)[0]
+  let nipCredentials = ''
+  if (role === 'dokter') {
+    nipCredentials = Kd.dokter.kd_dokter
+  } else if (role === 'petugas') {
+    nipCredentials = Kd.petugas.nip
+  }
+
+  const handleValuesChangePemeriksaanCppt = (
+    suhuTubuh: string,
+    tensi: string,
+    nadi: string,
+    respirasi: string,
+    tinggi: string,
+    berat: string,
+    spo2: string,
+    gcs: string,
+    kesadaran: string,
+    keluhan: string,
+    pemeriksaan: string,
+    alergi: string,
+    lingkarPerut: string,
+    rtl: string,
+    penilaian: string,
+    instruksi: string,
+    evaluasi: string,
+  ) => {
+    setSuhuTubuh(suhuTubuh)
+    setTensi(tensi)
+    setNadi(nadi)
+    setRespirasi(respirasi)
+    setTinggi(tinggi)
+    setBerat(berat)
+    setSpo2(spo2)
+    setGcs(gcs)
+    setKesadaran(kesadaran)
+    setKeluhan(keluhan)
+    setPemeriksaan(pemeriksaan)
+    setAlergi(alergi)
+    setLingkarPerut(lingkarPerut)
+    setRtl(rtl)
+    setPenilaian(penilaian)
+    setInstruksi(instruksi)
+    setEvaluasi(evaluasi)
+  }
+
+  const setTimeAndDate = () => {
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = (today.getMonth() + 1).toString().padStart(2, '0')
+    const day = today.getDate().toString().padStart(2, '0')
+    const hours = today.getHours().toString().padStart(2, '0')
+    const minutes = today.getMinutes().toString().padStart(2, '0')
+    const formattedDate = `${year}-${month}-${day}`
+    const formattedTime = `${hours}:${minutes}`
+    setJam(formattedTime)
+    setTanggal(formattedDate)
+  }
+
+  const postSoapIgd = async () => {
+    const dataPost = {
+      noRawat: nmrRawat,
+      suhuTubuh: suhuTubuh,
+      tensi: tensi,
+      nadi: nadi,
+      respirasi: respirasi,
+      tinggi: tinggi,
+      berat: berat,
+      spo2: spo2,
+      gcs: gcs,
+      kesadaran: kesadaran,
+      keluhan: keluhan,
+      pemeriksaan: pemeriksaan,
+      alergi: alergi,
+      lingkarPerut: lingkarPerut,
+      rtl: rtl,
+      penilaian: penilaian,
+      instruksi: instruksi,
+      evaluasi: evaluasi,
+      nip: nipCredentials,
+    }
+
+    try {
+      const response = await api.post('/api/v1/postPemeriksaanRalan', dataPost)
+      console.log('berhasil : ', response.data)
+    } catch (err) {
+      console.log('error input soap igd', err)
+      console.log('data yang dikirim', dataPost)
+    }
+  }
+
+  useEffect(() => {
+    setTimeAndDate()
+  }, [])
+
   return (
     <>
-      <HeaderIgd />
       <div className='p-1'>
-        <p className='font-inter font-bold text-xl text-[#121713]'>CPPT / SOAP</p>
         <div className='flex w-full h-full bg-white mt-3 p-2'>
           <div className='w-full'>
             <div className=''>
@@ -39,14 +150,20 @@ const PageInsertSoapIgd = () => {
                     <div className='flex gap-2'>
                       <div className='grid'>
                         <label className='label'>Tanggal</label>
-                        <input type='date' className='input w-full border-primary text-sm' />
+                        <input
+                          value={tanggal}
+                          type='date'
+                          disabled
+                          className='disabled:bg-slate-200 disabled:text-black input w-full disabled:border-primary text-sm'
+                        />
                       </div>
                       <div className='w-full'>
                         <label className='label'>Jam</label>
                         <input
+                          value={jam}
                           type='time'
-                          className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
-                          value='13:30'
+                          disabled
+                          className='disabled:bg-slate-200 disabled:text-black input w-full disabled:border-primary text-sm'
                         />
                       </div>
                     </div>
@@ -54,7 +171,9 @@ const PageInsertSoapIgd = () => {
                       <div className='w-full'>
                         <label className='label'>Nama Pasien</label>
                         <input
+                          value={dataRow?.nm_pasien ? dataRow.nm_pasien : '-'}
                           type='text'
+                          disabled
                           className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
                         />
                       </div>
@@ -66,6 +185,8 @@ const PageInsertSoapIgd = () => {
                         <label className='label'>ID Rawat</label>
                         <input
                           type='text'
+                          disabled
+                          value={nmrRawat}
                           className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
                         />
                       </div>
@@ -73,6 +194,8 @@ const PageInsertSoapIgd = () => {
                         <label className='label'>Nomor RM</label>
                         <input
                           type='text'
+                          disabled
+                          value={dataRow?.no_rkm_medis ? dataRow.no_rkm_medis : '-'}
                           className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
                         />
                       </div>
@@ -81,155 +204,7 @@ const PageInsertSoapIgd = () => {
                 </div>
               </div>
               {/* Batas */}
-              <div className='mt-3'>
-                <label className='label font-inter font-bold text-xl text-[#121713]'>
-                  Pemeriksaan
-                </label>
-                <div className='grid grid-cols-6 gap-3'>
-                  <div className='form-control mt-6'>
-                    <label className='label font-semibold text-slate-700 text-md'>
-                      <span>Suhu(C)</span>
-                    </label>
-                    <input
-                      type='Text'
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                    />
-                  </div>
-                  <div className='form-control mt-6'>
-                    <label className='label font-semibold text-slate-700 text-md'>
-                      <span>Tensi(mmHg)</span>
-                    </label>
-                    <input
-                      type='Text'
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                    />
-                  </div>
-                  <div className='form-control mt-6'>
-                    <label className='label font-semibold text-slate-700 text-md'>
-                      <span>Nadi(/mnt)</span>
-                    </label>
-                    <input
-                      type='Text'
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                    />
-                  </div>
-                  <div className='form-control mt-6'>
-                    <label className='label font-semibold text-slate-700 text-md'>
-                      <span>RR(/mnt)</span>
-                    </label>
-                    <input
-                      type='Text'
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                    />
-                  </div>
-                  <div className='form-control mt-6'>
-                    <label className='label font-semibold text-slate-700 text-md'>
-                      <span>Tinggi(cm)</span>
-                    </label>
-                    <input
-                      type='Text'
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                    />
-                  </div>
-                  <div className='form-control mt-6'>
-                    <label className='label font-semibold text-slate-700 text-md'>
-                      <span>Berat(kg)</span>
-                    </label>
-                    <input
-                      type='Text'
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                    />
-                  </div>
-                  <div className='form-control mt-6'>
-                    <label className='label font-semibold text-slate-700 text-md'>
-                      <span>SPO2</span>
-                    </label>
-                    <input
-                      type='Text'
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                    />
-                  </div>
-                  <div className='form-control mt-6'>
-                    <label className='label font-semibold text-slate-700 text-md'>
-                      <span>GCS(E,V,M)</span>
-                    </label>
-                    <input
-                      type='Text'
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                    />
-                  </div>
-                  <div className='form-control mt-6'>
-                    <label className='label font-semibold text-slate-700 text-md'>
-                      <span>Alergi</span>
-                    </label>
-                    <input
-                      type='Text'
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                    />
-                  </div>
-                  <div className='form-control mt-6'>
-                    <label className='label font-semibold text-slate-700 text-md'>
-                      <span>Kesadaran</span>
-                    </label>
-                    <select className='input w-full input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black'>
-                      {Object.values(KesadaranOptions).map((option) => (
-                        <option
-                          key={option}
-                          value={option}
-                          disabled={option === KesadaranOptions.defaultValue}
-                          hidden={option === KesadaranOptions.defaultValue}
-                          selected={option === KesadaranOptions.defaultValue}
-                        >
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              {/* Batas */}
-              <div className='mt-3'>
-                <label className='label font-inter font-bold text-xl text-[#121713]'>SOAP</label>
-                <div className='grid grid-cols-2 gap-3'>
-                  <div>
-                    <label className='label'>Subjektif</label>
-                    <textarea
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
-                    />
-                  </div>
-                  <div>
-                    <label className='label'>Objektif</label>
-                    <textarea
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
-                    />
-                  </div>
-                  <div>
-                    <label className='label'>Assesmen</label>
-                    <textarea
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
-                    />
-                  </div>
-                  <div>
-                    <label className='label'>Plan</label>
-                    <textarea
-                      placeholder='-'
-                      className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
-                    />
-                  </div>
-                </div>
-              </div>
+              <PemeriksaanCppt onValuesChangePemeriksaanCppt={handleValuesChangePemeriksaanCppt} />
             </div>
           </div>
           <div className='w-[500px] p-5 mt-12 border rounded-2xl ml-2 mr-2'>
@@ -243,7 +218,10 @@ const PageInsertSoapIgd = () => {
               </p>
             </div>
             <div className='grid '>
-              <button className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'>
+              <button
+                onClick={postSoapIgd}
+                className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'
+              >
                 <p className='flex justify-center items-center'>
                   <ArchiveBoxArrowDownIcon className='mr-3' width={25} height={25} />
                   Mengirim
@@ -270,100 +248,8 @@ const PageInsertSoapIgd = () => {
             </div>
           </div>
         </div>
-        {/* Batas */}
-        <div className='w-full h-full bg-white mt-3 p-2'>
-          <div className='pt-3'>
-            <label className='label font-inter font-bold text-xl text-[#121713]'>ICD 9 & 10</label>
-          </div>
-          <div className='border-4 rounded-3xl p-2 mb-2'>
-            <label className='label'>Prosedur Tindakan ICD 9</label>
-            <table className='table'>
-              <thead>
-                <tr>
-                  <th>Kode</th>
-                  <th>labelrioritas</th>
-                  <th>Nama Penyakit</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Z33</td>
-                  <td>1</td>
-                  <td>Pregnant state, incidental</td>
-                  <td>
-                    <button className='text-red-400'>Hapus</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div className='border-4 rounded-3xl p-2'>
-            <label className='label'>Prosedur Tindakan ICD 10</label>
-            <table className='table'>
-              <thead>
-                <tr>
-                  <th>Kode</th>
-                  <th>labelrioritas</th>
-                  <th>Nama Penyakit</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Z33</td>
-                  <td>1</td>
-                  <td>Pregnant state, incidental</td>
-                  <td>
-                    <button className='text-red-400'>Hapus</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
         {/* batas */}
-        <div className='w-full h-full bg-white mt-3'>
-          <label className='label font-inter font-bold text-xl text-[#121713]'>
-            Rincian Riwayat
-          </label>
-          <table className='table font-bold'>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Tanggal</th>
-                <th>Soap</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>032345</td>
-                <td>2024-10-03</td>
-                <td>Lorem Ipsum dolor sit amet</td>
-              </tr>
-              <tr>
-                <td>032345</td>
-                <td>2024-10-03</td>
-                <td>Lorem Ipsum dolor sit amet</td>
-              </tr>
-              <tr>
-                <td>032345</td>
-                <td>2024-10-03</td>
-                <td>Lorem Ipsum dolor sit amet</td>
-              </tr>
-              <tr>
-                <td>032345</td>
-                <td>2024-10-03</td>
-                <td>Lorem Ipsum dolor sit amet</td>
-              </tr>
-              <tr>
-                <td>032345</td>
-                <td>2024-10-03</td>
-                <td>Lorem Ipsum dolor sit amet</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <RincianRiwayatCppt />
       </div>
     </>
   )

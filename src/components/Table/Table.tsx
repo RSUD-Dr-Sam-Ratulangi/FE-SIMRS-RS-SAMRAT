@@ -839,8 +839,8 @@ const TableData = ({ data, columns }: Props) => {
                               </button>
                               <button
                                 onClick={() => {
-                                  setSearchQuery('KLINIK SYARAF')
-                                  localStorage.setItem('PoliString', 'KLINIK SYARAF')
+                                  setSearchQuery('KLINIK SARAF')
+                                  localStorage.setItem('PoliString', 'KLINIK SARAF')
                                   setIsOpen(false)
                                 }}
                                 className='btn btn-ghost outline outline-1 outline-gray-200 hover:bg-[#55A46B]'

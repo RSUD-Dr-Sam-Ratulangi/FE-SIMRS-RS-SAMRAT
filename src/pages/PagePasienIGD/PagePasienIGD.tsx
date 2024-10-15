@@ -193,8 +193,7 @@ export default function PageRawatJalan() {
           className='font-semibold uppercase text-md hover:cursor-pointer'
           onClick={async () => {
             localStorage.setItem('no_rawat', row.no_rawat)
-            localStorage.setItem('no_antrian', row.no_reg)
-            localStorage.setItem('status_rawat', row.stts)
+            localStorage.setItem('dataRow', JSON.stringify(row))
             navigate(`/pasien-igd/soap-pemeriksaan/${row.no_rkm_medis}`, { state: { data: row } })
           }}
           onContextMenu={(e) =>

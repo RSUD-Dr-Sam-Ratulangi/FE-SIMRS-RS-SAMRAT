@@ -231,7 +231,7 @@ const RalanSoapPemeriksaan: React.FC = () => {
                   className={`tab flex-1 text-center ${activeTab === 1 ? 'tab-active' : ''}`}
                   onClick={() => {
                     setActiveTab(1)
-                    setActiveSubTab(1) // Reset sub-tab when switching to Tab 1
+                    setActiveSubTab(1)
                   }}
                 >
                   Riwayat Soap

@@ -1,717 +1,411 @@
-import { ArchiveBoxArrowDownIcon, BellIcon, CheckIcon, ClockIcon } from '@heroicons/react/24/solid'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable camelcase */
+import { ArchiveBoxArrowDownIcon } from '@heroicons/react/24/solid'
 import HeaderIgd from '../../../Navbar/HeaderDetailIGD'
+import PengkajianKeperawatan from './component/PengkajianKeperawatan'
+import PemeriksaanFisik from './component/PemeriksaanFisik'
+import RiwayatPsikologi from './component/RiwayatPsikologis'
+import PengkajianNyeriPenilaianResikoJatuh from './component/PengkajianNyeri_PenilaianResikoJatuh'
+import React, { useState } from 'react'
+import { api } from '../../../../services/api/config.api'
 
-const PageIgdAssesmenAwal = () => {
+const PageIgdAssesmenAwal: React.FC = () => {
+  const nmrRawat = localStorage.getItem('no_rawat')
+  // State for Pengkajian Keperawatan
+  const [informasi, setInformasi] = useState<string>('')
+  const [keluhanUtama, setKeluhanUtama] = useState<string>('')
+  const [rpd, setRpd] = useState<string>('')
+  const [rpo, setRpo] = useState<string>('')
+  const [statusKehamilan, setStatusKehamilan] = useState<string>('')
+  const [gravida, setGravida] = useState<string>('')
+  const [para, setPara] = useState<string>('')
+  const [abortus, setAbortus] = useState<string>('')
+  const [hpht, setHpht] = useState<string>('')
+
+  // State for Pemeriksaan Fisik
+  const [tekanan, setTekanan] = useState<string>('')
+  const [pupil, setPupil] = useState<string>('')
+  const [neurosensorik, setNeurosensorik] = useState<string>('')
+  const [integumen, setIntegumen] = useState<string>('')
+  const [turgor, setTurgor] = useState<string>('')
+  const [edema, setEdema] = useState<string>('')
+  const [mukosa, setMukosa] = useState<string>('')
+  const [perdarahan, setPerdarahan] = useState<string>('')
+  const [jumlahPerdarahan, setJumlahPerdarahan] = useState<string>('')
+  const [warnaPerdarahan, setWarnaPerdarahan] = useState<string>('')
+  const [intoksikasi, setIntoksikasi] = useState<string>('')
+  const [bab, setBab] = useState<string>('')
+  const [xBab, setXBab] = useState<string>('')
+  const [kBab, setKBab] = useState<string>('')
+  const [wBab, setWBab] = useState<string>('')
+  const [bak, setBak] = useState<string>('')
+  const [xBak, setXBak] = useState<string>('')
+  const [kBak, setKBak] = useState<string>('')
+  const [wBak, setWBak] = useState<string>('')
+  const [lBak, setLBak] = useState<string>('')
+
+  // State for Riwayat Psikologi
+  const [psikologi, setPsikologi] = useState<string>('')
+  const [jiwa, setJiwa] = useState<string>('')
+  const [perilaku, setPerilaku] = useState<string>('')
+  const [dilaporkan, setDilaporkan] = useState<string>('')
+  const [sebutkan, setSebutkan] = useState<string>('')
+  const [hubungan, setHubungan] = useState<string>('')
+  const [tinggalDengan, setTinggalDengan] = useState<string>('')
+  const [ketTinggal, setKetTinggal] = useState<string>('')
+  const [budaya, setBudaya] = useState<string>('')
+  const [ketBudaya, setKetBudaya] = useState<string>('')
+  const [pendidikanPj, setPendidikanPj] = useState<string>('')
+  const [ketPendidikanPj, setKetPendidikanPj] = useState<string>('')
+  const [edukasi, setEdukasi] = useState<string>('')
+  const [ketEdukasi, setKetEdukasi] = useState<string>('')
+  const [kemampuan, setKemampuan] = useState<string>('')
+  const [aktifitas, setAktifitas] = useState<string>('')
+  const [alatBantu, setAlatBantu] = useState<string>('')
+  const [ketBantu, setKetBantu] = useState<string>('')
+
+  // State for Pengkajian Nyeri Penilaian Resiko Jatuh
+  const [nyeri, setNyeri] = useState<string>('')
+  const [provokes, setProvokes] = useState<string>('')
+  const [ketProvokes, setKetProvokes] = useState<string>('')
+  const [quality, setQuality] = useState<string>('')
+  const [ketQuality, setKetQuality] = useState<string>('')
+  const [lokasi, setLokasi] = useState<string>('')
+  const [menyebar, setMenyebar] = useState<string>('')
+  const [skalaNyeri, setSkalaNyeri] = useState<string>('')
+  const [durasi, setDurasi] = useState<string>('')
+  const [nyeriHilang, setNyeriHilang] = useState<string>('')
+  const [ketNyeri, setKetNyeri] = useState<string>('')
+  const [padaDokter, setPadaDokter] = useState<string>('')
+  const [ketDokter, setKetDokter] = useState<string>('')
+  const [berjalanA, setBerjalanA] = useState<string>('')
+  const [berjalanB, setBerjalanB] = useState<string>('')
+  const [berjalanC, setBerjalanC] = useState<string>('')
+  const [hasil, setHasil] = useState<string>('')
+  const [lapor, setLapor] = useState<string>('')
+  const [ketLapor, setKetLapor] = useState<string>('')
+  const [rencana, setRencana] = useState<string>('')
+
+  const tokenValue = localStorage.getItem('token')
+  const Kd = JSON.parse(tokenValue)
+  const role = Object.keys(Kd)[0]
+  let nipCredentials = ''
+  if (role === 'dokter') {
+    nipCredentials = Kd.dokter.kd_dokter
+  } else if (role === 'petugas') {
+    nipCredentials = Kd.petugas.nip
+  }
+
+  function getCurrentFormattedDate() {
+    const now = new Date()
+    return now.toISOString().slice(0, 19)
+  }
+
+  const handleValuesChangePengkajianKeperawatan = (
+    informasi: string,
+    keluhanUtama: string,
+    rpd: string,
+    rpo: string,
+    statusKehamilan: string,
+    gravida: string,
+    para: string,
+    abortus: string,
+    hpht: string,
+  ) => {
+    setInformasi(informasi)
+    setKeluhanUtama(keluhanUtama)
+    setRpd(rpd)
+    setRpo(rpo)
+    setStatusKehamilan(statusKehamilan)
+    setGravida(gravida)
+    setPara(para)
+    setAbortus(abortus)
+    setHpht(hpht)
+  }
+
+  const handleValuesChangePemeriksaanFisik = (
+    tekanan: string,
+    pupil: string,
+    neurosensorik: string,
+    integumen: string,
+    turgor: string,
+    edema: string,
+    mukosa: string,
+    perdarahan: string,
+    jumlahPerdarahan: string,
+    warnaPerdarahan: string,
+    intoksikasi: string,
+    bab: string,
+    xBab: string,
+    kBab: string,
+    wBab: string,
+    bak: string,
+    xBak: string,
+    kBak: string,
+    wBak: string,
+    lBak: string,
+  ) => {
+    setTekanan(tekanan)
+    setPupil(pupil)
+    setNeurosensorik(neurosensorik)
+    setIntegumen(integumen)
+    setTurgor(turgor)
+    setEdema(edema)
+    setMukosa(mukosa)
+    setPerdarahan(perdarahan)
+    setJumlahPerdarahan(jumlahPerdarahan)
+    setWarnaPerdarahan(warnaPerdarahan)
+    setIntoksikasi(intoksikasi)
+    setBab(bab)
+    setXBab(xBab)
+    setKBab(kBab)
+    setWBab(wBab)
+    setBak(bak)
+    setXBak(xBak)
+    setKBak(kBak)
+    setWBak(wBak)
+    setLBak(lBak)
+  }
+
+  const handleValuesChangeRiwayatPsikologi = (
+    psikologi: string,
+    jiwa: string,
+    perilaku: string,
+    dilaporkan: string,
+    sebutkan: string,
+    hubungan: string,
+    tinggalDengan: string,
+    ketTinggal: string,
+    budaya: string,
+    ketBudaya: string,
+    pendidikanPj: string,
+    ketPendidikanPj: string,
+    edukasi: string,
+    ketEdukasi: string,
+    kemampuan: string,
+    aktifitas: string,
+    alatBantu: string,
+    ketBantu: string,
+  ) => {
+    setPsikologi(psikologi)
+    setJiwa(jiwa)
+    setPerilaku(perilaku)
+    setDilaporkan(dilaporkan)
+    setSebutkan(sebutkan)
+    setHubungan(hubungan)
+    setTinggalDengan(tinggalDengan)
+    setKetTinggal(ketTinggal)
+    setBudaya(budaya)
+    setKetBudaya(ketBudaya)
+    setPendidikanPj(pendidikanPj)
+    setKetPendidikanPj(ketPendidikanPj)
+    setEdukasi(edukasi)
+    setKetEdukasi(ketEdukasi)
+    setKemampuan(kemampuan)
+    setAktifitas(aktifitas)
+    setAlatBantu(alatBantu)
+    setKetBantu(ketBantu)
+
+  }
+
+  const handleValuesChangePengkajianNyeriPenilaianResikoJatuh = (
+    nyeri: string,
+    provokes: string,
+    ketProvokes: string,
+    quality: string,
+    ketQuality: string,
+    lokasi: string,
+    menyebar: string,
+    skalaNyeri: string,
+    durasi: string,
+    nyeriHilang: string,
+    ketNyeri: string,
+    padaDokter: string,
+    ketDokter: string,
+    berjalanA: string,
+    berjalanB: string,
+    berjalanC: string,
+    hasil: string,
+    lapor: string,
+    ketLapor: string,
+    rencana: string,
+  ) => {
+    setNyeri(nyeri)
+    setProvokes(provokes)
+    setKetProvokes(ketProvokes)
+    setQuality(quality)
+    setKetQuality(ketQuality)
+    setLokasi(lokasi)
+    setMenyebar(menyebar)
+    setSkalaNyeri(skalaNyeri)
+    setDurasi(durasi)
+    setNyeriHilang(nyeriHilang)
+    setKetNyeri(ketNyeri)
+    setPadaDokter(padaDokter)
+    setKetDokter(ketDokter)
+    setBerjalanA(berjalanA)
+    setBerjalanB(berjalanB)
+    setBerjalanC(berjalanC)
+    setHasil(hasil)
+    setLapor(lapor)
+    setKetLapor(ketLapor)
+    setRencana(rencana)
+  }
+
+  const postAwalKeperawatanIgd = async () => {
+    const dataPost = {
+      noRawat: nmrRawat,
+      tanggal: getCurrentFormattedDate(),
+      informasi: informasi,
+      keluhanUtama: keluhanUtama,
+      rpd: rpd,
+      rpo: rpo,
+      statusKehamilan: statusKehamilan,
+      gravida: gravida,
+      para: para,
+      abortus: abortus,
+      hpht: hpht,
+      tekanan: tekanan,
+      pupil: pupil,
+      neurosensorik: neurosensorik,
+      integumen: integumen,
+      turgor: turgor,
+      edema: edema,
+      mukosa: mukosa,
+      perdarahan: perdarahan,
+      jumlahPerdarahan: jumlahPerdarahan,
+      warnaPerdarahan: warnaPerdarahan,
+      intoksikasi: intoksikasi,
+      bab: bab,
+      xbab: xBab,
+      kbab: kBab,
+      wbab: wBab,
+      bak: bak,
+      xbak: xBak,
+      kbak: kBak,
+      wbak: wBak,
+      lbak: lBak,
+      psikologis: psikologi,
+      jiwa: jiwa,
+      perilaku: perilaku,
+      dilaporkan: dilaporkan,
+      sebutkan: sebutkan,
+      hubungan: hubungan,
+      tinggalDengan: tinggalDengan,
+      ketTinggal: ketTinggal,
+      budaya: budaya,
+      ketBudaya: ketBudaya,
+      pendidikanPj: pendidikanPj,
+      ketPendidikanPj: ketPendidikanPj,
+      edukasi: edukasi,
+      ketEdukasi: ketEdukasi,
+      kemampuan: kemampuan,
+      aktifitas: aktifitas,
+      alatBantu: alatBantu,
+      keBantu: ketBantu,
+      nyeri: nyeri,
+      provokes: provokes,
+      ketProvokes: ketProvokes,
+      quality: quality,
+      ketQuality: ketQuality,
+      lokasi: lokasi,
+      menyebar: menyebar,
+      skalaNyeri: skalaNyeri,
+      durasi: durasi,
+      nyeriHilang: nyeriHilang,
+      ketNyeri: ketNyeri,
+      padaDokter: padaDokter,
+      ketDokter: ketDokter,
+      berjalanA: berjalanA,
+      berjalanB: berjalanB,
+      berjalanC: berjalanC,
+      hasil: hasil,
+      lapor: lapor,
+      ketLapor: ketLapor,
+      rencana: rencana,
+      nip: nipCredentials,
+    }
+
+    try {
+      const response = await api.post('/api/v1/insert-keperawatan-igd', dataPost)
+      console.log('hasil', response.data)
+    } catch (err) {
+      console.log('Error', err)
+      console.log('data yang dikirim', dataPost)
+    }
+  }
+
   return (
     <>
       <HeaderIgd />
       <div className='p-1'>
-        <p className='font-inter font-bold text-xl text-[#121713]'>ASSESMEN AWAL</p>
-        <div className='flex'></div>
-        <div className='grid w-full h-full bg-white mt-3 p-2'>
+        <div className='grid w-full h-full bg-white mt-1 p-2'>
           <div className='mt-3'>
-            <label className='label font-inter font-bold text-xl text-[#121713]'>
-              Tanda - Tanda Vital
-            </label>
-            <p className='text-sm text-disabled '>Isi semua data dibawah ini.</p>
-            <div className='grid grid-cols-7 gap-3'>
-              <div className='form-control 3'>
-                <label className='label font-semibold text-slate-700 text-md'>
-                  <span>Suhu(C)</span>
+            <div className='flex justify-between'>
+              <div>
+                <label className='font-inter font-bold text-xl text-[#121713]'>
+                  Assesmen Awal Keperawatan
                 </label>
-                <input
-                  type='Text'
-                  placeholder='-'
-                  className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                />
+                <p className='text-lg '>Di isi oleh Perawat.</p>
               </div>
-              <div className='form-control 3'>
-                <label className='label font-semibold text-slate-700 text-md'>
-                  <span>Kesadaran</span>
-                </label>
-                <input
-                  type='Text'
-                  placeholder='-'
-                  className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                />
-              </div>
-              <div className='form-control 3'>
-                <label className='label font-semibold text-slate-700 text-md'>
-                  <span>TD</span>
-                </label>
-                <input
-                  type='Text'
-                  placeholder='-'
-                  className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                />
-              </div>
-              <div className='form-control 3'>
-                <label className='label font-semibold text-slate-700 text-md'>
-                  <span>mmHg Nadi</span>
-                </label>
-                <input
-                  type='Text'
-                  placeholder='-'
-                  className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                />
-              </div>
-              <div className='form-control 3'>
-                <label className='label font-semibold text-slate-700 text-md'>
-                  <span>x/m Respirasi</span>
-                </label>
-                <input
-                  type='Text'
-                  placeholder='-'
-                  className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                />
-              </div>
-              <div className='form-control 3'>
-                <label className='label font-semibold text-slate-700 text-md'>
-                  <span>x/m SB</span>
-                </label>
-                <input
-                  type='Text'
-                  placeholder='-'
-                  className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                />
-              </div>
-            </div>
-          </div>
-          {/* Batas */}
-          <div>
-            <label className='label font-inter font-bold text-xl text-[#121713]'>GCS</label>
-            <div className='flex gap-3 items-center'>
-              <div className='grid gap-3'>
-                <div className='flex items-center gap-4'>
-                  <label className='flex font-semibold text-slate-700 text-md'>
-                    <span>E</span>
-                    <strong>=</strong>
-                  </label>
+              <div className='flex gap-2 items-center'>
+                <div className='grid w-64'>
+                  <label className='label font-bold'>Tanggal</label>
+                  <input type='date' className='input w-full border-primary text-sm' />
+                </div>
+                <div className='w-64'>
+                  <label className='label font-bold'>Jam</label>
                   <input
-                    type='Text'
-                    placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
+                    type='time'
+                    className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
+                    value='13:30'
                   />
                 </div>
-                <div className='flex items-center gap-4'>
-                  <label className='flex font-semibold text-slate-700 text-md'>
-                    <span>V</span>
-                    <strong>=</strong>
-                  </label>
-                  <input
-                    type='Text'
-                    placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                  />
-                </div>
-                <div className='flex items-center gap-4 '>
-                  <label className='flex font-semibold text-slate-700 text-md'>
-                    <span>M</span>
-                    <strong>=</strong>
-                  </label>
-                  <input
-                    type='Text'
-                    placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                  />
-                </div>
-              </div>
-              <div className='grid gap-2'>
-                <div className='flex items-center gap-4 '>
-                  <label className='flex font-semibold text-slate-700 text-md'>
-                    <span>AKRAL</span>
-                    <strong>=</strong>
-                  </label>
-                  <input
-                    type='Text'
-                    placeholder='-'
-                    className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black w-full'
-                  />
-                </div>
-                <div className='flex items-center gap-4 '>
-                  <label className='label font-semibold text-slate-700 text-md'>
-                    <span>Status Alergi</span>
-                  </label>
-                  <div className='grid gap-3'>
-                    <div className='flex gap-3'>
-                      <input type='radio' name='radio-1' className='radio' defaultChecked />
-                      <p>Tidak ada</p>
-                    </div>
-                    <div className='flex gap-3'>
-                      <input type='radio' name='radio-1' className='radio' />
-                      <p>Ada</p>
-                    </div>
+                <div>
+                  <label className='label font-bold'>Info</label>
+                  <div className='p-1 border w-64 border-green-500 bg-white rounded-xl'>
+                    <p className='text text-xs font-semibold'>INSTALASI IGD - U2001</p>
+                    <p className=' font-bold text-sm text-[#121713] mt-2 '>
+                      DOKTER : dr Gerry A.M. Supit
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          {/* BATAS */}
-          <div className='grid justify-start items-center p-1 gap-1 bg-white rounded-lg shadow mt-5 '>
-            {/* Header */}
-            <div className='grid grid-cols-7 gap-1 mb-2'>
-              <div className='col-span-2 font-semibold'>PENGKAJIAN</div>
-              <div className='bg-red-500 text-white text-center'>RESUSCITATE</div>
-              <div className='bg-orange-500 text-white text-center'>EMERGENT</div>
-              <div className='bg-yellow-500 text-center'>URGENT</div>
-              <div className='bg-green-500 text-white text-center'>NON-URGENT</div>
-              <div className='bg-gray-300 text-center'>FALSE EMERGENCY</div>
-            </div>
-
-            {/* JALAN NAFAS */}
-            <div className='grid grid-cols-7 gap-2 mb-4'>
-              <div className='col-span-2 font-semibold'>JALAN NAFAS</div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                Obstruksi/Obstruksi Partial
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                Bebas
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                Bebas
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                Bebas
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                Bebas
-              </div>
-              <div></div>
-            </div>
-
-            {/* PERNAFASAN */}
-            <div className='grid grid-cols-7 gap-2 mb-4'>
-              <div className='col-span-2 font-semibold'>PERNAFASAN</div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Henti Nafas</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>RR {'<'} 10 mnt</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Sianosis</p>
-                </div>
-              </div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>RR {'>'} 32x/m</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Wheezing</p>
-                </div>
-              </div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>RR 24-32x/m</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Wheezing</p>
-                </div>
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                Normal
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                Normal
-              </div>
-              <div></div>
-            </div>
-
-            {/* SIRKULASI */}
-            <div className='grid grid-cols-7 gap-2 mb-4'>
-              <div className='col-span-2 font-semibold'>SIRKULASI</div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Henti Jantung</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Nadi TT</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Akral Dingin</p>
-                </div>
-              </div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Nadi Teraba Lemah</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>HR {'<'} 50x/m</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>HR {'<'} 150x/m</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Akral Dingin</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>CRT {'>'} 2 detik</p>
-                </div>
-              </div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>RR 24-32x/m</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>TD Sislotik {'>'} 160 mmHg</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>TD Sislotik {'>'} 100 mmHg</p>
-                </div>
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                Normal
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                Normal
-              </div>
-              <div></div>
-            </div>
-
-            {/* KESADARAN */}
-            <div className='grid grid-cols-7 gap-2'>
-              <div className='col-span-2 font-semibold'>KESADARAN</div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                GCS &lt; 9
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                GCS 9-12
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                GCS 13-14
-              </div>
-              <div>
-                <input type='checkbox' className='mr-2' />
-                GCS 15
-              </div>
-              <div></div>
-            </div>
-
-            {/* Skala nyeri */}
-            <div className='flex items-center gap-[1px] mb-4'>
-              <div className='col-span-2 font-semibold mr-[349px]'>SKALA NYERI</div>
-              <div className='grid gap-1'>
-                <div className='flex'>
-                  <div>
-                    <div>
-                      <p className='text-end font-bold text-sm'>0</p>
-                      <div className='w-20 h-4 bg-[#009718] rounded-full'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <p className='text-end font-bold text-sm'>1</p>
-                      <div className='w-20 h-4 bg-[#01B91F] rounded-full'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <p className='text-end font-bold text-sm'>2</p>
-                      <div className='w-20 h-4 bg-[#00C821] rounded-full'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <p className='text-end font-bold text-sm'>3</p>
-                      <div className='w-20 h-4 bg-[#00DA24] rounded-full'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <p className='text-end font-bold text-sm'>4</p>
-                      <div className='w-20 h-4 bg-[#AEDA00] rounded-full'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <p className='text-end font-bold text-sm'>5</p>
-                      <div className='w-20 h-4 bg-[#DAAA00] rounded-full'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <p className='text-end font-bold text-sm'>6</p>
-                      <div className='w-20 h-4 bg-[#EA7F00] rounded-full'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <p className='text-end font-bold text-sm'>7</p>
-                      <div className='w-20 h-4 bg-[#FA744A] rounded-full'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <p className='text-end font-bold text-sm'>8</p>
-                      <div className='w-20 h-4 bg-[#FE3C3C] rounded-full'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <p className='text-end font-bold text-sm'>9</p>
-                      <div className='w-20 h-4 bg-[#FF2E2E] rounded-full'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <p className='text-end font-bold text-sm'>10</p>
-                      <div className='w-20 h-4 bg-[#D21717] rounded-full'></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className='flex gap-6'>
-                  <div className='bg-[#009718] w-32 h-32 rounded-full'></div>
-                  <div className='bg-[#00C821] w-32 h-32 rounded-full'></div>
-                  <div className='bg-[#DAAA00] w-32 h-32 rounded-full'></div>
-                  <div className='bg-[#EA7F00] w-32 h-32 rounded-full'></div>
-                  <div className='bg-[#EA7F00] w-32 h-32 rounded-full'></div>
-                  <div className='bg-[#D00404] w-32 h-32 rounded-full'></div>
-                </div>
-
-                <div className='flex justify-evenly mt-5 items-center'>
-                  <p>Lokasi : </p>
-                  <div className='flex justify-center gap-2'>
-                    <p>1-3</p>
-                    <input type='checkbox' className='mr-2' />
-                  </div>
-                  <div className='flex justify-center gap-2'>
-                    <p>4-6</p>
-                    <input type='checkbox' className='mr-2' />
-                  </div>
-                  <div className='flex justify-center gap-2'>
-                    <p>6-10</p>
-                    <input type='checkbox' className='mr-2' />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* kondisi mental */}
-            <div className='grid grid-cols-7 gap-2 mb-4'>
-              <div className='col-span-2 font-semibold'>KONDISI MENTAL</div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Tidak Kooperatif</p>
-                </div>
-              </div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Kooperatif</p>
-                </div>
-              </div>
-              <div></div>
-            </div>
-
-            {/* doa */}
-            <div className='grid grid-cols-7 gap-2 mb-4'>
-              <div className='col-span-2 font-semibold'>DEATH ON ARRIVAL</div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Tidak ada tanda kehidupan</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Tidak ada denyut nadi</p>
-                </div>
-              </div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Reflek Cahaya -/-</p>
-                </div>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>EKG Flat</p>
-                </div>
-              </div>
-              <div></div>
-            </div>
-
-            {/* ? */}
-            <div className='flex items-center gap-[1px] mb-4'>
-              <div className='col-span-2 font-semibold mr-[315px]'>Diteruskan Kepada</div>
-              <div className='grid gap-1'>
-                <div className='flex'>
-                  <div>
-                    <div>
-                      <div className='w-20 h-10 bg-[#F74848] border '></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <div className='w-20 h-10 bg-[#F89500] border'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <div className='w-20 h-10 bg-[#FFE710] border'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <div className='w-20 h-10 bg-[#33EF04] border'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <div className='w-20 h-10 bg-gray-100 border'></div>
-                    </div>
-                  </div>
-                  <div className='flex gap-1'>
-                    <div>
-                      <div className='w-20 h-10 bg-[#000000] border'></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* tindak lanjut */}
-            <div className='grid grid-cols-7 gap-2 mb-4'>
-              <div className='col-span-2 font-semibold'>KONDISI MENTAL</div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Rawat Jalan</p>
-                </div>
-              </div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Rawat Inap</p>
-                </div>
-              </div>
-              <div className='grid items-center'>
-                <div className='flex items-center'>
-                  <input type='checkbox' className='mr-2' />
-                  <p>Dirujuk</p>
-                </div>
-              </div>
-              <div></div>
-            </div>
-
-            {/* Pengkajian p */}
+            {/* BATAS/ PENGKAJIAN KEPERAWATAN */}
             <div>
-              <label className='label font-inter font-bold text-xl text-[#121713]'>
-                Pengkajian Perawatan
-              </label>
-              <div className='grid'>
-                <div className='flex gap-3'>
-                  <div className='grid'>
-                    <div>
-                      <div>
-                        <label className='label font-bold'>Informasi Diperoleh Dari :</label>
-                        <select className='select select-bordered w-full max-w-xs'>
-                          <option disabled selected>
-                            Autoanamnesa
-                          </option>
-                          <option>Lorem</option>
-                          <option>Lorem</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div>
-                      <div className='form-control 3'>
-                        <label className='label font-semibold text-slate-700 text-md'>
-                          <span>Cara Masuk</span>
-                        </label>
-                        <input
-                          placeholder='Kursi Roda'
-                          className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black '
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <div className='form-control 3'>
-                        <label className='label font-semibold text-slate-700 text-md'>
-                          <span>Nama</span>
-                        </label>
-                        <input
-                          type='Text'
-                          placeholder='-'
-                          className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black '
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className='grid'>
-                    <div>
-                      <div>
-                        <label className='label font-bold'>Merokok</label>
-                        <select className='select select-bordered w-full max-w-xs'>
-                          <option disabled selected>
-                            tidak
-                          </option>
-                          <option>Lorem</option>
-                          <option>Lorem</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div>
-                      <div className='form-control 3'>
-                        <label className='label font-semibold text-slate-700 text-md'>
-                          <span>Prosedur Masuk</span>
-                        </label>
-                        <input
-                          placeholder='Rujukan'
-                          className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black '
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <div className='form-control 3'>
-                        <label className='label font-semibold text-slate-700 text-md'>
-                          <span>Hubungan</span>
-                        </label>
-                        <input
-                          type='Text'
-                          placeholder='-'
-                          className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black '
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className='grid'>
-                    <div>
-                      <div>
-                        <label className='label font-bold'>Alkohol :</label>
-                        <select className='select select-bordered w-full max-w-xs'>
-                          <option disabled selected>
-                            tidak
-                          </option>
-                          <option>Lorem</option>
-                          <option>Lorem</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div>
-                      <div className='form-control 3'>
-                        <label className='label font-semibold text-slate-700 text-md'>
-                          <span>TP/PB</span>
-                        </label>
-                        <input
-                          type='text'
-                          placeholder='-'
-                          className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black '
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <div className='form-control 3'>
-                        <label className='label font-semibold text-slate-700 text-md'>
-                          <span>Berat Badan</span>
-                        </label>
-                        <input
-                          type='Text'
-                          placeholder='-'
-                          className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black '
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className='grid'>
-                    <div>
-                      <div className='form-control 3'>
-                        <label className='label font-semibold text-slate-700 text-md'>
-                          <span>Riwayat Penyakit Sekarang</span>
-                        </label>
-                        <textarea
-                          placeholder='-'
-                          className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black '
-                        />
-                        <div className='flex justify-evenly mt-2'>
-                          <button className='btn btn-md w-20 bg-primary text-gray-50 rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:bg-primary'>
-                            Hipertensi
-                          </button>
-                          <button className='btn btn-md w-20 bg-primary text-gray-50 rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:bg-primary'>
-                            Ginjal
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className='form-control 3'>
-                        <label className='label font-semibold text-slate-700 text-md'>
-                          <span>Riwayat Penyakit Dahulu</span>
-                        </label>
-                        <textarea
-                          placeholder='-'
-                          className='input input-bordered text-sm rounded-2xl border-disabled disabled:bg-slate-200 disabled:text-black '
-                        />
-                        <div className='flex justify-evenly mt-2'>
-                          <button className='btn btn-md w-20 bg-primary text-gray-50 rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:bg-primary'>
-                            Hipertensi
-                          </button>
-                          <button className='btn btn-md w-20 bg-primary text-gray-50 rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:bg-primary'>
-                            Ginjal
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <PengkajianKeperawatan
+                onValuesChangePengkajianKeperawatan={handleValuesChangePengkajianKeperawatan}
+              />
             </div>
+            {/* BATAS / PEMERIKSAAN FISIK*/}
+            <div>
+              <PemeriksaanFisik
+                onValuesChangePemeriksaanFisik={handleValuesChangePemeriksaanFisik}
+              />
+            </div>
+            {/* BATAS / RIWAYAT PSIKOLOGIS & PENGKAJIAN FUNGSIONAL */}
+            <div>
+              <RiwayatPsikologi
+                onValuesChangeRiwayatPsikologi={handleValuesChangeRiwayatPsikologi}
+              />
+            </div>
+            {/* BATAS / PENGKAJIAN NYERI & PENILAIAN RESIKO JATUH */}
+            <PengkajianNyeriPenilaianResikoJatuh
+              onValuesChangePengkajianNyeriPenilaianResiko={
+                handleValuesChangePengkajianNyeriPenilaianResikoJatuh
+              }
+            />
           </div>
         </div>
         <div className='grid '>
-          <button className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'>
+          <button
+            className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'
+            onClick={postAwalKeperawatanIgd}
+          >
             <p className='flex justify-center items-center'>
               <ArchiveBoxArrowDownIcon className='mr-3' width={25} height={25} />
-              Mengirim
-            </p>
-          </button>
-          <button className='flex justify-center items-center font-semibold text-gray-500 border-2 text-base w-full h-[50px] py-2 mt-[20px] bg-white rounded-xl hover:opacity-80'>
-            <p className='flex justify-center items-center'>
-              <BellIcon className='mr-3' width={25} height={25} />
-              ICD 9 & 10
-            </p>
-          </button>
-          <button className='flex justify-center items-center font-semibold text-gray-500 border-2 text-base w-full h-[50px] py-2 mt-[20px] bg-white rounded-xl hover:opacity-80'>
-            <p className='flex justify-center items-center'>
-              <ClockIcon className='mr-3' width={25} height={25} />
-              RIWAYAT
-            </p>
-          </button>
-          <button className='flex justify-center items-center font-semibold text-gray-500 border-2 text-base w-full h-[50px] py-2 mt-[20px] bg-white rounded-xl hover:opacity-80'>
-            <p className='flex justify-center items-center'>
-              <CheckIcon className='mr-3' width={25} height={25} />
-              SELESAI
+              SIMPAN
             </p>
           </button>
         </div>
