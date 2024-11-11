@@ -4,13 +4,14 @@ import {
   InformationCircleIcon,
 } from '@heroicons/react/24/solid'
 import HeaderIgd from '../../../Navbar/HeaderDetailIGD'
+import { useState } from 'react'
 
 const PageIgdTindakan = () => {
+  const [activeTabs, setActiveTabs] = useState<number>()
   return (
     <>
       <HeaderIgd />
       <div>
-        <p className='font-inter font-bold text-xl text-[#121713]'>TINDAKAN</p>
         <div className='grid w-full h-full bg-white mt-3 p-2'>
           <p className='font-inter font-bold text-xl text-[#121713]'>Riwayat Perawatan</p>
           <div className='p-1'>
@@ -113,19 +114,120 @@ const PageIgdTindakan = () => {
             </div>
           </div>
           <div>
-            <div className='w-96'>
-              <label className='label'>Tindakan</label>
-              <input
-                type='text'
-                className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
-              />
+            <div className='grid items-center bg-white mt-3 w-[800px] h-14'>
+              <div role='tablist' className='tabs w-[800px]'>
+                <a
+                  role='tab'
+                  className={`tab ${
+                    activeTabs === 1 ? 'tab-active text-primary text-xl font-bold' : ''
+                  }`}
+                  onClick={() => setActiveTabs(1)}
+                >
+                  Penanganan Dokter
+                </a>
+                <a
+                  role='tab'
+                  className={`tab ${
+                    activeTabs === 2 ? 'tab-active text-primary text-xl font-bold' : ''
+                  }`}
+                  onClick={() => setActiveTabs(2)}
+                >
+                  Penanganan Petugas
+                </a>
+                <a
+                  role='tab'
+                  className={`tab ${
+                    activeTabs === 3 ? 'tab-active text-primary text-xl font-bold' : ''
+                  }`}
+                  onClick={() => setActiveTabs(3)}
+                >
+                  Penanganan Dokter & Petugas
+                </a>
+              </div>
             </div>
-            <div className='w-96'>
-              <label className='label'>Jenis</label>
-              <input
-                type='text'
-                className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
-              />
+            <div className='mt-4'>
+              {/* Penanganan Dokter */}
+              {activeTabs === 1 && (
+                <>
+                  <div>
+                    <div className='w-96'>
+                      <label className='label'>Dokter</label>
+                      <input
+                        type='text'
+                        className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
+                      />
+                    </div>
+                    <div className='w-96'>
+                      <label className='label'>Input Tindakan</label>
+                      <textarea className='textarea w-full border border-primary disabled:bg-slate-200 disabled:text-black' />
+                    </div>
+                    <div className='w-96'>
+                      <label className='label'>Cari Tindakan</label>
+                      <input
+                        type='text'
+                        className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+              {/* Penanganan Petugas */}
+              {activeTabs === 2 && (
+                <>
+                  <div>
+                    <div className='w-96'>
+                      <label className='label'>Petugas</label>
+                      <input
+                        type='text'
+                        className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
+                      />
+                    </div>
+                    <div className='w-96'>
+                      <label className='label'>Input Tindakan</label>
+                      <textarea className='textarea w-full border border-primary disabled:bg-slate-200 disabled:text-black' />
+                    </div>
+                    <div className='w-96'>
+                      <label className='label'>Cari Tindakan</label>
+                      <input
+                        type='text'
+                        className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+              {/* Penanganan petugas & Dokter */}
+              {activeTabs === 3 && (
+                <>
+                  <div>
+                    <div className='w-96'>
+                      <label className='label'>Dokter</label>
+                      <input
+                        type='text'
+                        className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
+                      />
+                    </div>
+                    <div className='w-96'>
+                      <label className='label'>Petugas</label>
+                      <input
+                        type='text'
+                        className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
+                      />
+                    </div>
+                    <div className='w-96'>
+                      <label className='label'>Input Tindakan</label>
+                      <textarea className='textarea w-full border border-primary disabled:bg-slate-200 disabled:text-black' />
+                    </div>
+                    <div className='w-96'>
+                      <label className='label'>Cari Tindakan</label>
+                      <input
+                        type='text'
+                        className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <div className='border-4 rounded-3xl p-2 mb-2 mt-3'>

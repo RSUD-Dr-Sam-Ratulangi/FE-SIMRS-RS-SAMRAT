@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useState, useEffect } from 'react'
-import { api } from '../../../services/api/config.api'
+import { api } from '../../../../services/api/config.api'
 import { useParams } from 'react-router-dom'
 
 // eslint-disable-next-line react/prop-types

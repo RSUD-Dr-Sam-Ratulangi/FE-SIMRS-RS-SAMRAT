@@ -4,7 +4,7 @@ import React, { forwardRef, useEffect, useState } from 'react'
 import Popup from 'reactjs-popup'
 import { PopupActions } from 'reactjs-popup/dist/types'
 import { ArrowPathIcon } from '@heroicons/react/24/solid'
-import { apiLabor } from '../../../../services/api/config.api'
+import { apiLabor } from '../../../../../../services/api/config.api'
 
 interface ModalLaborHistoryProps {
   noRawat: any
@@ -23,6 +23,8 @@ const ModalLaborHistory = forwardRef<PopupActions, ModalLaborHistoryProps>((prop
   const [dataRiwayat, setDataRiwayat] = useState<{ [key: string]: any[] }>({})
 
   useEffect(() => {
+    if (!nmrRawat) return
+
     setLoading(true)
 
     const fetchDataRiwayatLabor = async () => {

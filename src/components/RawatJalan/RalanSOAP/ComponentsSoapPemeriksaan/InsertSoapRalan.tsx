@@ -4,7 +4,6 @@ import { api } from '../../../../services/api/config.api'
 import { spesificError } from '../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-// import { AxiosResponse } from 'axios'
 import {
   ArchiveBoxArrowDownIcon,
   InformationCircleIcon,
@@ -13,9 +12,9 @@ import {
 } from '@heroicons/react/24/solid'
 import { useNavigate, useParams } from 'react-router-dom'
 import { formatSelectedDate, formatSelectedDateNow } from '../../../../utils/DateNow'
-import ModalLaborInput from '../../../Layouts/Laboratorium/Modal/ModalLaborInput'
+import ModalLaborInput from '../../../Layouts/Ralan/ModalRalan/Laboratorium/Modal/ModalLaborInput'
 import { PopupActions } from 'reactjs-popup/dist/types'
-import ModalRadiologiInput from '../../../Layouts/Radiologi/Modal/ModalRadiologiInput'
+import ModalRadiologiInput from '../../../Layouts/Ralan/ModalRalan/Radiologi/Modal/ModalRadiologiInput'
 
 enum KesadaranOptions {
   defaultValue = 'Pilih Kesadaran',
@@ -104,10 +103,13 @@ const InsertSoapRalan: React.FC<{
   const [instruksi, setInstruksi] = useState('')
   const [evaluasi, setEvaluasi] = useState('')
   const [listPenyakit, setListPenyakit] = useState<DataItem[]>([])
+  const [listProsedur, setListProsedur] = useState([])
+  const [prosedur, setProsedur] = useState('')
   const [listObat, setListObat] = useState([])
   const [listTindakan, setListTindakan] = useState([])
   const [aturanPakai, setAturanPakai] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [searchTermProsedur, setSearchTermProsedur] = useState('')
   const [searchTermObat, setSearchTermObat] = useState('')
   const [searchTermTindakan, setSearchTermTindakan] = useState('')
   const [tindakan, setTindakan] = useState('')
@@ -155,7 +157,6 @@ const InsertSoapRalan: React.FC<{
   const updateDiagnosaState = () => {
     if (copyDiagnosa && copyDiagnosa.length > 0) {
       const data = copyDiagnosa[0]
-      console.log('data Diagnosa', data?.nm_penyakit)
       setPenilaian((prevValue) => `${prevValue}\n${data?.kd_penyakit}, ${data?.nm_penyakit}`)
       setKdPenyakit(data?.kd_penyakit)
     }
@@ -181,20 +182,14 @@ const InsertSoapRalan: React.FC<{
 
   const handleChangeStatusSecondSend = async () => {
     try {
-      const response = await api.put(
-        `api/v1/updateRegPeriksaStts?noRawat=${nmrRawat}&newStatus=Sudah`,
-      )
-      console.log(response)
+      await api.put(`api/v1/updateRegPeriksaStts?noRawat=${nmrRawat}&newStatus=Sudah`)
     } catch (err) {
       console.log('Status Gagal Diubah', err)
     }
   }
   const handleChangeStatusFirstSend = async () => {
     try {
-      const response = await api.put(
-        `api/v1/updateRegPeriksaStts?noRawat=${nmrRawat}&newStatus=Berkas Diterima`,
-      )
-      console.log(response)
+      await api.put(`api/v1/updateRegPeriksaStts?noRawat=${nmrRawat}&newStatus=Berkas Diterima`)
     } catch (err) {
       console.log('Status Gagal Diubah', err)
     }
@@ -220,7 +215,6 @@ const InsertSoapRalan: React.FC<{
   }
 
   const handleLaborData = (laborData) => {
-    console.log('Received labor data:', laborData)
     setLaborData(laborData)
   }
 
@@ -261,6 +255,25 @@ const InsertSoapRalan: React.FC<{
 
     handleGetPenyakit()
   }, [searchTerm])
+
+  useEffect(() => {
+    const handleGetProsedur = async () => {
+      try {
+        if (searchTermProsedur.trim().length >= 3) {
+          const response = await api.get(
+            `/api/v1/searchIcd9?deskripsiPanjang=${searchTermProsedur}`,
+          )
+          setListProsedur(response.data)
+        } else {
+          setListProsedur([])
+        }
+      } catch (err) {
+        console.log('prosedur err', err)
+      }
+    }
+
+    handleGetProsedur()
+  }, [searchTermProsedur])
 
   useEffect(() => {
     const handleGetObat = async () => {
@@ -338,7 +351,6 @@ const InsertSoapRalan: React.FC<{
         jumlahObat: item.jml,
         aturanPakai: item.aturan_pakai,
       }
-      console.log('mappedDataObat', mappedData)
 
       handlePilihObat(
         mappedData.kode,
@@ -381,7 +393,6 @@ const InsertSoapRalan: React.FC<{
               'Content-Type': 'application/json',
             },
           })
-          console.log(res.data)
           setHaveNoResep(false)
           setNmrResep(res.data)
         } catch (err) {
@@ -454,13 +465,11 @@ const InsertSoapRalan: React.FC<{
             aturanPakai: medicineData.aturanPakai,
           }
           try {
-            const res = await api.post('/api/v1/postResepDokter', resepDokterData, {
+            await api.post('/api/v1/postResepDokter', resepDokterData, {
               headers: {
                 'Content-Type': 'application/json',
               },
             })
-            console.log('Berhasil')
-            console.log(res.data)
           } catch (err) {
             console.log('obat :', resepDokterData)
             console.log(err)
@@ -477,7 +486,6 @@ const InsertSoapRalan: React.FC<{
         const medicineData = selectedMedicines[key]
 
         if (existingMedicines.includes(medicineData.kode)) {
-          console.log('Medicine already exists, skipping:', medicineData)
           continue
         }
 
@@ -489,14 +497,11 @@ const InsertSoapRalan: React.FC<{
         }
 
         try {
-          const res = await api.post('/api/v1/postResepDokter', resepDokterData, {
+          await api.post('/api/v1/postResepDokter', resepDokterData, {
             headers: {
               'Content-Type': 'application/json',
             },
           })
-          console.log('Berhasil')
-          console.log(res.data)
-          console.log('obat berhasil :', resepDokterData)
         } catch (err) {
           console.log('obat error :', resepDokterData)
           console.log(err)
@@ -784,8 +789,13 @@ const InsertSoapRalan: React.FC<{
                 setProgress(100)
               } finally {
                 setProgress(100)
-                navigate('/rawat-jalan/')
-                window.location.reload()
+                const isCorrect = window.confirm('Apakah Ingin Melanjutkan Mengisi RESUME PASIEN ?')
+                if (isCorrect) {
+                  navigate(`/rawat-jalan/resume/${id}`)
+                } else {
+                  navigate('/rawat-jalan/')
+                  window.location.reload()
+                }
               }
             } else {
               spesificError({ errMessage: 'Aborted' })
@@ -800,9 +810,14 @@ const InsertSoapRalan: React.FC<{
   }
 
   const handlePilihPenyakit = async (kode: string, nama: string) => {
+    setPenilaian((prevValue) => `${prevValue}\n${kode}, ${nama}`)
     setKdPenyakit(kode)
     setListPenyakit([])
-    setPenilaian((prevValue) => `${prevValue}\n${kode}, ${nama}`)
+  }
+
+  const handlePilihProsedur = async (kode: string, namaProsedur: string) => {
+    setProsedur((prevValue) => `${prevValue}\n${kode}, ${namaProsedur}`)
+    setPenilaian((prevValue) => `${prevValue}\n${kode}, ${namaProsedur}`)
   }
 
   const handlePilihTindakan = async (kode, nmPerawatan) => {
@@ -897,6 +912,8 @@ const InsertSoapRalan: React.FC<{
       modalRadiologiRef.current.close()
     }
   }
+
+  console.log(prosedur ? prosedur : null)
 
   return (
     <div className='min-w-fit mt-4'>
@@ -1215,32 +1232,101 @@ const InsertSoapRalan: React.FC<{
             </div>
             <textarea
               placeholder='-'
-              defaultValue={penilaian || dataSoap[0]?.penilaian}
+              value={[penilaian].filter(Boolean).join('\n')}
               className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
               onChange={(e) => setPenilaian(e.target.value)}
-              disabled={role.includes('petugas')}
+              // disabled={role.includes('petugas')}
             />
           </div>
           <div className='mt-4'>
-            <label>Cari Penyakit</label>
-            <div className='flex relative mt-1'>
-              <input
-                type='text'
-                value={searchTerm}
-                disabled={role.includes('petugas')}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className='w-full px-3 py-2 border rounded-2xl  disabled:bg-slate-200 disabled:text-black'
-                placeholder='Kanker'
-              />
+            <div className='grid grid-cols-2 gap-3'>
+              <div>
+                <label>Diagnosa</label>
+                <div className='flex relative mt-1'>
+                  <input
+                    type='text'
+                    value={searchTerm}
+                    // disabled={role.includes('petugas')}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className='w-full px-3 py-2 border rounded-2xl  disabled:bg-slate-200 disabled:text-black'
+                    placeholder='Diagnosa'
+                  />
+                </div>
+              </div>
+              <div>
+                <label>Prosedur</label>
+                <div className='flex relative mt-1'>
+                  <input
+                    type='text'
+                    value={searchTermProsedur}
+                    // disabled={role.includes('petugas')}
+                    onChange={(e) => setSearchTermProsedur(e.target.value)}
+                    className='w-full px-3 py-2 border rounded-2xl  disabled:bg-slate-200 disabled:text-black'
+                    placeholder='Prosedur'
+                  />
+                </div>
+              </div>
             </div>
-            {listPenyakit.length > 0 ? (
+
+            {listProsedur.length > 0 ? (
               <div className='mt-4 pt-4'>
                 <div className='h-56 overflow-auto'>
+                  <label className='label font-bold'>Prosedur</label>
                   <table className='table w-full'>
                     <thead className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 '>
                       <th className=''>NO</th>
-                      <th className=''>KODE PENYAKIT</th>
-                      <th className=''>NAMA PENYAKIT</th>
+                      <th className=''>KODE</th>
+                      <th className=''>PROSEDUR PANJANG</th>
+                      <th className=''>PROSEDUR PENDEK</th>
+                      <th>
+                        <button
+                          onClick={() => setListProsedur([])}
+                          className='btn btn-sm bg-slate-100 hover:bg-slate-100 border-none text-lg font-bold'
+                        >
+                          X
+                        </button>
+                      </th>
+                    </thead>
+                    <tbody className='overflow-y-auto'>
+                      {listProsedur.map((data, index) => (
+                        <tr
+                          key={index}
+                          className='text-sm text-gray-700 font-bold border-b-[1px] border-gray-200 '
+                        >
+                          <td className=''>{index + 1}</td>
+                          <td className=''>{listProsedur.length > 0 ? data.kode || '-' : '-'}</td>
+                          <td className=''>
+                            {listProsedur.length > 0 ? data.deskripsi_panjang || '-' : '-'}
+                          </td>
+                          <td className=''>
+                            {listProsedur.length > 0 ? data.deskripsi_pendek || '-' : '-'}
+                          </td>
+                          <td className=''>
+                            <button
+                              className='underline'
+                              onClick={() => handlePilihProsedur(data.kode, data.deskripsi_pendek)}
+                              // disabled={role.includes('petugas')}
+                            >
+                              Pilih
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : null}
+
+            {listPenyakit.length > 0 ? (
+              <div className='mt-4 pt-4'>
+                <div className='h-56 overflow-auto'>
+                  <label className='label font-bold'>Diagnosa</label>
+                  <table className='table w-full'>
+                    <thead className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 '>
+                      <th className=''>NO</th>
+                      <th className=''>KODE DIAGNOSA</th>
+                      <th className=''>NAMA DIAGNOSA</th>
                       <th className=''>AKSI</th>
                       <th>
                         <button
@@ -1267,7 +1353,7 @@ const InsertSoapRalan: React.FC<{
                           <td className=''>
                             <button
                               className='underline '
-                              disabled={role.includes('petugas')}
+                              // disabled={role.includes('petugas')}
                               onClick={() =>
                                 handlePilihPenyakit(data.kd_penyakit, data.nm_penyakit)
                               }

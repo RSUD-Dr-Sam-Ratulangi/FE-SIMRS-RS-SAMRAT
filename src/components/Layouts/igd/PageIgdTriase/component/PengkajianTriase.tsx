@@ -12,9 +12,14 @@ const PengkajianTriase: React.FC = () => {
   const [isActive, setIsActive] = useState(false)
   const [dataPemeriksaanTriase, setDataPemeriksaanTriase] = useState<DataPemeriksaanTriase[]>([])
   const [scaleData, setScaleData] = useState<ScaleDataType>({})
+  const [skalaNyeri, setSkalaNyeri] = useState<number>(0)
 
   const toggleButton = () => {
     setIsActive(!isActive)
+  }
+
+  const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSkalaNyeri(Number(event.target.value))
   }
 
   const fetchDataPemeriksaanTriase = async () => {
@@ -196,19 +201,54 @@ const PengkajianTriase: React.FC = () => {
         {/* Skala nyeri */}
         <div className='flex items-center gap-[1px] mb-4'>
           <div className='col-span-2 font-semibold mr-[349px]'>SKALA NYERI</div>
-          <div className='flex items-center gap-2'>
-            <div>
-              <label className='label'>Lokasi</label>
-              <select className='select select-bordered w-36 max-w-xs'>
-                <option disabled selected>
-                  Pilih Lokasi
-                </option>
-                <option>Lorem</option>
-                <option>Lorem</option>
-              </select>
-            </div>
+          <div className='grid items-center gap-2 ml-20'>
             <div>
               <img src={pmsImage} className='w-full' />
+            </div>
+            <div>
+              <label className='label'>Lokasi</label>
+              <input
+                type='range'
+                min={0}
+                max={10}
+                value={skalaNyeri}
+                className={
+                  skalaNyeri >= 0 && skalaNyeri <= 2
+                    ? 'range [--range-shdw:#26d500]'
+                    : skalaNyeri >= 2 && skalaNyeri <= 3
+                    ? 'range [--range-shdw:#7af804]'
+                    : skalaNyeri >= 3 && skalaNyeri <= 4
+                    ? 'range [--range-shdw:#c2f318]'
+                    : skalaNyeri >= 4 && skalaNyeri <= 5
+                    ? 'range [--range-shdw:#ffcf43]'
+                    : skalaNyeri >= 5 && skalaNyeri <= 6
+                    ? 'range [--range-shdw:#ffb624]'
+                    : skalaNyeri >= 6 && skalaNyeri <= 7
+                    ? 'range [--range-shdw:#f39402]'
+                    : skalaNyeri >= 7 && skalaNyeri <= 8
+                    ? 'range [--range-shdw:#e17f01]'
+                    : skalaNyeri >= 8 && skalaNyeri <= 9
+                    ? 'range [--range-shdw:#f04500]'
+                    : skalaNyeri >= 9 && skalaNyeri <= 10
+                    ? 'range [--range-shdw:#ff1300]'
+                    : 'range range-error'
+                }
+                step={1}
+                onChange={handleSliderChange}
+              />
+              <div className='flex w-full justify-between px-2 text-xs'>
+                <span>0</span>
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+                <span>6</span>
+                <span>7</span>
+                <span>8</span>
+                <span>9</span>
+                <span>10</span>
+              </div>
             </div>
           </div>
         </div>

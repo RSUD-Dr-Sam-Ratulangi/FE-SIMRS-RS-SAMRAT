@@ -60,7 +60,7 @@ const PemeriksaanAwal: React.FC<PemeriksaanAwalProps> = ({ onValueChangePemeriks
           />
         </div>
       </div>
-      <div className='grid gap-2'>
+      <div className='grid grid-cols-3 gap-5 items-center'>
         <div>
           <label className='text text-xl font-bold label'>Keluhan Utama</label>
           <textarea
@@ -70,43 +70,41 @@ const PemeriksaanAwal: React.FC<PemeriksaanAwalProps> = ({ onValueChangePemeriks
             className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
           />
         </div>
-        <div className='flex gap-5 w-full'>
-          <div className='flex items-start w-full'>
-            <label className='text text-sm font-bold label'>Riwayat Penyakit Sekarang</label>
-            <textarea
-              placeholder='Riwayat Penyakit Sekarang'
-              onChange={(e) => setRps(e.target.value)}
-              value={rps}
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-            />
-          </div>
-          <div className='flex items-start w-full'>
-            <label className='text text-sm font-bold label'>Riwayat Penyakit Dahulu</label>
-            <textarea
-              placeholder='Riwayat Penyakit Dahulu'
-              onChange={(e) => setRpd(e.target.value)}
-              value={rpd}
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-            />
-          </div>
-          <div className='flex items-start w-full'>
-            <label className='text text-sm font-bold label'>Riwayat Penggunaan Obat</label>
-            <textarea
-              placeholder='Riwayat Penggunaan Obat'
-              onChange={(e) => setRpo(e.target.value)}
-              value={rpo}
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-            />
-          </div>
-          <div className='flex items-start w-full'>
-            <label className='text text-sm font-bold label'>Riwayat Penyakit Keluarga</label>
-            <textarea
-              placeholder='Riwayat Penyakit Keluarga'
-              onChange={(e) => setRpk(e.target.value)}
-              value={rpk}
-              className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-            />
-          </div>
+        <div className='grid items-start w-full'>
+          <label className='text text-sm font-bold label'>Riwayat Penyakit Sekarang</label>
+          <textarea
+            placeholder='Riwayat Penyakit Sekarang'
+            onChange={(e) => setRps(e.target.value)}
+            value={rps}
+            className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+          />
+        </div>
+        <div className='grid items-start w-full'>
+          <label className='text text-sm font-bold label'>Riwayat Penyakit Dahulu</label>
+          <textarea
+            placeholder='Riwayat Penyakit Dahulu'
+            onChange={(e) => setRpd(e.target.value)}
+            value={rpd}
+            className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+          />
+        </div>
+        <div className='grid items-start w-full'>
+          <label className='text text-sm font-bold label'>Riwayat Penggunaan Obat</label>
+          <textarea
+            placeholder='Riwayat Penggunaan Obat'
+            onChange={(e) => setRpo(e.target.value)}
+            value={rpo}
+            className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+          />
+        </div>
+        <div className='grid items-start w-full'>
+          <label className='text text-sm font-bold label'>Riwayat Penyakit Keluarga</label>
+          <textarea
+            placeholder='Riwayat Penyakit Keluarga'
+            onChange={(e) => setRpk(e.target.value)}
+            value={rpk}
+            className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+          />
         </div>
         <div>
           <label className='text text-xl font-bold label'>Riwayat Alergi</label>

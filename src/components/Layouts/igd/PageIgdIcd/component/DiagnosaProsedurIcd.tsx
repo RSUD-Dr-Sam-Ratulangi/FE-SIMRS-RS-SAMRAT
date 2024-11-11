@@ -209,12 +209,9 @@ const DiagnosaProsedurIcd: React.FC = () => {
                 <table className='table'>
                   <thead>
                     <tr>
-                      <th>Tanggal</th>
-                      <th>Nama Obat</th>
-                      <th>Aturan Pakai</th>
-                      <th>Provide</th>
-                      <th>Tarif</th>
-                      <th>Aksi</th>
+                      <th>Kode</th>
+                      <th>Deskripsi Panjang</th>
+                      <th>Deskripsi Pendek</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -222,31 +219,16 @@ const DiagnosaProsedurIcd: React.FC = () => {
                       <td>2024-08-15</td>
                       <td>Energen 800mg</td>
                       <td>2x1 Pagi</td>
-                      <td>RSUD</td>
-                      <td>Rp.100.000</td>
-                      <td>
-                        <button className='text-red-400'>Hapus</button>
-                      </td>
                     </tr>
                     <tr>
                       <td>2024-08-15</td>
                       <td>Energen 800mg</td>
                       <td>2x1 Pagi</td>
-                      <td>RSUD</td>
-                      <td>Rp.100.000</td>
-                      <td>
-                        <button className='text-red-400'>Hapus</button>
-                      </td>
                     </tr>
                     <tr>
                       <td>2024-08-15</td>
                       <td>Energen 800mg</td>
                       <td>2x1 Pagi</td>
-                      <td>RSUD</td>
-                      <td>Rp.100.000</td>
-                      <td>
-                        <button className='text-red-400'>Hapus</button>
-                      </td>
                     </tr>
                   </tbody>
                 </table>

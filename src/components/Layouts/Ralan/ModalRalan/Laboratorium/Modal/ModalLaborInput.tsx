@@ -10,8 +10,8 @@ import {
   TrashIcon,
   ArrowPathIcon,
 } from '@heroicons/react/24/solid'
-import { apiLabor } from '../../../../services/api/config.api'
-import { spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
+import { apiLabor } from '../../../../../../services/api/config.api'
+import { spesificSuccess, spesificError } from '../../../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
 
 interface ModalProps {
@@ -50,6 +50,8 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
   }
 
   useEffect(() => {
+    if (!nmrRawat) return
+
     const fetchDataPemeriksaan = async () => {
       try {
         const response = await apiLabor.get(
@@ -61,7 +63,7 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
       }
     }
     fetchDataPemeriksaan()
-  }, [ref])
+  }, [nmrRawat])
 
   useEffect(() => {
     const fetchDataDetailPemeriksaan = async () => {
@@ -294,6 +296,7 @@ const ModalLaborInput = forwardRef<PopupActions, ModalProps>((props, ref) => {
   }
 
   useEffect(() => {
+    if (!nmrRawat) return
     onLaborData(laborData)
   }, [laborData])
 

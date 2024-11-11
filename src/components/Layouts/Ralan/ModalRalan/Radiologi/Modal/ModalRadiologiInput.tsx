@@ -8,8 +8,8 @@ import {
   InformationCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/solid'
-import { apiRadiologi } from '../../../../services/api/config.api'
-import { spesificError } from '../../../../utils/ToastInfo'
+import { apiRadiologi } from '../../../../../../services/api/config.api'
+import { spesificError } from '../../../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
 
 interface ModalProps {

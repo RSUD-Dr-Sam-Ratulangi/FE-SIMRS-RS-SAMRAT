@@ -30,16 +30,18 @@ const PemeriksaanPenunjang: React.FC<PemeriksaanPenunjangProps> = ({
     <>
       <div className='border rounded-2xl p-2 grid mt-3 gap-3 w-full'>
         <label className='label font-bold text-lg'>Status Lokalis</label>
-        <div className='grid gap-1 justify-center'>
-          <img src={imgLokalis} className='w-[1500px] h-[700px]' />
+        <div className='grid items-center gap-3 '>
+          <div className='flex justify-center'>
+            <img src={imgLokalis} className='w-[1200px] h-[450px]' />
+          </div>
           <div className='flex gap-3'>
             <div className='w-full'>
-              <label className='text text-xl font-bold label'>Keterangan Lokalis</label>
+              <label className='label font-bold'>Keterangan</label>
               <textarea
                 placeholder='-'
                 onChange={(e) => setKetLokalis(e.target.value)}
                 value={ketLokalis}
-                className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+                className='input input-bordered text-sm h-[155px] rounded-2xl align-text-top border-disabled w-full pt-1'
               />
             </div>
           </div>

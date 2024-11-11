@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { api } from '../../../services/api/config.api'
-import { errorCopyResep, spesificError, spesificSuccess } from '../../../utils/ToastInfo'
+import { api } from '../../../../services/api/config.api'
+import { errorCopyResep, spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
 import { useParams } from 'react-router-dom'
 import { ClockIcon, CalendarDaysIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import { ToastContainer } from 'react-toastify'
-import ModalLaborHistory from '../Laboratorium/Modal/ModalLaborHistory'
+import ModalLaborHistory from '../../Ralan/ModalRalan/Laboratorium/Modal/ModalLaborHistory'
 import { PopupActions } from 'reactjs-popup/dist/types'
-import ModalRadiologiHistory from '../Radiologi/Modal/ModalRadiologiHistory'
-import PdfComponent from '../Pdf/PrintSoapPDF'
+import ModalRadiologiHistory from '../../Ralan/ModalRalan/Radiologi/Modal/ModalRadiologiHistory'
+import PdfComponent from '../../Pdf/PrintSoapPDF'
 import LoadingBar from 'react-top-loading-bar'
+import RiwayatModalResume from '../../Ralan/ModalRalan/Resume/RiwayatResume'
 
 type userData = {
   existsInLabTable: any
@@ -81,6 +82,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   const dataPersonal = personalData || {} // Hampir sama seperti null
   const modalLaborRef = useRef<PopupActions>(null)
   const ModalRadiologiRef = useRef<PopupActions>(null)
+  const modalRiwayatResumeRef = useRef<PopupActions>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [riwayatSoap, setRiwayatSoap] = useState<ApiData>([])
   const [laborNmrRawat, setLaborNmrRawat] = useState('')
@@ -301,6 +303,21 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
     console.log('Close')
   }
 
+  const modalRiwayatResumeOpen = (noRawat: any) => {
+    if (modalRiwayatResumeRef.current) {
+      modalRiwayatResumeRef.current.open()
+      setRadiologiNmrRawat(noRawat)
+    }
+    console.log('open')
+  }
+
+  const modalRiwayatResumeClose = () => {
+    if (modalRiwayatResumeRef.current) {
+      modalRiwayatResumeRef.current.close()
+    }
+    console.log('close')
+  }
+
   return (
     <div className='h-[2360px] overflow-y-auto mt-4 rounded-xl border border-slate-100'>
       <LoadingBar
@@ -332,7 +349,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                   <div className='flex justify-between'>
                     <div>
                       <p className=' font-bold text-xl text-[#121713] mb-2'>
-                        RIWAYAT SOAP (Rawat Jalan)
+                        RIWAYAT SOAP (Rawat Jalan) {riwayat.no_rawat}
                       </p>
                     </div>
                     <div className='flex w-auto p-3 pr-[6px] items-center rounded-xl bg-primary text-white text-base font-bold'>
@@ -504,6 +521,12 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                       >
                         Print PDF
                       </button>
+                      <button
+                        className='text text-gray-100 btn bg-primary btn-md'
+                        onClick={() => modalRiwayatResumeOpen(riwayat.no_rawat)}
+                      >
+                        Riwayat Resume
+                      </button>
                     </div>
                   </div>
                   <ModalLaborHistory
@@ -516,6 +539,11 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                     ref={ModalRadiologiRef}
                     noRawat={radiologiNmrRawat}
                     onClose={modalRadiologiClose}
+                  />
+                  <RiwayatModalResume
+                    ref={modalRiwayatResumeRef}
+                    noRawat={radiologiNmrRawat}
+                    onClose={modalRiwayatResumeClose}
                   />
                 </div>
               ))}

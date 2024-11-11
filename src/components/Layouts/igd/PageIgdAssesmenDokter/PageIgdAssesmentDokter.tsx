@@ -219,7 +219,7 @@ const PageIgdAssesmenDokter = () => {
   return (
     <>
       <HeaderIgd />
-      <div>
+      <div className=''>
         <div className='grid gap-2'>
           <div>
             <p className=' font-bold text-sm text-disabled '>Data Pasien</p>

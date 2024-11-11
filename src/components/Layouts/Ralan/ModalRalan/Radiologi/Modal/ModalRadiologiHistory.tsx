@@ -4,7 +4,7 @@
 import React, { forwardRef, useState, useEffect } from 'react'
 import Popup from 'reactjs-popup'
 import { PopupActions } from 'reactjs-popup/dist/types'
-import { api } from '../../../../services/api/config.api'
+import { api } from '../../../../../../services/api/config.api'
 import { ArrowPathIcon } from '@heroicons/react/24/solid'
 import Zoom from 'react-medium-image-zoom'
 import 'react-medium-image-zoom/dist/styles.css'
@@ -24,6 +24,8 @@ const ModalRadiologiHistory = forwardRef<PopupActions, ModalRadiologiHistoryProp
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
+    if (!nmrRawat) return
+
     const fetchData = async () => {
       try {
         const response = await api.get(`/api/v1/radiology-results?noRawat=${nmrRawat}`)

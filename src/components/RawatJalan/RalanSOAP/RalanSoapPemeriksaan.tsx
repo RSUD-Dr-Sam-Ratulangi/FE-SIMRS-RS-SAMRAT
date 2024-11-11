@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../../services/api/config.api'
 import { useParams } from 'react-router-dom'
-// import RiwayatSoap from './RiwayatSoap';
-import RiwayatSoapRalan from '../../Layouts/Riwayat/RiwayatSoap'
+import RiwayatSoapRalan from '../../Layouts/Ralan/Riwayat/RiwayatSoap'
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/solid'
 import InsertSoapRalan from './ComponentsSoapPemeriksaan/InsertSoapRalan'
 import HeaderRalan from '../../Navbar/HeaderDetailRalan'
-import RiwayatDiagnosa from '../../Layouts/Riwayat/RiwayatDiagnosa'
+import RiwayatDiagnosa from '../../Layouts/Ralan/Riwayat/RiwayatDiagnosa'
 
 type userData = {
   no_rkm_medis: string

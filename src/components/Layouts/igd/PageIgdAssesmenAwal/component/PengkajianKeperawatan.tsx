@@ -2,6 +2,7 @@ import { ClockIcon } from '@heroicons/react/24/solid'
 import img from '../../../../../assets/img/asawal.png'
 import React, { useEffect, useState } from 'react'
 import { InformasiAwalKeperawatan, StatusKehamilanAwalKeperawatan } from '../type/EnumAssesmenAwal'
+import RiwayatModalIgd from '../../RiwayatModal/RiwayatIgd'
 
 interface PengkajianKeperawatanProps {
   onValuesChangePengkajianKeperawatan: (
@@ -20,6 +21,7 @@ interface PengkajianKeperawatanProps {
 const PengkajianKeperawatan: React.FC<PengkajianKeperawatanProps> = ({
   onValuesChangePengkajianKeperawatan,
 }) => {
+  const [activeTab, setActiveTab] = useState<number>()
   const [informasi, setInformasi] = useState<string>('')
   const [keluhanUtama, setKeluhanUtama] = useState<string>('')
   const [rpd, setRpd] = useState<string>('')
@@ -29,6 +31,7 @@ const PengkajianKeperawatan: React.FC<PengkajianKeperawatanProps> = ({
   const [para, setPara] = useState<string>('')
   const [abortus, setAbortus] = useState<string>('')
   const [hpht, setHpht] = useState<string>('')
+  const [isPopupOpenModalRiwayat, setIsPopupOpenModalRiwayat] = useState(false)
 
   useEffect(() => {
     onValuesChangePengkajianKeperawatan(
@@ -54,6 +57,12 @@ const PengkajianKeperawatan: React.FC<PengkajianKeperawatanProps> = ({
     hpht,
     onValuesChangePengkajianKeperawatan,
   ])
+
+  const openPopupModal = () => {
+    setActiveTab(2)
+    setIsPopupOpenModalRiwayat(true)
+  }
+  const closePopupModal = () => setIsPopupOpenModalRiwayat(false)
 
   return (
     <>
@@ -230,7 +239,10 @@ const PengkajianKeperawatan: React.FC<PengkajianKeperawatanProps> = ({
           {/* BATAS IMAGE */}
           <div className='grid gap-3 mt-5'>
             <div className='flex justify-end'>
-              <button className='flex justify-center items-end font-semibold text-gray-500 border-2 text-base w-80 h-[50px] py-2 p-2 mt-[20px] bg-white rounded-xl hover:opacity-80'>
+              <button
+                onClick={openPopupModal}
+                className='flex justify-center items-end font-semibold text-gray-500 border-2 text-base w-80 h-[50px] py-2 p-2 mt-[20px] bg-white rounded-xl hover:opacity-80'
+              >
                 <p className='flex justify-center items-center'>
                   <ClockIcon className='mr-3' width={25} height={25} />
                   RIWAYAT PEMERIKSAAN PASIEN
@@ -241,6 +253,14 @@ const PengkajianKeperawatan: React.FC<PengkajianKeperawatanProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      <RiwayatModalIgd
+        activeTab={activeTab}
+        isOpen={isPopupOpenModalRiwayat}
+        onClose={closePopupModal}
+        noRawat={undefined}
+      />
     </>
   )
 }

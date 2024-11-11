@@ -216,7 +216,7 @@ const PemeriksaanFisikDokter: React.FC<PemeriksaanFisikDokterProps> = ({
             </div>
             <div className='grid'>
               <label className='label font-bold'>GCS</label>
-              <div className='flex gap-5'>
+              <div className='flex gap-7'>
                 <div>
                   <label className='label font-bold text-sm'>E :</label>
                   <input
@@ -255,148 +255,154 @@ const PemeriksaanFisikDokter: React.FC<PemeriksaanFisikDokterProps> = ({
                 </div>
               </div>
             </div>
-            <div className='flex gap-5'>
+            <div className='flex items-center gap-5'>
               <div>
-                <label className='label font-bold text-sm'>Kepala :</label>
-                <select
-                  className='select select-bordered w-56'
-                  onChange={(e) => setKepala(e.target.value)}
-                >
-                  <option disabled selected>
-                    Kepala
-                  </option>
-                  {Object.values(PemeriksaanKepala).map((kepala) => (
-                    <option key={kepala} value={kepala}>
-                      {kepala}
-                    </option>
-                  ))}
-                </select>
+                <div>
+                  <div className='flex gap-5'>
+                    <div>
+                      <label className='label font-bold text-sm'>Kepala :</label>
+                      <select
+                        className='select select-bordered w-56'
+                        onChange={(e) => setKepala(e.target.value)}
+                      >
+                        <option disabled selected>
+                          Kepala
+                        </option>
+                        {Object.values(PemeriksaanKepala).map((kepala) => (
+                          <option key={kepala} value={kepala}>
+                            {kepala}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className='label font-bold text-sm'>Mata :</label>
+                      <select
+                        className='select select-bordered w-56'
+                        onChange={(e) => setMata(e.target.value)}
+                      >
+                        <option disabled selected>
+                          Mata
+                        </option>
+                        {Object.values(PemeriksaanMata).map((mata) => (
+                          <option key={mata} value={mata}>
+                            {mata}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className='label font-bold text-sm'>Gigi & Mulut :</label>
+                      <select
+                        className='select select-bordered w-56'
+                        onChange={(e) => setGigi(e.target.value)}
+                      >
+                        <option disabled selected>
+                          Gigi & Mulut
+                        </option>
+                        {Object.values(PemeriksaanGigi).map((gigi) => (
+                          <option key={gigi} value={gigi}>
+                            {gigi}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className='label font-bold text-sm'>Leher :</label>
+                      <select
+                        className='select select-bordered w-56'
+                        onChange={(e) => setLeher(e.target.value)}
+                      >
+                        <option disabled selected>
+                          Leher
+                        </option>
+                        {Object.values(PemeriksaanLeher).map((leher) => (
+                          <option key={leher} value={leher}>
+                            {leher}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className='flex gap-5'>
+                    <div>
+                      <label className='label font-bold text-sm'>Thoraks :</label>
+                      <select
+                        className='select select-bordered w-56'
+                        onChange={(e) => setThoraks(e.target.value)}
+                      >
+                        <option disabled selected>
+                          Thoraks
+                        </option>
+                        {Object.values(PemeriksaanThoraks).map((thoraks) => (
+                          <option key={thoraks} value={thoraks}>
+                            {thoraks}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className='label font-bold text-sm'>Abdomen :</label>
+                      <select
+                        className='select select-bordered w-56'
+                        onChange={(e) => setAbdomen(e.target.value)}
+                      >
+                        <option disabled selected>
+                          Abdomen
+                        </option>
+                        {Object.values(PemeriksaanAbdomen).map((abdomen) => (
+                          <option key={abdomen} value={abdomen}>
+                            {abdomen}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className='label font-bold text-sm'>Genital & Anus :</label>
+                      <select
+                        className='select select-bordered w-56'
+                        onChange={(e) => setGenital(e.target.value)}
+                      >
+                        <option disabled selected>
+                          Genital/Anus
+                        </option>
+                        {Object.values(PemeriksaanGenital).map((genital) => (
+                          <option key={genital} value={genital}>
+                            {genital}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className='label font-bold text-sm'>Ekstremitas :</label>
+                      <select
+                        className='select select-bordered w-56'
+                        onChange={(e) => setEkstremitas(e.target.value)}
+                      >
+                        <option disabled selected>
+                          Ekstremitas
+                        </option>
+                        {Object.values(PemeriksaanEkstremitas).map((ekstremitas) => (
+                          <option key={ekstremitas} value={ekstremitas}>
+                            {ekstremitas}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className='label font-bold text-sm'>Mata :</label>
-                <select
-                  className='select select-bordered w-56'
-                  onChange={(e) => setMata(e.target.value)}
-                >
-                  <option disabled selected>
-                    Mata
-                  </option>
-                  {Object.values(PemeriksaanMata).map((mata) => (
-                    <option key={mata} value={mata}>
-                      {mata}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className='label font-bold text-sm'>Gigi & Mulut :</label>
-                <select
-                  className='select select-bordered w-56'
-                  onChange={(e) => setGigi(e.target.value)}
-                >
-                  <option disabled selected>
-                    Gigi & Mulut
-                  </option>
-                  {Object.values(PemeriksaanGigi).map((gigi) => (
-                    <option key={gigi} value={gigi}>
-                      {gigi}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className='label font-bold text-sm'>Leher :</label>
-                <select
-                  className='select select-bordered w-56'
-                  onChange={(e) => setLeher(e.target.value)}
-                >
-                  <option disabled selected>
-                    Leher
-                  </option>
-                  {Object.values(PemeriksaanLeher).map((leher) => (
-                    <option key={leher} value={leher}>
-                      {leher}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className='flex gap-5'>
-              <div>
-                <label className='label font-bold text-sm'>Thoraks :</label>
-                <select
-                  className='select select-bordered w-56'
-                  onChange={(e) => setThoraks(e.target.value)}
-                >
-                  <option disabled selected>
-                    Thoraks
-                  </option>
-                  {Object.values(PemeriksaanThoraks).map((thoraks) => (
-                    <option key={thoraks} value={thoraks}>
-                      {thoraks}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className='label font-bold text-sm'>Abdomen :</label>
-                <select
-                  className='select select-bordered w-56'
-                  onChange={(e) => setAbdomen(e.target.value)}
-                >
-                  <option disabled selected>
-                    Abdomen
-                  </option>
-                  {Object.values(PemeriksaanAbdomen).map((abdomen) => (
-                    <option key={abdomen} value={abdomen}>
-                      {abdomen}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className='label font-bold text-sm'>Genital & Anus :</label>
-                <select
-                  className='select select-bordered w-56'
-                  onChange={(e) => setGenital(e.target.value)}
-                >
-                  <option disabled selected>
-                    Genital/Anus
-                  </option>
-                  {Object.values(PemeriksaanGenital).map((genital) => (
-                    <option key={genital} value={genital}>
-                      {genital}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className='label font-bold text-sm'>Ekstremitas :</label>
-                <select
-                  className='select select-bordered w-56'
-                  onChange={(e) => setEkstremitas(e.target.value)}
-                >
-                  <option disabled selected>
-                    Ekstremitas
-                  </option>
-                  {Object.values(PemeriksaanEkstremitas).map((ekstremitas) => (
-                    <option key={ekstremitas} value={ekstremitas}>
-                      {ekstremitas}
-                    </option>
-                  ))}
-                </select>
+              <div className='w-full'>
+                <label className='text text-xl font-bold label'>Keterangan Fisik</label>
+                <textarea
+                  placeholder='keterangan fisik'
+                  onChange={(e) => setKetFisik(e.target.value)}
+                  value={ketFisik}
+                  className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
+                />
               </div>
             </div>
           </div>
-        </div>
-        <div className='w-full'>
-          <label className='text text-xl font-bold label'>Keterangan Fisik</label>
-          <textarea
-            placeholder='keterangan fisik'
-            onChange={(e) => setKetFisik(e.target.value)}
-            value={ketFisik}
-            className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
-          />
         </div>
       </div>
     </>

@@ -18,14 +18,12 @@ interface RiwayatModalIgd {
 
 const RiwayatModalIgd = forwardRef<PopupActions, RiwayatModalIgd>(
   ({ isOpen, onClose, activeTab, noRawat }, ref) => {
-    const [activeTabs, setActiveTabs] = useState<number>()
+    const [activeTabs, setActiveTabs] = useState<number>(activeTab)
 
+    // Sync local state with prop changes
     useEffect(() => {
-      activeTabs
-      noRawat
-    }, [activeTabs, noRawat])
-
-    console.log('igd no rawat', noRawat)
+      setActiveTabs(activeTab)
+    }, [activeTab])
 
     return (
       <Popup
@@ -52,72 +50,39 @@ const RiwayatModalIgd = forwardRef<PopupActions, RiwayatModalIgd>(
       >
         <div>
           <div className='flex justify-between items-center'>
-            <p>Riwayat Triase</p>
+            <p>Riwayat</p>
             <button onClick={onClose} className='btn bg-primary border'>
               Close
             </button>
           </div>
           <div className='grid items-center bg-white border rounded-lg mt-3 w-[800px] h-14'>
             <div role='tablist' className='tabs w-[800px]'>
-              <a
-                role='tab'
-                className={`tab ${activeTab === 1 ? 'tab-active text-primary font-bold' : ''}`}
-                onClick={() => setActiveTabs(1)}
-              >
-                Triase
-              </a>
-              <a
-                role='tab'
-                className={`tab ${activeTab === 2 ? 'tab-active text-primary font-bold' : ''}`}
-                onClick={() => setActiveTabs(2)}
-              >
-                Assesmen Awal
-              </a>
-              <a
-                role='tab'
-                className={`tab ${activeTab === 3 ? 'tab-active text-primary font-bold' : ''}`}
-                onClick={() => setActiveTabs(3)}
-              >
-                Assesmen Dokter
-              </a>
-              <a
-                role='tab'
-                className={`tab ${activeTab === 4 ? 'tab-active text-primary font-bold' : ''}`}
-                onClick={() => setActiveTabs(4)}
-              >
-                CPPT
-              </a>
-              <a
-                role='tab'
-                className={`tab ${activeTab === 5 ? 'tab-active text-primary font-bold' : ''}`}
-                onClick={() => setActiveTabs(5)}
-              >
-                Penunjang
-              </a>
-              <a
-                role='tab'
-                className={`tab ${activeTab === 6 ? 'tab-active text-primary font-bold' : ''}`}
-                onClick={() => setActiveTabs(6)}
-              >
-                Layanan & Obat
-              </a>
-              <a
-                role='tab'
-                className={`tab ${activeTab === 7 ? 'tab-active text-primary font-bold' : ''}`}
-                onClick={() => setActiveTabs(7)}
-              >
-                Tindakan
-              </a>
+              {[1, 2, 3, 4, 5, 6, 7].map((tab) => (
+                <a
+                  key={tab}
+                  role='tab'
+                  className={`tab ${activeTabs === tab ? 'tab-active text-primary font-bold' : ''}`}
+                  onClick={() => setActiveTabs(tab)}
+                >
+                  {tab === 1 && 'Triase'}
+                  {tab === 2 && 'Assesmen Awal'}
+                  {tab === 3 && 'Assesmen Dokter'}
+                  {tab === 4 && 'CPPT'}
+                  {tab === 5 && 'Penunjang'}
+                  {tab === 6 && 'Layanan & Obat'}
+                  {tab === 7 && 'Tindakan'}
+                </a>
+              ))}
             </div>
           </div>
           <div className='mt-4'>
-            {activeTab === 1 && <RiwayatTriaseContent />}
-            {activeTab === 2 && <RiwayatAssesmenAwal />}
-            {activeTab === 3 && <RiwayatAssesmenDokter />}
-            {activeTab === 4 && <RiwayatCppt noRawat={noRawat} />}
-            {activeTab === 5 && <RiwayatPenunjang />}
-            {activeTab === 6 && <RiwayatLayananObat />}
-            {activeTab === 7 && <RiwayatTindakan />}
+            {activeTabs === 1 && <RiwayatTriaseContent />}
+            {activeTabs === 2 && <RiwayatAssesmenAwal />}
+            {activeTabs === 3 && <RiwayatAssesmenDokter modalOpen={isOpen} />}
+            {activeTabs === 4 && <RiwayatCppt noRawat={noRawat} />}
+            {activeTabs === 5 && <RiwayatPenunjang />}
+            {activeTabs === 6 && <RiwayatLayananObat />}
+            {activeTabs === 7 && <RiwayatTindakan />}
           </div>
         </div>
       </Popup>

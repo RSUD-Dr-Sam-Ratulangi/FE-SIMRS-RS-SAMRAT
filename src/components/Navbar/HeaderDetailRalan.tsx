@@ -14,6 +14,10 @@ const HeaderRalan: React.FC = () => {
       link: `/rawat-jalan/soap-pemeriksaan/${id}`,
     },
     {
+      name: 'Resume',
+      link: `/rawat-jalan/resume/${id}`,
+    },
+    {
       name: 'Elektronik Rekam Medis',
       link: `/rawat-jalan/rme/${id}`,
     },

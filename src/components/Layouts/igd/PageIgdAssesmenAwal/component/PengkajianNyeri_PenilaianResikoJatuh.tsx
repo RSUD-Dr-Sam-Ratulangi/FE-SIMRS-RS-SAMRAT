@@ -416,28 +416,56 @@ const PengkajianNyeriPenilaianResikoJatuh: React.FC<PengkajianNyeriPenilaianResi
                 </div>
               </div>
             </div>
-            <div className='border rounded-2xl p-2'>
+          </div>
+          <div className='border rounded-2xl p-2 grid mt-3 gap-3 w-fit'>
+            <div className='grid gap-3'>
               <div>
                 <div className='flex items-center gap-3'>
                   <div className='p-2'>
                     <div className='grid gap-2'>
                       <div className='flex gap-5'>
                         <div>
-                          <label className='label font-bold text-sm'>Masalah Keperawatan</label>
-                          <select disabled className='select select-bordered w-56'>
+                          <label className='label font-bold text-sm'>Hasil</label>
+                          <select
+                            className='select select-bordered w-56'
+                            onChange={(e) => setHasil(e.target.value)}
+                          >
                             <option disabled selected>
-                              Autoanamnesa
+                              Hasil
                             </option>
-                            <option>Lorem</option>
-                            <option>Lorem</option>
+                            {Object.values(HasilKeperawatan).map((hasil) => (
+                              <option key={hasil} value={hasil}>
+                                {hasil}
+                              </option>
+                            ))}
                           </select>
                         </div>
                         <div>
-                          <label className='label font-bold text-sm'>Rencana Keperawatan</label>
-                          <textarea
-                            className='textarea textarea-bordered'
-                            value={rencana}
-                            onChange={(e) => setRencana(e.target.value)}
+                          <label className='label font-bold text-sm'>
+                            Dilaporkan Kepada Dokter ?
+                          </label>
+                          <select
+                            className='select select-bordered w-56'
+                            onChange={(e) => setLapor(e.target.value)}
+                          >
+                            <option disabled selected>
+                              Autoanamnesa
+                            </option>
+                            {Object.values(LaporKeperawatan).map((lapor) => (
+                              <option key={lapor} value={lapor}>
+                                {lapor}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className='label font-bold text-sm'>Keterangan Dilaporkan</label>
+                          <input
+                            value={ketLapor}
+                            onChange={(e) => setKetLapor(e.target.value)}
+                            type='text'
+                            placeholder='-'
+                            className='input input-bordered text-sm rounded-2xl border-gray-300 w-full'
                           />
                         </div>
                       </div>
@@ -448,57 +476,29 @@ const PengkajianNyeriPenilaianResikoJatuh: React.FC<PengkajianNyeriPenilaianResi
             </div>
           </div>
         </div>
-        <div className='border rounded-2xl p-2 grid mt-3 gap-3 w-fit'>
-          <div className='grid gap-3'>
-            <div>
-              <div className='flex items-center gap-3'>
-                <div className='p-2'>
-                  <div className='grid gap-2'>
-                    <div className='flex gap-5'>
-                      <div>
-                        <label className='label font-bold text-sm'>Hasil</label>
-                        <select
-                          className='select select-bordered w-56'
-                          onChange={(e) => setHasil(e.target.value)}
-                        >
-                          <option disabled selected>
-                            Hasil
-                          </option>
-                          {Object.values(HasilKeperawatan).map((hasil) => (
-                            <option key={hasil} value={hasil}>
-                              {hasil}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className='label font-bold text-sm'>
-                          Dilaporkan Kepada Dokter ?
-                        </label>
-                        <select
-                          className='select select-bordered w-56'
-                          onChange={(e) => setLapor(e.target.value)}
-                        >
-                          <option disabled selected>
-                            Autoanamnesa
-                          </option>
-                          {Object.values(LaporKeperawatan).map((lapor) => (
-                            <option key={lapor} value={lapor}>
-                              {lapor}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className='label font-bold text-sm'>Keterangan Dilaporkan</label>
-                        <input
-                          value={ketLapor}
-                          onChange={(e) => setKetLapor(e.target.value)}
-                          type='text'
-                          placeholder='-'
-                          className='input input-bordered text-sm rounded-2xl border-gray-300 w-full'
-                        />
-                      </div>
+        <div className='border rounded-2xl p-2'>
+          <div>
+            <div className='flex items-center gap-3'>
+              <div className='p-2'>
+                <div className='grid gap-2'>
+                  <div className='flex gap-5'>
+                    <div>
+                      <label className='label font-bold text-sm'>Masalah Keperawatan</label>
+                      <select disabled className='select select-bordered w-56'>
+                        <option disabled selected>
+                          Autoanamnesa
+                        </option>
+                        <option>Lorem</option>
+                        <option>Lorem</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className='label font-bold text-sm'>Rencana Keperawatan</label>
+                      <textarea
+                        className='textarea textarea-bordered'
+                        value={rencana}
+                        onChange={(e) => setRencana(e.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
