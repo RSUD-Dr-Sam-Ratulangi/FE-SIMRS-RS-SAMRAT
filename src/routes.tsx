@@ -27,6 +27,7 @@ import PageIgdSelesai from './components/Layouts/igd/PageIgdSelesai/PageIgdSeles
 import PageIgdTriase from './components/Layouts/igd/PageIgdTriase/PageIgdTriase'
 import PageIgdIcd from './components/Layouts/igd/PageIgdIcd/PageIgdIcd'
 import PageRalanRME from './components/Layouts/Ralan/PageRalanRME/PageRalanRME'
+import PageRalanAssesmenAwal from './components/Layouts/Ralan/PageRalanAssesmenAwal/PageAssesmenAwal'
 
 export const ROUTES = {
   HOME: '/',
@@ -47,6 +48,7 @@ export const ROUTES = {
   PAGE_RANAP_BERKAS_DIGITAL: '/rawat-inap/berkas-digital/:id',
   PAGE_RALAN_RME: '/rawat-jalan/rme/:id',
   PAGE_RALAN_RESUME: '/rawat-jalan/resume/:id',
+  PAGE_RALAN_ASSESMEN_AWAL: '/rawat-jalan/awal-keperawatan/:id',
   PAGE_SOAP_RALAN: '/rawat-jalan/soap-pemeriksaan/:id',
   PAGE_SOAP_IGD: '/pasien-igd/soap-pemeriksaan/:id',
   PAGE_IGD_ASSESSMEN_AWAL: '/pasien-igd/assesmen-awal/:id',
@@ -81,6 +83,7 @@ export const ROUTES_NAME = {
   [ROUTES.PAGE_RANAP_BERKAS_DIGITAL]: 'Ranap Berkas Digital',
   [ROUTES.PAGE_RALAN_RME]: 'Ralan RME',
   [ROUTES.PAGE_RALAN_RESUME]: 'Ralan Resume',
+  [ROUTES.PAGE_RALAN_ASSESMEN_AWAL]: 'Ralan Assesmen Awal',
   [ROUTES.PAGE_SOAP_RALAN]: 'Ralan Soap & Pemeriksaan',
   [ROUTES.PAGE_RALAN_LAYANAN_OBAT]: 'Ralan Layanan & Obat',
   [ROUTES.PAGE_RALAN_LAYANAN_OBAT]: 'Ralan Layanan & Obat',
@@ -157,6 +160,14 @@ export const routerList = [
       {
         path: ROUTES.PAGE_RALAN_RME,
         element: <PageRalanRME />,
+      },
+      {
+        path: ROUTES.PAGE_RALAN_RESUME,
+        element: <PageRalanInsertResume />,
+      },
+      {
+        path: ROUTES.PAGE_RALAN_ASSESMEN_AWAL,
+        element: <PageRalanAssesmenAwal />,
       },
       {
         path: ROUTES.PAGE_RALAN_RESUME,

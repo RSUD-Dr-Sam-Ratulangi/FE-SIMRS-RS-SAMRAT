@@ -245,201 +245,201 @@ export default function PageRawatJalan() {
       ),
       sortable: true,
     },
-    {
-      name: 'CHECKLIST RM',
-      selector: (row: DataItem) => {
-        const [isTrueSoap, setIsTrueSoap] = useState<boolean | null>(null)
-        const [isTrueLab, setIsTrueLab] = useState<boolean | null>(null)
-        const [isTrueRad, setIsTrueRad] = useState<boolean | null>(null)
-        const [isTrueFarmasi, setIsTrueFarmasi] = useState<boolean | null>(null)
-        const [isTrueIcd9, setIsTrueIcd9] = useState<boolean | null>(null)
-        const [isTrueDiagnosa, setIsTrueDiagnosa] = useState<boolean | null>(null)
-        const [isTrueResume, setIsTrueResume] = useState<boolean | null>(null)
-        useEffect(() => {
-          const fetchData = async () => {
-            try {
-              // Fetch SOAP data
-              try {
-                const responseSoap = await api.get(
-                  `/api/v1/RiwayatSoapByNoRawat?noRkmMedis=${row.no_rkm_medis}&noRawat=${row.no_rawat}`,
-                )
-                const dataSoap = responseSoap.data
-                console.log('SOAP Response:', dataSoap)
+    // {
+    //   name: 'CHECKLIST RM',
+    //   selector: (row: DataItem) => {
+    //     const [isTrueSoap, setIsTrueSoap] = useState<boolean | null>(null)
+    //     const [isTrueLab, setIsTrueLab] = useState<boolean | null>(null)
+    //     const [isTrueRad, setIsTrueRad] = useState<boolean | null>(null)
+    //     const [isTrueFarmasi, setIsTrueFarmasi] = useState<boolean | null>(null)
+    //     const [isTrueIcd9, setIsTrueIcd9] = useState<boolean | null>(null)
+    //     const [isTrueDiagnosa, setIsTrueDiagnosa] = useState<boolean | null>(null)
+    //     const [isTrueResume, setIsTrueResume] = useState<boolean | null>(null)
+    //     useEffect(() => {
+    //       const fetchData = async () => {
+    //         try {
+    //           // Fetch SOAP data
+    //           try {
+    //             const responseSoap = await api.get(
+    //               `/api/v1/RiwayatSoapByNoRawat?noRkmMedis=${row.no_rkm_medis}&noRawat=${row.no_rawat}`,
+    //             )
+    //             const dataSoap = responseSoap.data
+    //             console.log('SOAP Response:', dataSoap)
 
-                if (dataSoap.length > 0) {
-                  setIsTrueSoap(true)
-                } else {
-                  setIsTrueSoap(false)
-                }
-              } catch (soapError) {
-                setIsTrueSoap(false)
-              }
+    //             if (dataSoap.length > 0) {
+    //               setIsTrueSoap(true)
+    //             } else {
+    //               setIsTrueSoap(false)
+    //             }
+    //           } catch (soapError) {
+    //             setIsTrueSoap(false)
+    //           }
 
-              // Fetch Lab data
-              try {
-                const responseLab = await api.get(
-                  `/api/v1/checkPermintaanLab?noRawat=${row.no_rawat}`,
-                )
-                const dataLab = responseLab.data
+    //           // Fetch Lab data
+    //           try {
+    //             const responseLab = await api.get(
+    //               `/api/v1/checkPermintaanLab?noRawat=${row.no_rawat}`,
+    //             )
+    //             const dataLab = responseLab.data
 
-                if (dataLab === 'no_rawat exists in permintaan_lab table') {
-                  setIsTrueLab(true)
-                } else {
-                  setIsTrueLab(false)
-                }
-              } catch (labError) {
-                setIsTrueLab(false)
-              }
+    //             if (dataLab === 'no_rawat exists in permintaan_lab table') {
+    //               setIsTrueLab(true)
+    //             } else {
+    //               setIsTrueLab(false)
+    //             }
+    //           } catch (labError) {
+    //             setIsTrueLab(false)
+    //           }
 
-              // Fetch Radiologi data
-              try {
-                const responseRad = await api.get(
-                  `/api/v1/radiology-results?noRawat=${row.no_rawat}`,
-                )
-                const dataRad = responseRad.data
+    //           // Fetch Radiologi data
+    //           try {
+    //             const responseRad = await api.get(
+    //               `/api/v1/radiology-results?noRawat=${row.no_rawat}`,
+    //             )
+    //             const dataRad = responseRad.data
 
-                if (Object.keys(dataRad).length > 0) {
-                  setIsTrueRad(true)
-                } else {
-                  setIsTrueRad(false)
-                }
-              } catch (radError) {
-                setIsTrueRad(false)
-              }
+    //             if (Object.keys(dataRad).length > 0) {
+    //               setIsTrueRad(true)
+    //             } else {
+    //               setIsTrueRad(false)
+    //             }
+    //           } catch (radError) {
+    //             setIsTrueRad(false)
+    //           }
 
-              // Fetch Farmasi data
-              try {
-                const responseFarmasi = await api.get(
-                  `/api/v1/getPrescriptionNumbers?noRkmMedis=${row.no_rkm_medis}&noRawat=${row.no_rawat}`,
-                )
-                const dataFarmasi = responseFarmasi.data
+    //           // Fetch Farmasi data
+    //           try {
+    //             const responseFarmasi = await api.get(
+    //               `/api/v1/getPrescriptionNumbers?noRkmMedis=${row.no_rkm_medis}&noRawat=${row.no_rawat}`,
+    //             )
+    //             const dataFarmasi = responseFarmasi.data
 
-                if (dataFarmasi.length > 0) {
-                  setIsTrueFarmasi(true)
-                } else {
-                  setIsTrueFarmasi(false)
-                }
-              } catch (farmasiError) {
-                setIsTrueFarmasi(false)
-              }
+    //             if (dataFarmasi.length > 0) {
+    //               setIsTrueFarmasi(true)
+    //             } else {
+    //               setIsTrueFarmasi(false)
+    //             }
+    //           } catch (farmasiError) {
+    //             setIsTrueFarmasi(false)
+    //           }
 
-              // Fetch icd9/prosedur data
-              try {
-                const responseProsedur = await api.get(
-                  `/api/v1/getProsedurByNoRawat?noRawat=${row.no_rawat}`,
-                )
-                const dataProsedur = responseProsedur.data
+    //           // Fetch icd9/prosedur data
+    //           try {
+    //             const responseProsedur = await api.get(
+    //               `/api/v1/getProsedurByNoRawat?noRawat=${row.no_rawat}`,
+    //             )
+    //             const dataProsedur = responseProsedur.data
 
-                if (dataProsedur.length > 0) {
-                  setIsTrueIcd9(true)
-                } else {
-                  setIsTrueIcd9(false)
-                }
-              } catch (farmasiError) {
-                setIsTrueIcd9(false)
-              }
+    //             if (dataProsedur.length > 0) {
+    //               setIsTrueIcd9(true)
+    //             } else {
+    //               setIsTrueIcd9(false)
+    //             }
+    //           } catch (farmasiError) {
+    //             setIsTrueIcd9(false)
+    //           }
 
-              // Fetch diagnosa data
-              try {
-                const responseDiagnosa = await api.get(
-                  `/api/v1/getDiagnosaPasien?noRawat=${row.no_rawat}`,
-                )
-                const dataDiganosa = responseDiagnosa.data
+    //           // Fetch diagnosa data
+    //           try {
+    //             const responseDiagnosa = await api.get(
+    //               `/api/v1/getDiagnosaPasien?noRawat=${row.no_rawat}`,
+    //             )
+    //             const dataDiganosa = responseDiagnosa.data
 
-                if (dataDiganosa.length > 0) {
-                  setIsTrueDiagnosa(true)
-                } else {
-                  setIsTrueDiagnosa(false)
-                }
-              } catch (farmasiError) {
-                setIsTrueDiagnosa(false)
-              }
+    //             if (dataDiganosa.length > 0) {
+    //               setIsTrueDiagnosa(true)
+    //             } else {
+    //               setIsTrueDiagnosa(false)
+    //             }
+    //           } catch (farmasiError) {
+    //             setIsTrueDiagnosa(false)
+    //           }
 
-              // Fetch resume data
-              try {
-                const responseResume = await api.get(
-                  `/api/v1/getDiagnosaPasien?noRawat=${row.no_rawat}`,
-                )
-                const dataResume = responseResume.data
+    //           // Fetch resume data
+    //           try {
+    //             const responseResume = await api.get(
+    //               `/api/v1/getDiagnosaPasien?noRawat=${row.no_rawat}`,
+    //             )
+    //             const dataResume = responseResume.data
 
-                if (dataResume.length > 0) {
-                  setIsTrueResume(true)
-                } else {
-                  setIsTrueResume(false)
-                }
-              } catch (farmasiError) {
-                setIsTrueResume(false)
-              }
-            } catch (err) {
-              console.log('General error during fetch process:', err)
-            }
-          }
+    //             if (dataResume.length > 0) {
+    //               setIsTrueResume(true)
+    //             } else {
+    //               setIsTrueResume(false)
+    //             }
+    //           } catch (farmasiError) {
+    //             setIsTrueResume(false)
+    //           }
+    //         } catch (err) {
+    //           console.log('General error during fetch process:', err)
+    //         }
+    //       }
 
-          fetchData()
-        }, [row.no_rkm_medis, row.no_rawat])
+    //       fetchData()
+    //     }, [row.no_rkm_medis, row.no_rawat])
 
-        if (isTrueSoap === null) {
-          return <div>Loading...</div>
-        }
+    //     if (isTrueSoap === null) {
+    //       return <div>Loading...</div>
+    //     }
 
-        return (
-          <div className='grid items-center p-2'>
-            <div className='flex space-x-4'>
-              <div>
-                {isTrueSoap ? (
-                  <Icon icon='medical-icon:medical-records' fontSize={26} color='#0bf000' />
-                ) : (
-                  <Icon icon='medical-icon:medical-records' fontSize={26} color='#000000' />
-                )}
-              </div>
-              <div>
-                {isTrueLab ? (
-                  <Icon icon='medical-icon:laboratory' fontSize={26} color='#0bf000' />
-                ) : (
-                  <Icon icon='medical-icon:laboratory' fontSize={26} color='#000000' />
-                )}
-              </div>
-              <div>
-                {isTrueRad ? (
-                  <Icon icon='medical-icon:i-radiology' fontSize={26} color='#0bf000' />
-                ) : (
-                  <Icon icon='medical-icon:i-radiology' fontSize={26} color='#000000' />
-                )}
-              </div>
-            </div>
-            <div className='flex space-x-4'>
-              {isTrueFarmasi ? (
-                <Icon icon='mdi:drugs' fontSize={26} color='#0bf000' />
-              ) : (
-                <Icon icon='mdi:drugs' fontSize={26} color='#000000' />
-              )}
-              <div>
-                {isTrueIcd9 ? (
-                  <Icon icon='medical-icon:i-physical-therapy' fontSize={26} color='#0bf000' />
-                ) : (
-                  <Icon icon='medical-icon:i-physical-therapy' fontSize={26} color='#000000' />
-                )}
-              </div>
-              <div>
-                {isTrueDiagnosa ? (
-                  <Icon icon='medical-icon:i-pathology' fontSize={26} color='#0bf000' />
-                ) : (
-                  <Icon icon='medical-icon:i-pathology' fontSize={26} color='#000000' />
-                )}
-              </div>
-              <div>
-                {isTrueResume ? (
-                  <Icon icon='medical-icon:i-administration' fontSize={26} color='#0bf000' />
-                ) : (
-                  <Icon icon='medical-icon:i-administration' fontSize={26} color='#000000' />
-                )}
-              </div>
-            </div>
-          </div>
-        )
-      },
-      sortable: true,
-    },
+    //     return (
+    //       <div className='grid items-center p-2'>
+    //         <div className='flex space-x-4'>
+    //           <div>
+    //             {isTrueSoap ? (
+    //               <Icon icon='medical-icon:medical-records' fontSize={26} color='#0bf000' />
+    //             ) : (
+    //               <Icon icon='medical-icon:medical-records' fontSize={26} color='#000000' />
+    //             )}
+    //           </div>
+    //           <div>
+    //             {isTrueLab ? (
+    //               <Icon icon='medical-icon:laboratory' fontSize={26} color='#0bf000' />
+    //             ) : (
+    //               <Icon icon='medical-icon:laboratory' fontSize={26} color='#000000' />
+    //             )}
+    //           </div>
+    //           <div>
+    //             {isTrueRad ? (
+    //               <Icon icon='medical-icon:i-radiology' fontSize={26} color='#0bf000' />
+    //             ) : (
+    //               <Icon icon='medical-icon:i-radiology' fontSize={26} color='#000000' />
+    //             )}
+    //           </div>
+    //         </div>
+    //         <div className='flex space-x-4'>
+    //           {isTrueFarmasi ? (
+    //             <Icon icon='mdi:drugs' fontSize={26} color='#0bf000' />
+    //           ) : (
+    //             <Icon icon='mdi:drugs' fontSize={26} color='#000000' />
+    //           )}
+    //           <div>
+    //             {isTrueIcd9 ? (
+    //               <Icon icon='medical-icon:i-physical-therapy' fontSize={26} color='#0bf000' />
+    //             ) : (
+    //               <Icon icon='medical-icon:i-physical-therapy' fontSize={26} color='#000000' />
+    //             )}
+    //           </div>
+    //           <div>
+    //             {isTrueDiagnosa ? (
+    //               <Icon icon='medical-icon:i-pathology' fontSize={26} color='#0bf000' />
+    //             ) : (
+    //               <Icon icon='medical-icon:i-pathology' fontSize={26} color='#000000' />
+    //             )}
+    //           </div>
+    //           <div>
+    //             {isTrueResume ? (
+    //               <Icon icon='medical-icon:i-administration' fontSize={26} color='#0bf000' />
+    //             ) : (
+    //               <Icon icon='medical-icon:i-administration' fontSize={26} color='#000000' />
+    //             )}
+    //           </div>
+    //         </div>
+    //       </div>
+    //     )
+    //   },
+    //   sortable: true,
+    // },
   ]
 
   if (

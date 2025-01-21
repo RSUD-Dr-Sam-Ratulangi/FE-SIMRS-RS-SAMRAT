@@ -205,7 +205,6 @@ const PageIgdAssesmenAwal: React.FC = () => {
     setAktifitas(aktifitas)
     setAlatBantu(alatBantu)
     setKetBantu(ketBantu)
-
   }
 
   const handleValuesChangePengkajianNyeriPenilaianResikoJatuh = (
