@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@heroicons/react": "^2.0.18",
+    "@newrelic/browser-agent": "^1.278.3",
     "@reduxjs/toolkit": "^2.1.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
