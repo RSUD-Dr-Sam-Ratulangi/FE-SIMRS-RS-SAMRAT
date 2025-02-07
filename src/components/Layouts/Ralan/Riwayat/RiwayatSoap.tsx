@@ -1,8 +1,9 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useState, useRef } from 'react'
 import { api } from '../../../../services/api/config.api'
 import { errorCopyResep, spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
 import { useParams } from 'react-router-dom'
-import { ClockIcon, CalendarDaysIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
+import { ClockIcon, CalendarDaysIcon } from '@heroicons/react/24/solid'
 import { ToastContainer } from 'react-toastify'
 import ModalLaborHistory from '../../Ralan/ModalRalan/Laboratorium/Modal/ModalLaborHistory'
 import { PopupActions } from 'reactjs-popup/dist/types'
@@ -92,6 +93,9 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   const [noRawatExistRadiologi, setNoRawatExistRadiologi] = useState(null)
   const [progress, setProgress] = useState(0)
   const [noData, setNoData] = useState(false)
+  const [startDate, setStartDate] = useState<string>('')
+  const [endDate, setEndDate] = useState<string>('')
+
   const { id } = useParams()
   const tokenValue = localStorage.getItem('token')
   const Kd = JSON.parse(tokenValue)
@@ -103,33 +107,23 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
       try {
         const response = await api.get(`/api/v1/riwayatsoap?noRkmMedis=${id}`)
         const data: ApiData = await response.data
-        const noRawatList = data.map((item) => item.no_rawat)
 
-        const dataSoap = response.data
+        let filteredData = data
 
-        console.log('sub Tab', checkSubTab)
+        if (startDate && endDate) {
+          filteredData = data.filter((item) => {
+            const itemDate = new Date(item.tgl_perawatan) // Sesuaikan dengan format data API
+            const start = new Date(startDate)
+            const end = new Date(endDate)
+            return itemDate >= start && itemDate <= end
+          })
+        }
 
-        // ACTIVE WHEN UPDATE ENDPOINT
-        // const filteredData = data.filter((item) => {
-        //   if (checkSubTab === 3) {
-        //     return (
-        //       item.kd_poli.includes('IGD') &&
-        //       (item.status_lanjut === 'Ralan' || item.status_lanjut === 'Ranap')
-        //     )
-        //   } else {
-        //     return checkSubTab === 1
-        //       ? item.status_lanjut === 'Ralan'
-        //       : item.status_lanjut === 'Ranap'
-        //   }
-        // })
+        console.log('sub tab', checkSubTab)
 
-        // if (filteredData.length === 0) {
-        //   setNoData(true)
-        // } else {
-        //   setNoData(false)
-        // }
+        const noRawatList = filteredData.map((item) => item.no_rawat)
 
-        if (dataSoap.length === 0) {
+        if (filteredData.length === 0) {
           setNoData(true)
         } else {
           setNoData(false)
@@ -146,7 +140,6 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
         }
 
         const results = await Promise.all(noRawatList.map(checkNoRawatLab))
-
         setNoRawatExistLab(results)
 
         // Radiologi Check no Rawat
@@ -162,18 +155,17 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
         }
 
         const resultRadiologi = await Promise.all(noRawatList.map(checkNoRawatRadiologi))
-
         setNoRawatExistRadiologi(resultRadiologi)
 
         const newData = await Promise.all(
-          dataSoap.map(async (riwayat) => {
+          filteredData.map(async (riwayat) => {
             const nmPoliResponse = await api.get(`/api/v1/poli?kode=${riwayat.kd_poli}`)
             const nmPoliData = nmPoliResponse.data[0].nm_poli
 
-            // eslint-disable-next-line camelcase
             return { ...riwayat, nm_poli: nmPoliData }
           }),
         )
+
         setRiwayatSoap(newData)
       } catch (err) {
         console.log(err)
@@ -183,7 +175,76 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
     }
 
     fetchRiwayatSoap()
-  }, [])
+  }, [startDate, endDate])
+
+  // useEffect(() => {
+  //   const fetchRiwayatSoap = async () => {
+  //     setIsLoading(true)
+  //     try {
+  //       const response = await api.get(`/api/v1/riwayatsoap?noRkmMedis=${id}`)
+  //       const data: ApiData = await response.data
+
+  //       const noRawatList = data.map((item) => item.no_rawat)
+
+  //       const dataSoap = response.data
+
+  //       console.log('sub Tab', checkSubTab)
+
+  //       if (dataSoap.length === 0) {
+  //         setNoData(true)
+  //       } else {
+  //         setNoData(false)
+  //       }
+
+  //       const checkNoRawatLab = async (noRawat: any) => {
+  //         try {
+  //           const checkResponse = await api.get(`/api/v1/checkPermintaanLab?noRawat=${noRawat}`)
+  //           const checkData = checkResponse.data
+  //           return checkData === 'no_rawat exists in permintaan_lab table'
+  //         } catch (error) {
+  //           return false
+  //         }
+  //       }
+
+  //       const results = await Promise.all(noRawatList.map(checkNoRawatLab))
+
+  //       setNoRawatExistLab(results)
+
+  //       // Radiologi Check no Rawat
+  //       const checkNoRawatRadiologi = async (noRawat: any) => {
+  //         try {
+  //           const checkResponse = await api.get(`/api/v1/check-no-rawat?noRawat=${noRawat}`)
+  //           const checkData = checkResponse.data
+  //           return checkData.exists
+  //         } catch (error) {
+  //           console.error('Error checking no_rawat:', error)
+  //           return false
+  //         }
+  //       }
+
+  //       const resultRadiologi = await Promise.all(noRawatList.map(checkNoRawatRadiologi))
+
+  //       setNoRawatExistRadiologi(resultRadiologi)
+
+  //       const newData = await Promise.all(
+  //         dataSoap.map(async (riwayat) => {
+  //           const nmPoliResponse = await api.get(`/api/v1/poli?kode=${riwayat.kd_poli}`)
+  //           const nmPoliData = nmPoliResponse.data[0].nm_poli
+
+  //           // eslint-disable-next-line camelcase
+  //           return { ...riwayat, nm_poli: nmPoliData }
+  //         }),
+  //       )
+  //       setRiwayatSoap(newData)
+  //     } catch (err) {
+  //       console.log(err)
+  //     } finally {
+  //       setIsLoading(false)
+  //     }
+  //   }
+
+  //   fetchRiwayatSoap()
+  // }, [])
 
   // Get Nama Dokter ?
   useEffect(() => {
@@ -328,19 +389,62 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
       ></LoadingBar>
       {isLoading ? (
         <>
-          <p className='flex justify-center items-center'>
-            <ArrowPathIcon width={40} height={40} className='animate-spin' />
-            <span className='ml-3 font-bold'>MEMUAT DATA SOAP</span>
-          </p>
+          <div className='flex w-full flex-col gap-4 p-3'>
+            <div className='skeleton h-32 w-full'></div>
+            <div className='skeleton h-4 w-full'></div>
+            <div className='skeleton h-4 w-full'></div>
+            <div className='skeleton h-4 w-full'></div>
+            <div className='skeleton h-32 w-full'></div>
+            <div className='skeleton h-32 w-full'></div>
+            <div className='skeleton h-32 w-full'></div>
+          </div>
         </>
       ) : (
         <>
           {noData ? (
             <>
-              <p>No Data Avalaible.</p>
+              <div>
+                <label className='label'>Filter tanggal : </label>
+                <div className='flex gap-3 items-center'>
+                  <input
+                    type='date'
+                    className='input input-sm border-primary text-sm'
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                  <span>&gt;</span>
+                  <input
+                    type='date'
+                    className='input input-sm border-primary text-sm'
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
+              </div>
+              <p className='text-center mt-5'>No Data Avalaible.</p>
             </>
           ) : (
-            <>
+            <div className=''>
+              <div className=''>
+                <div>
+                  <label className='label'>Filter tanggal : </label>
+                  <div className='flex gap-3 items-center'>
+                    <input
+                      type='date'
+                      className='input input-sm border-primary text-sm'
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                    <span>&gt;</span>
+                    <input
+                      type='date'
+                      className='input input-sm border-primary text-sm'
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
               {riwayatSoap.map((riwayat, index) => (
                 <div
                   key={index}
@@ -547,7 +651,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                   />
                 </div>
               ))}
-            </>
+            </div>
           )}
         </>
       )}

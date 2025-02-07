@@ -13,7 +13,7 @@ export default function PageLogin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
-  const apiUrl =  'http://rsudsamrat.site:8901/api/v1/login'
+  const apiUrl = 'http://rsudsamrat.site:8901/api/v1/login'
 
   const loginUser = async () => {
     try {
@@ -137,9 +137,11 @@ export default function PageLogin() {
                 Login <ArrowRightIcon className='w-5' />
               </span>
             </button>
-            <p className='grow-0 text-center absolute bottom-5 self-center text-[15px] text-slate-400'>
-              © 2023 UPTIRS RSUD Sam Ratulangi Tondano
-            </p>
+            <span className='grid text-center absolute bottom-1 self-center text-[15px] text-slate-400 mb-2'>
+              <span>UPTIRS RSUD Sam Ratulangi Tondano</span>
+              <span className='text-xs'>Developed with contributions from IT team</span>
+              <span className='text-xs'>DR.RSUD SAMRATULANGI TONDANO</span>
+            </span>
           </div>
         </div>
       </div>

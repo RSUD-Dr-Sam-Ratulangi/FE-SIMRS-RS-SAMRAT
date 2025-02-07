@@ -28,6 +28,7 @@ import PageIgdTriase from './components/Layouts/igd/PageIgdTriase/PageIgdTriase'
 import PageIgdIcd from './components/Layouts/igd/PageIgdIcd/PageIgdIcd'
 import PageRalanRME from './components/Layouts/Ralan/PageRalanRME/PageRalanRME'
 import PageRalanAssesmenAwal from './components/Layouts/Ralan/PageRalanAssesmenAwal/PageAssesmenAwal'
+import DiagnosaSearchList from './utils/DiagnosaListSearch'
 
 export const ROUTES = {
   HOME: '/',
@@ -62,6 +63,9 @@ export const ROUTES = {
   PAGE_RALAN_LAYANAN_OBAT: '/rawat-jalan/layanan-obat/:id',
   PAGE_RALAN_BERKAS_DIGITAL: '/rawat-jalan/berkas-digital/:id',
   PAGE_ANTRIAN_RALAN: '/antrian-ralan',
+
+  // Another
+  PAGE_SEARCH_DIGANOSA: '/diagnosa-search',
 }
 
 export const ROUTES_NAME = {
@@ -227,6 +231,12 @@ export const routerList = [
   {
     path: ROUTES.PAGE_404,
     element: <PageError />,
+  },
+
+  // Another
+  {
+    path: ROUTES.PAGE_SEARCH_DIGANOSA,
+    element: <DiagnosaSearchList />,
   },
 ]
 
