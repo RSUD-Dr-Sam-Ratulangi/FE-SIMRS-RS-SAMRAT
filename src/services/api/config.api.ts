@@ -1,8 +1,10 @@
 import axios from 'axios'
 
+const apiUrl = process.env.REACT_APP_API_URL
+
 // Production http
 export const api = axios.create({
-  baseURL: 'http://rsudsamrat.site:8901/',
+  baseURL: apiUrl,
   timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
@@ -10,7 +12,7 @@ export const api = axios.create({
 })
 
 export const apiLabor = axios.create({
-  baseURL: 'http://rsudsamrat.site:8901/',
+  baseURL: apiUrl,
   timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
@@ -18,7 +20,7 @@ export const apiLabor = axios.create({
 })
 
 export const apiRadiologi = axios.create({
-  baseURL: 'http://rsudsamrat.site:8901/',
+  baseURL: apiUrl,
   timeout: 120000,
   headers: {
     'Content-Type': 'application/json',

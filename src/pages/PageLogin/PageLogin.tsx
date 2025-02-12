@@ -13,31 +13,29 @@ export default function PageLogin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
-  const apiUrl = 'http://rsudsamrat.site:8901/api/v1/login'
 
   const loginUser = async () => {
     try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+      const response = await api.post('/api/v1/login', {
+        username,
+        password,
       })
 
-      const data = await response.json()
-      if (response.ok) {
+      const data = response.data
+      if (response.status === 200) {
         if (data.message === 'No match found in petugas or dokter.') {
           spesificError({ errMessage: 'AKUN TIDAK DITEMUKAN' })
         } else {
           localStorage.setItem('token', JSON.stringify(data))
           navigate('/dashboard')
+
           const fetchJadwal = async () => {
             const tokenString = localStorage.getItem('token')
             const token = JSON.parse(tokenString)
             const kdDokter = token?.dokter?.kd_dokter
             localStorage.setItem('tglSkrng', tglSkrng)
             localStorage.setItem('PoliString', '')
+
             if (data.petugas) {
               const nip = data.petugas.nip
               localStorage.setItem('nip', nip)
@@ -45,6 +43,7 @@ export default function PageLogin() {
               const kdDokter = data.dokter.kd_dokter
               localStorage.setItem('kd_dokter', kdDokter)
             }
+
             try {
               const response = await api.get(`/api/v1/getJadwalDokter?kdDokter=${kdDokter}`)
               const kode = response.data
@@ -63,10 +62,6 @@ export default function PageLogin() {
       console.error('Error during login:', error)
     }
   }
-
-  // const handleCheck = () => {
-  //   setIsChecked(!isChecked)
-  // }
 
   const handlePassword = () => {
     setIstPasswordVisible(!isPasswordVisible)
