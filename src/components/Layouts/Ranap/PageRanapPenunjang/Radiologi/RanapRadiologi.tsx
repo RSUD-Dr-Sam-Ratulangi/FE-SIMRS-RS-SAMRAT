@@ -6,7 +6,7 @@ import {
   InformationCircleIcon,
 } from '@heroicons/react/24/solid'
 import { apiRadiologi } from '../../../../../services/api/config.api'
-import { spesificError } from '../../../../../utils/ToastInfo'
+import { spesificError, spesificSuccess } from '../../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
 
 const RanapRadiologi = () => {
@@ -70,7 +70,7 @@ const RanapRadiologi = () => {
       tgl_hasil: tglPermintaan,
       jam_hasil: getCurrentTime(),
       dokter_perujuk: nipCredentials,
-      status: 'ralan',
+      status: 'ranap',
       informasi_tambahan: info,
       diagnosa_klinis: indikasi,
     }
@@ -127,6 +127,7 @@ const RanapRadiologi = () => {
           setErrCheck(true)
         } finally {
           setSending(false)
+          spesificSuccess({ doneMessage: 'Data Berhasil Dikirim' })
         }
       }
     }

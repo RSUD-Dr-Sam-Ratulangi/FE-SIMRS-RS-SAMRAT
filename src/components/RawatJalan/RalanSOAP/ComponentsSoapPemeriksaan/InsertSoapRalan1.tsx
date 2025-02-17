@@ -520,6 +520,7 @@ const InsertSoapRalan1: React.FC<{
   const postResep = async () => {
     const data = {
       noRawat: nmrRawat,
+      status: 'ralan',
       kdDokter: nipCredentials,
     }
     if (haveNoResep === false) {
@@ -1505,8 +1506,6 @@ const InsertSoapRalan1: React.FC<{
                   <textarea
                     placeholder='-'
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
-                    // value={plan}
-                    //   value={plan || dataSoap[0]?.rtl}
                     value={formData.rtl}
                     onChange={(e) => setFormData({ ...formData, rtl: e.target.value })}
                     disabled={role.includes('petugas')}
@@ -1822,11 +1821,6 @@ const InsertSoapRalan1: React.FC<{
                   <textarea
                     placeholder='-'
                     disabled={role.includes('petugas')}
-                    //   value={[laborData, radiologiData, diagnosa, evaluasi, dataSoap[0]?.evaluasi]
-                    //     .filter(Boolean)
-                    //     .map((value) => value || '')
-                    //     .join('\n')}
-                    //     onChange={(e) => setEvaluasi(e.target.value)}
                     value={formData.evaluasi}
                     onChange={(e) => setFormData({ ...formData, evaluasi: e.target.value })}
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'

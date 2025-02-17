@@ -11,6 +11,7 @@ import {
 import Popup from 'reactjs-popup'
 import { PopupActions } from 'reactjs-popup/dist/types'
 import { spesificError, spesificSuccess } from '../../../../../utils/ToastInfo'
+import { ToastContainer } from 'react-toastify'
 
 const RanapLabor = () => {
   const [dataLaborPemeriksaan, setDataLaborPemeriksaan] = useState([])
@@ -20,7 +21,6 @@ const RanapLabor = () => {
   const [labSelectedDetailData, setLabSelectedDetailData] = useState([])
   const [listSelectedDetailData, setListSelectedDetailData] = useState([])
   const [dataLaborDetailPemeriksaan, setDataLaborDetailPemeriksaan] = useState([])
-  const [errInfo, setErrInfo] = useState('')
   const pilihPemeriksaanModal = useRef<PopupActions>(null)
   const nmrRawat = localStorage.getItem('no_rawat')
   const [sending, setSending] = useState(false)
@@ -32,7 +32,6 @@ const RanapLabor = () => {
   const role = Object.keys(Kd)[0]
   const initialDate = today.toISOString().substr(0, 10)
   const [tglPermintaan, setTanggalPermintaan] = useState(initialDate)
-  const [errCheck, setErrCheck] = useState(false)
 
   if (role === 'dokter') {
     nipCredentials = Kd.dokter.kd_dokter
@@ -48,7 +47,7 @@ const RanapLabor = () => {
         )
         setDataLaborPemeriksaan(response.data.content)
       } catch (err) {
-        console.log('labor data err', err)
+        console.log('labor data pemeriksaan err', err)
       }
     }
     fetchDataPemeriksaan()
@@ -62,7 +61,7 @@ const RanapLabor = () => {
         )
         setDataLaborDetailPemeriksaan(response.data)
       } catch (err) {
-        console.log('labor data err', err)
+        console.log('labor data details pemeriksaan err', err)
       }
     }
     fetchDataDetailPemeriksaan()
@@ -127,24 +126,21 @@ const RanapLabor = () => {
     }
 
     if (!indikasi) {
-      setErrInfo('MOHON MENGINPUT INDIKASI/KLINIS')
+      spesificError({ errMessage: 'MOHON MENGINPUT INDIKASI/KLINIS' })
     } else if (!info) {
-      setErrInfo('MOHON MENGINPUT INFORMASI TAMBAHAN')
+      spesificError({ errMessage: 'MOHON MENGINPUT INFORMASI TAMBAHAN' })
     } else if (Object.keys(listSelectedDetailData).length === 0) {
-      setErrInfo('MOHON MEMILIH SETIDAKNYA 1 PEMERIKSAAN')
+      spesificError({ errMessage: 'MOHON MEMILIH SETIDAKNYA 1 PEMERIKSAAN' })
     } else if (!tglPermintaan) {
-      setErrInfo('MOHON MEMILIH TANGGAL PERMINTAAN')
+      spesificError({ errMessage: 'MOHON MEMILIH TANGGAL' })
     } else {
       const isDataCorrect = window.confirm(
         'Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam pengisian data dapat berdampak pada perawatan pasien. LANJUTKAN?',
       )
       if (isDataCorrect) {
         try {
-          let isError = false
-
           const response1 = await apiLabor.post('/api/v1/permintaanLab', dataPermintaanLab)
           setSending(true)
-          setErrInfo('')
 
           for (const item of listSelectedDetailData) {
             const key = Object.keys(item)[0]
@@ -155,10 +151,7 @@ const RanapLabor = () => {
                 sttsBayar: 'Belum',
               })
             } catch (err) {
-              isError = true
-              setErrCheck(true)
-              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, postPemeriksaanLab' })
-              setErrInfo('Terjadi Kesalahan tidak terduga, Mohon Coba Lagi')
+              spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, Mohon Coba Lagi' })
               console.log('err', err)
             }
 
@@ -172,29 +165,21 @@ const RanapLabor = () => {
                 })
                 console.log('response3', response3)
               } catch (err) {
-                setErrCheck(true)
-                isError = true
                 console.log('err3', err)
                 spesificError({
-                  errMessage: 'Terjadi Kesalahan tidak terduga. EACH ITEM LABOR DATA',
+                  errMessage:
+                    'Terjadi Kesalahan tidak terduga, Mohon coba lagi(Details permintaan)',
                 })
-                setErrInfo('Terjadi Kesalahan tidak terduga, Mohon Coba Lagi')
               }
             }
-          }
-
-          if (!isError) {
-            window.location.reload()
-            console.log('errcheck', errCheck)
           }
         } catch (err) {
           spesificError({ errMessage: 'Terjadi Kesalahan tidak terduga, Mohon Coba Lagi' })
           setSending(false)
-          setErrCheck(true)
-          setErrInfo('Terjadi Kesalahan tidak terduga, Mohon Coba Lagi')
           console.log('error', dataPermintaanLab)
         } finally {
           setSending(false)
+          spesificSuccess({ doneMessage: 'Data Berhasil Dikirim' })
         }
       }
     }
@@ -362,8 +347,6 @@ const RanapLabor = () => {
             Mohon pastikan data yang Anda masukkan sudah benar sebelum melanjutkan. Kesalahan dalam
             pengisian data dapat berdampak pada perawatan pasien.
           </p>
-          <h1 className='mt-3 text text-2xl font-bold text-red-500 animate-pulse '>{errInfo}</h1>
-          <h1 className='mt-3 text text-2xl font-bold text-red-500 animate-pulse '>{errInfo}</h1>
           {sending ? (
             <div className='flex justify-center'>
               <ArrowPathIcon width={30} height={30} className='mr-3 animate-spin' />
@@ -381,6 +364,7 @@ const RanapLabor = () => {
             </div>
           )}
         </div>
+        <ToastContainer />
       </div>
       {/* MODAL */}
       <Popup
