@@ -30,6 +30,7 @@ import PageRalanRME from './components/Layouts/Ralan/PageRalanRME/PageRalanRME'
 import PageRalanAssesmenAwal from './components/Layouts/Ralan/PageRalanAssesmenAwal/PageAssesmenAwal'
 import DiagnosaSearchList from './utils/DiagnosaListSearch'
 import ProsedurSearchList from './utils/ProsedurListSearch'
+import TindakanSearchList from './utils/TindakanListSearch'
 
 export const ROUTES = {
   HOME: '/',
@@ -68,6 +69,7 @@ export const ROUTES = {
   // Another
   PAGE_SEARCH_DIGANOSA: '/diagnosa-search',
   PAGE_SEARCH_PROSEDUR: '/prosedur-search',
+  PAGE_SEARCH_TINDAKAN: '/tindakan-search',
 }
 
 export const ROUTES_NAME = {
@@ -243,6 +245,10 @@ export const routerList = [
   {
     path: ROUTES.PAGE_SEARCH_PROSEDUR,
     element: <ProsedurSearchList />,
+  },
+  {
+    path: ROUTES.PAGE_SEARCH_TINDAKAN,
+    element: <TindakanSearchList />,
   },
 ]
 

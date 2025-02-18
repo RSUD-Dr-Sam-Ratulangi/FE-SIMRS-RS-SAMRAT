@@ -1,16 +1,30 @@
-import {
-  ArchiveBoxArrowDownIcon,
-  ArchiveBoxIcon,
-  InformationCircleIcon,
-} from '@heroicons/react/24/solid'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import HeaderRanap from '../../../Navbar/HeaderDetailRanap'
+import RiwayatTindakanRanap from './component/RiwayatTindakanRanap'
 
 const PageRanapTindakan = () => {
+  const handleWindowTindakan = () => {
+    const width = Math.floor(window.screen.width * 0.5)
+    const height = Math.floor(window.screen.height * 0.7)
+    const left = Math.floor((window.screen.width - width) / 2)
+    const top = Math.floor((window.screen.height - height) / 2)
+
+    const popup = window.open(
+      '/tindakan-search',
+      'tindakan',
+      `width=${width},height=${height},left=${left},top=${top}`,
+    )
+
+    if (!popup) {
+      console.error('Popup gagal dibuka. Pastikan pop-up tidak diblokir oleh browser.')
+      return
+    }
+  }
+
   return (
     <>
       <HeaderRanap />
       <div>
-        <p className='font-inter font-bold text-xl text-[#121713]'>TINDAKAN</p>
         <div className='grid w-full h-full bg-white mt-3 p-2'>
           <p className='font-inter font-bold text-xl text-[#121713]'>Riwayat Perawatan</p>
           <div className='p-1'>
@@ -113,71 +127,19 @@ const PageRanapTindakan = () => {
             </div>
           </div>
           <div>
-            <div className='w-96'>
-              <label className='label'>Tindakan</label>
-              <input
-                type='text'
-                className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
-              />
-            </div>
-            <div className='w-96'>
-              <label className='label'>Jenis</label>
-              <input
-                type='text'
-                className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
-              />
+            <div>
+              <label className='label font-bold'>Cari Tindakan</label>
+              <button
+                onClick={handleWindowTindakan}
+                className='btn bg-primary text-slate-100 flex items-center gap-2 hover:bg-primary hover:border-slate-400 hover:shadow-lg'
+              >
+                <MagnifyingGlassIcon width={25} height={25} />
+                <span>Cari Tindakan</span>
+              </button>
             </div>
           </div>
-          <div className='border-4 rounded-3xl p-2 mb-2 mt-3'>
-            <label className='label font-inter font-bold text-xl text-[#121713]'>
-              Rincian Tindakan
-            </label>
-            <table className='table'>
-              <thead>
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Nama Obat</th>
-                  <th>Aturan Pakai</th>
-                  <th>Provide</th>
-                  <th>Tarif</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>2024-08-15</td>
-                  <td>Energen 800mg</td>
-                  <td>2x1 Pagi</td>
-                  <td>RSUD</td>
-                  <td>Rp.100.000</td>
-                  <td>
-                    <button className='text-red-400'>Hapus</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2024-08-15</td>
-                  <td>Energen 800mg</td>
-                  <td>2x1 Pagi</td>
-                  <td>RSUD</td>
-                  <td>Rp.100.000</td>
-                  <td>
-                    <button className='text-red-400'>Hapus</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>2024-08-15</td>
-                  <td>Energen 800mg</td>
-                  <td>2x1 Pagi</td>
-                  <td>RSUD</td>
-                  <td>Rp.100.000</td>
-                  <td>
-                    <button className='text-red-400'>Hapus</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div className=' w-auto mt-4'>
+          <RiwayatTindakanRanap />
+          {/* <div className=' w-auto mt-4'>
             <div className='flex text-base text-[#121713] items-center font-bold font-sans my-[20px]'>
               <InformationCircleIcon width={25} height={25} />
               <p className='ml-[6px]'>Informasi</p>
@@ -198,7 +160,7 @@ const PageRanapTindakan = () => {
                 </p>
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </>
