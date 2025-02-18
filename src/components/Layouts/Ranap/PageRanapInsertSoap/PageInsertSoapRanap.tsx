@@ -16,12 +16,15 @@ import { spesificError } from '../../../../utils/ToastInfo'
 import RiwayatSoapRanap from './component/RiwayatSoapRanap'
 import { api } from '../../../../services/api/config.api'
 import { useParams } from 'react-router-dom'
+import RiwayatDiagnosaRanap from './component/RiwayatDiagnosaRanap'
+import RiwayatProsedurRanap from './component/RiwayatProsedurRanap'
 
 const PageInsertSoapRanap = () => {
   const [pemeriksaanDataCpptRanap, setPemeriksaanDataCpptRanap] = useState<any>({})
   const [soapDataCpptRanap, setSoapDataCpptRanap] = useState<any>({})
   const [dataPasien, setDataPasien] = useState<any | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [activeTab, setActiveTab] = useState<any | null>('riwayatSoap')
 
   const nmrRawat = localStorage.getItem('no_rawat')
   // const noAntrian = localStorage.getItem('no_antrian')
@@ -96,7 +99,6 @@ const PageInsertSoapRanap = () => {
     penilaian: string, // Assesmen
     instruksi: string, // instuksi
     evaluasi: string, // evaluasi
-    choosenDiagnosa: any[] | null,
   ) => {
     setSoapDataCpptRanap({
       keluhan,
@@ -105,33 +107,7 @@ const PageInsertSoapRanap = () => {
       penilaian,
       instruksi,
       evaluasi,
-      choosenDiagnosa,
     })
-  }
-
-  const postDiagnosa = async () => {
-    try {
-      if (!soapDataCpptRanap.choosenDiagnosa || soapDataCpptRanap.choosenDiagnosa.length === 0) {
-        console.log('Tidak ada diagnosa yang dipilih')
-        return
-      }
-
-      for (const diagnosa of soapDataCpptRanap.choosenDiagnosa) {
-        const [kode] = diagnosa.split(', ') // Ambil kode penyakit sebelum koma
-        const data = {
-          noRawat: nmrRawat,
-          status: 'Ralan',
-          kdPenyakit: kode,
-          prioritas: '1',
-          statusPenyakit: 'Baru',
-        }
-
-        const response = await api.post('/api/v1/insertDiagnosaPasien', data)
-        console.log('Diagnosa dikirim:', response.data)
-      }
-    } catch (error) {
-      console.log('Diagnosa gagal dikirim', error)
-    }
   }
 
   const handleSubmit = async () => {
@@ -184,11 +160,6 @@ const PageInsertSoapRanap = () => {
         // Kirim Pemeriksaan Ranap
         const response = await api.post('/api/v1/insertPemeriksaanRanap', requestData)
         console.log(response)
-
-        // Kirim Diagnosa
-        if (soapDataCpptRanap.choosenDiagnosa && soapDataCpptRanap.choosenDiagnosa.length > 0) {
-          await postDiagnosa()
-        }
 
         setTimeout(() => {
           setIsLoading(false)
@@ -328,7 +299,38 @@ const PageInsertSoapRanap = () => {
         </div>
       </div>
       {/* batas */}
-      <RiwayatSoapRanap />
+      <div>
+        <div role='tablist' className='tabs tabs-bordered'>
+          <a
+            role='tab'
+            className={`tab ${activeTab === 'riwayatSoap' ? 'tab-active' : ''}`}
+            onClick={() => setActiveTab('riwayatSoap')}
+          >
+            Riwayat Soap
+          </a>
+          <a
+            role='tab'
+            className={`tab ${activeTab === 'riwayatDiagnosa' ? 'tab-active' : ''}`}
+            onClick={() => setActiveTab('riwayatDiagnosa')}
+          >
+            Riwayat Diagnosa
+          </a>
+          <a
+            role='tab'
+            className={`tab ${activeTab === 'riwayatProsedur' ? 'tab-active' : ''}`}
+            onClick={() => setActiveTab('riwayatProsedur')}
+          >
+            Riwayat Prosedur
+          </a>
+        </div>
+
+        {/* Tab Content */}
+        <div className='mt-4'>
+          {activeTab === 'riwayatSoap' && <RiwayatSoapRanap />}
+          {activeTab === 'riwayatDiagnosa' && <RiwayatDiagnosaRanap />}
+          {activeTab === 'riwayatProsedur' && <RiwayatProsedurRanap />}
+        </div>
+      </div>
       {/* <div
         className='p-4 bg-gray-100 rounded-lg text-sm text-gray-700 
              overflow-auto max-w-full whitespace-pre-wrap break-words 

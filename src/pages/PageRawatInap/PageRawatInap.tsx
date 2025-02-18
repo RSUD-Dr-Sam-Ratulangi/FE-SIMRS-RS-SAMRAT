@@ -184,7 +184,7 @@ export default function PageRawatInap() {
       ) : (
         <div>
           <Breadcrumb />
-          <div className='mt-5'>
+          <div className='grid gap-3 items-center mt-5'>
             <div>
               <label className='label font-bold'>Pilih Tanggal :</label>
               <input

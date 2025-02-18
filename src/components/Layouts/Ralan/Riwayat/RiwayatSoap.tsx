@@ -11,6 +11,8 @@ import ModalRadiologiHistory from '../../Ralan/ModalRalan/Radiologi/Modal/ModalR
 import PdfComponent from '../../Pdf/PrintSoapPDF'
 import LoadingBar from 'react-top-loading-bar'
 import RiwayatModalResume from '../../Ralan/ModalRalan/Resume/RiwayatResume'
+import jsPDF from 'jspdf'
+import img from '../../../../assets/img/LOGORSREVISI4.png'
 
 type userData = {
   existsInLabTable: any
@@ -379,6 +381,141 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
     console.log('close')
   }
 
+  const generatePDF = (riwayat) => {
+    if (!riwayat) return
+
+    const doc = new jsPDF()
+    doc.setFontSize(10)
+    const lineSpacing = 8
+    let yPos = 10
+    const pageHeight = doc.internal.pageSize.height - 20
+
+    // Fungsi untuk menambahkan header
+    const addTitleHead = (doc, img) => {
+      const pageWidth = doc.internal.pageSize.getWidth()
+      const namePlace = 'RSUD SAM RATULANGI TONDANO'
+      const address = 'JL. SUPRAPTO LUAAN TONDANO TIMUR, Telp: Hp: 0431321171 E-mail: -'
+      const location = 'TONDANO, SULAWESI UTARA'
+
+      const textWidth = doc.getTextWidth(namePlace)
+      const locationWidth = doc.getTextWidth(location)
+
+      const xOffset = (pageWidth - textWidth) / 1.9
+      const addressOffset = (pageWidth - textWidth) / 2.5
+      const locationOffset = (pageWidth - locationWidth) / 1.7
+
+      const logoWidth = 30
+      const logoHeight = 25
+      const logoX = 8
+      const logoY = 5.5
+      const textY = logoY + logoHeight / 4
+      const addressY = textY + 6
+      const locationY = addressY + 6
+
+      doc.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight)
+      doc.text(namePlace, xOffset, textY)
+      doc.setFontSize(10)
+      doc.text(address, addressOffset, addressY)
+      doc.text(location, locationOffset, locationY)
+
+      const lineY = locationY + 10
+      doc.setLineWidth(1)
+      doc.line(10, lineY, pageWidth - 10, lineY)
+
+      return lineY
+    }
+
+    // Tambahkan header dan update posisi yPos
+    yPos = addTitleHead(doc, img) + lineSpacing
+
+    const addSection = (title, content) => {
+      if (yPos + 10 >= pageHeight) {
+        doc.addPage()
+        yPos = addTitleHead(doc, img) + lineSpacing
+      }
+
+      doc.setFont('helvetica', 'bold')
+      doc.text(title, 10, yPos)
+      doc.setFont('helvetica', 'normal')
+      const splitText = doc.splitTextToSize(content || '-', 180)
+      if (yPos + splitText.length * 5 + lineSpacing >= pageHeight) {
+        doc.addPage()
+        yPos = addTitleHead(doc, img) + lineSpacing
+      }
+      doc.text(splitText, 20, yPos + 5)
+      yPos += splitText.length * 5 + lineSpacing
+    }
+
+    const addLine = () => {
+      if (yPos + 4 >= pageHeight) {
+        doc.addPage()
+        yPos = addTitleHead(doc, img) + lineSpacing
+      }
+      doc.line(10, yPos, 200, yPos)
+      yPos += 4
+    }
+
+    // Header Dokumen
+    doc.setFont('helvetica', 'bold')
+    doc.text(`RIWAYAT SOAP (Rawat Jalan) - ${riwayat.no_rawat}`, 10, yPos)
+    yPos += lineSpacing
+    doc.setFont('helvetica', 'normal')
+    doc.text(`Tanggal Pemeriksaan : ${riwayat.tgl_perawatan} ${riwayat.jam_rawat}`, 10, yPos)
+    yPos += lineSpacing
+    addLine()
+
+    // Informasi Poli dan Dokter
+    addSection('POLI', `${riwayat.nm_poli} - ${riwayat.kd_poli}`)
+    addSection('DOKTER', dokterNames[riwayat.no_rawat])
+    addLine()
+
+    // Subjektif
+    addSection('SUBJEK', riwayat.keluhan)
+
+    // Objektif
+    const pemeriksaanText = riwayat.pemeriksaan
+      ? riwayat.pemeriksaan.replace('* Data Ekspertisi *', '--Data Ekspertisi--')
+      : '-'
+    addSection('OBJECT', pemeriksaanText)
+    addLine()
+
+    // Vital Sign
+    doc.setFont('helvetica', 'bold')
+    doc.text('VITALITY SIGN', 10, yPos)
+    yPos += 5
+    doc.setFont('helvetica', 'normal')
+    const vitalSigns = [
+      `SUHU(C) : ${riwayat.suhu_tubuh || '-'}`,
+      `TENSI(mmHg) : ${riwayat.tensi || '-'}`,
+      `GCS(E,V,M) : ${riwayat.gcs || '-'}`,
+      `SpO2 : ${riwayat.spo2 || '-'}`,
+      `KESADARAN : ${riwayat.kesadaran || '-'}`,
+      `NADI(/menit) : ${riwayat.nadi || '-'}`,
+      `TINGGI(cm) : ${riwayat.tinggi || '-'}`,
+      `RR(/menit) : ${riwayat.respirasi || '-'}`,
+      `BERAT(kg) : ${riwayat.berat || '-'}`,
+      `ALERGI : ${riwayat.alergi || '-'}`,
+    ].join('\n')
+
+    const splitVitalSigns = doc.splitTextToSize(vitalSigns, 180)
+    if (yPos + splitVitalSigns.length * 5 >= pageHeight) {
+      doc.addPage()
+      yPos = addTitleHead(doc, img) + lineSpacing
+    }
+    doc.text(splitVitalSigns, 20, yPos)
+    yPos += (splitVitalSigns.length + 1) * 5 + lineSpacing
+    addLine()
+
+    // Asesmen, Plan, Instruksi, Evaluasi
+    addSection('ASESMEN', riwayat.penilaian)
+    addSection('PLAN', riwayat.rtl)
+    addSection('INSTRUKSI', riwayat.instruksi)
+    addSection('EVALUASI', riwayat.evaluasi)
+
+    // Simpan PDF
+    doc.save(`riwayat_${riwayat.no_rawat}.pdf`)
+  }
+
   return (
     <div className='h-[2360px] overflow-y-auto mt-4 rounded-xl border border-slate-100'>
       <LoadingBar
@@ -481,10 +618,21 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                       <label className='font-semibold text-slate-700 text-sm'>SUBJEK</label>
                       <p className='whitespace-pre'>{riwayat.keluhan || '-'}</p>
                     </div>
-                    <div className='mt-5 mb-3 p-2'>
-                      <label className=' font-semibold text-slate-700 text-sm'>OBJECT</label>
-                      <p className='whitespace-pre'>{riwayat.pemeriksaan || '-'}</p>
+                    <div className='mt-5 mb-3'>
+                      <label className='font-semibold text-slate-700 text-sm'>OBJECT</label>
+                      <p
+                        className='whitespace-pre'
+                        dangerouslySetInnerHTML={{
+                          __html: riwayat.pemeriksaan
+                            ? riwayat.pemeriksaan.replace(
+                                '* Data Ekspertisi *',
+                                '<div class="rounded-lg border-blue-300 border p-2 w-fit mt-2 -mb-3"><strong>--Data Ekspertisi--</strong></div>',
+                              )
+                            : '-',
+                        }}
+                      />
                     </div>
+
                     <div className='border border-slate-400 p-2 rounded-lg'>
                       <label className=' font-semibold text-slate-700 text-md'>VITALITY SIGN</label>
                       <div className='flex w-full justify-between mt-3'>
@@ -611,6 +759,12 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                     <div>
                       <button
                         className='text text-gray-100 btn bg-primary btn-md'
+                        onClick={() => generatePDF(riwayat)}
+                      >
+                        Print
+                      </button>
+                      <button
+                        className='text text-gray-100 btn bg-primary btn-md'
                         onClick={() =>
                           PdfComponent(
                             riwayat.no_rawat,
@@ -633,26 +787,26 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                       </button>
                     </div>
                   </div>
-                  <ModalLaborHistory
-                    ref={modalLaborRef}
-                    onClose={modalLaborClose}
-                    noRawat={laborNmrRawat}
-                    dataPersonal={dataPersonal}
-                  />
-                  <ModalRadiologiHistory
-                    ref={ModalRadiologiRef}
-                    noRawat={radiologiNmrRawat}
-                    onClose={modalRadiologiClose}
-                  />
-                  <RiwayatModalResume
-                    ref={modalRiwayatResumeRef}
-                    noRawat={radiologiNmrRawat}
-                    onClose={modalRiwayatResumeClose}
-                  />
                 </div>
               ))}
             </div>
           )}
+          <ModalLaborHistory
+            ref={modalLaborRef}
+            onClose={modalLaborClose}
+            noRawat={laborNmrRawat}
+            dataPersonal={dataPersonal}
+          />
+          <ModalRadiologiHistory
+            ref={ModalRadiologiRef}
+            noRawat={radiologiNmrRawat}
+            onClose={modalRadiologiClose}
+          />
+          <RiwayatModalResume
+            ref={modalRiwayatResumeRef}
+            noRawat={radiologiNmrRawat}
+            onClose={modalRiwayatResumeClose}
+          />
         </>
       )}
       <ToastContainer />

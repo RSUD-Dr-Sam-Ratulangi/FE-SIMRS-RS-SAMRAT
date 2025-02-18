@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FormDataCpptSoap } from '../type/interfaceCPPTSoap'
-import { api } from '../../../../../services/api/config.api'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 
 interface SoapCpptRanapProps {
   onValuesChangeSoapCpptRanap: (
@@ -10,7 +10,6 @@ interface SoapCpptRanapProps {
     penilaian: string, // Assesmen
     instruksi: string, // instuksi
     evaluasi: string, // evaluasi
-    diagnosa: any[], // diagnosa
   ) => void
 }
 
@@ -23,36 +22,6 @@ const SoapCpptRanap: React.FC<SoapCpptRanapProps> = ({ onValuesChangeSoapCpptRan
     instruksi: '',
     evaluasi: '',
   })
-  const [initialDiagnosa, setInitialDiagnosa] = useState<string[]>([]) // Diagnosa dari API (tidak bisa dihapus)
-  const [choosenDiagnosa, setChoosenDiagnosa] = useState<string[]>([])
-
-  const nmrRawat = localStorage.getItem('no_rawat')
-
-  const checkExistDiagnosa = async () => {
-    try {
-      const response = await api.get(`/api/v1/getDiagnosaPasien?noRawat=${nmrRawat}`)
-      if (response.data.length === 0) {
-        console.log('TIDAK ADA DIAGNOSA.')
-      } else {
-        const diagnosaList = response.data.map(
-          (item: { kd_penyakit: string; nm_penyakit: string }) =>
-            `${item.kd_penyakit}, ${item.nm_penyakit}`,
-        )
-
-        setInitialDiagnosa(diagnosaList) // Simpan diagnosa awal yang tidak bisa dihapus
-        setFormData((prevData) => ({
-          ...prevData,
-          penilaian: diagnosaList.join('\n'),
-        }))
-      }
-    } catch (err) {
-      console.log('exist diagnosa error', err)
-    }
-  }
-
-  useEffect(() => {
-    checkExistDiagnosa()
-  }, [])
 
   useEffect(() => {
     onValuesChangeSoapCpptRanap(
@@ -62,9 +31,8 @@ const SoapCpptRanap: React.FC<SoapCpptRanapProps> = ({ onValuesChangeSoapCpptRan
       formData.penilaian,
       formData.instruksi,
       formData.evaluasi,
-      choosenDiagnosa,
     )
-  }, [JSON.stringify(formData), JSON.stringify(choosenDiagnosa)])
+  }, [JSON.stringify(formData)])
 
   const handleWindowDiagnosa = () => {
     const width = Math.floor(window.screen.width * 0.5)
@@ -82,34 +50,24 @@ const SoapCpptRanap: React.FC<SoapCpptRanapProps> = ({ onValuesChangeSoapCpptRan
       console.error('Popup gagal dibuka. Pastikan pop-up tidak diblokir oleh browser.')
       return
     }
-
-    window.addEventListener('message', (event) => {
-      if (event.origin !== window.location.origin) return
-      if (Array.isArray(event.data) && event.data.every((item) => item.kode && item.nmPenyakit)) {
-        const newDiagnosa = event.data.map((item) => `${item.kode}, ${item.nmPenyakit}`)
-
-        setChoosenDiagnosa((prev) => [...prev, ...newDiagnosa])
-
-        setFormData((prevData) => ({
-          ...prevData,
-          penilaian: [...initialDiagnosa, ...choosenDiagnosa, ...newDiagnosa].join('\n'),
-        }))
-      }
-    })
   }
 
-  const handleRemoveDiagnosa = (indexToRemove: number) => {
-    setChoosenDiagnosa((prev) => {
-      const updatedDiagnosa = prev.filter((_, index) => index !== indexToRemove)
+  const handleWindowProsedur = () => {
+    const width = Math.floor(window.screen.width * 0.5)
+    const height = Math.floor(window.screen.height * 0.7)
+    const left = Math.floor((window.screen.width - width) / 2)
+    const top = Math.floor((window.screen.height - height) / 2)
 
-      // Update penilaian hanya untuk diagnosa baru yang bisa dihapus
-      setFormData((prevData) => ({
-        ...prevData,
-        penilaian: [...initialDiagnosa, ...updatedDiagnosa].join('\n'),
-      }))
+    const popup = window.open(
+      '/prosedur-search',
+      'prosedur',
+      `width=${width},height=${height},left=${left},top=${top}`,
+    )
 
-      return updatedDiagnosa
-    })
+    if (!popup) {
+      console.error('Popup gagal dibuka. Pastikan pop-up tidak diblokir oleh browser.')
+      return
+    }
   }
 
   return (
@@ -134,53 +92,17 @@ const SoapCpptRanap: React.FC<SoapCpptRanapProps> = ({ onValuesChangeSoapCpptRan
             className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
           />
         </div>
-        <div className='relative'>
-          <label className='label'>
-            Assesmen (Data diagnosa yang sudah ada tidak bisa dihapus)
-          </label>
+        <div>
+          <label className='label'>Assesmen</label>
 
-          <div className='relative'>
+          <div>
             <textarea
-              disabled
               placeholder='-'
               value={formData.penilaian}
               onChange={(e) => setFormData({ ...formData, penilaian: e.target.value })}
               className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1 pr-10' // Tambahkan padding kanan agar tombol tidak menutupi teks
             />
-
-            <button
-              onClick={handleWindowDiagnosa}
-              className='absolute bottom-2 right-2 bg-white rounded-md p-1 text-sm hover:bg-gray-200'
-            >
-              ??
-            </button>
           </div>
-
-          {choosenDiagnosa && choosenDiagnosa.length > 0 && (
-            <table className='w-full mt-2 border-collapse border border-gray-300'>
-              <thead>
-                <tr className='bg-gray-100 text-left'>
-                  <th className='p-2'>Diagnosa</th>
-                  <th className='p-2'>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {choosenDiagnosa.map((item, index) => (
-                  <tr key={index} className='hover:bg-gray-50'>
-                    <td className='p-2'>{item}</td>
-                    <td className='p-2'>
-                      <button
-                        onClick={() => handleRemoveDiagnosa(index)}
-                        className='btn btn-ghost hover:bg-gray-200 text-red-500'
-                      >
-                        Hapus
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
         </div>
 
         <div>
@@ -210,6 +132,26 @@ const SoapCpptRanap: React.FC<SoapCpptRanapProps> = ({ onValuesChangeSoapCpptRan
             onChange={(e) => setFormData({ ...formData, evaluasi: e.target.value })}
             className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
           />
+        </div>
+      </div>
+      <div className='flex gap-3 mt-3 items-center w-full'>
+        <div>
+          <button
+            onClick={handleWindowDiagnosa}
+            className='btn bg-primary text-slate-100 flex items-center gap-2 hover:bg-primary hover:border-slate-400 hover:shadow-lg'
+          >
+            <MagnifyingGlassIcon width={25} height={25} />
+            <span>Diagnosa (ICD 10)</span>
+          </button>
+        </div>
+        <div>
+          <button
+            onClick={handleWindowProsedur}
+            className='btn bg-primary flex text-slate-100 items-center gap-2 hover:bg-primary hover:border-slate-400 hover:shadow-lg'
+          >
+            <MagnifyingGlassIcon width={25} height={25} />
+            <span>Prosedur (ICD 9)</span>
+          </button>
         </div>
       </div>
     </div>

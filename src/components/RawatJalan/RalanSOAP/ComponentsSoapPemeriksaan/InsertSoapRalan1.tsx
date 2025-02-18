@@ -143,11 +143,13 @@ const InsertSoapRalan1: React.FC<{
   const [selectedMedicines, setSelectedMedicines] = useState<{ [kode: string]: Medicine }>({})
   const [editedRowIndex, setEditedRowIndex] = useState(null)
   const [choosenDiagnosa, setChoosenDiagnosa] = useState([])
+  const [ekspertisi, setEkspertisi] = useState('')
   const modalLaborRef = useRef<PopupActions>(null)
   const modalRadiologiRef = useRef<PopupActions>(null)
 
   const navigate = useNavigate()
   const nmrRawat = localStorage.getItem('no_rawat')
+  const choosenPoli = localStorage.getItem('poli')
   // const noAntrian = localStorage.getItem('no_antrian')
   const dateNow = formatSelectedDateNow()
   const tokenValue = localStorage.getItem('token')
@@ -1020,7 +1022,15 @@ const InsertSoapRalan1: React.FC<{
     })
   }
 
-  console.log('pilihan data', choosenDiagnosa)
+  const handleSimpanEkspertisi = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      pemeriksaan: prevData.pemeriksaan
+        ? `${prevData.pemeriksaan}\n* Data Ekspertisi *\n${ekspertisi}`
+        : `* Data Ekspertisi *\n${ekspertisi}`,
+    }))
+    setEkspertisi('')
+  }
 
   return (
     <div className='w-full mt-4'>
@@ -1334,6 +1344,25 @@ const InsertSoapRalan1: React.FC<{
                         className='input input-bordered text-sm rounded-2xl align-text-top border-disabled w-full h-36 pt-1'
                       />
                     </div>
+                    {choosenPoli === 'KLINIK KANDUNGAN ' ? (
+                      <div className='grid items-center gap-1'>
+                        <label className='label'>Ekspertisi USG</label>
+                        <div className='flex relative gap-1 mt-1'>
+                          <textarea
+                            className='w-full px-3 py-2 border rounded-2xl focus:outline-none focus:border-blue-500'
+                            placeholder='Ekspertisi'
+                            value={ekspertisi}
+                            onChange={(e) => setEkspertisi(e.target.value)}
+                          />
+                          <button
+                            className='btn bg-primary text-white'
+                            onClick={handleSimpanEkspertisi}
+                          >
+                            Simpan
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -1348,7 +1377,6 @@ const InsertSoapRalan1: React.FC<{
                   </div>
                   <textarea
                     placeholder='-'
-                    disabled
                     value={formData.penilaian}
                     onChange={(e) => setFormData({ ...formData, penilaian: e.target.value })}
                     className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'

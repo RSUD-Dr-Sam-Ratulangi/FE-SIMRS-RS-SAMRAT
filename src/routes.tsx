@@ -29,6 +29,7 @@ import PageIgdIcd from './components/Layouts/igd/PageIgdIcd/PageIgdIcd'
 import PageRalanRME from './components/Layouts/Ralan/PageRalanRME/PageRalanRME'
 import PageRalanAssesmenAwal from './components/Layouts/Ralan/PageRalanAssesmenAwal/PageAssesmenAwal'
 import DiagnosaSearchList from './utils/DiagnosaListSearch'
+import ProsedurSearchList from './utils/ProsedurListSearch'
 
 export const ROUTES = {
   HOME: '/',
@@ -66,6 +67,7 @@ export const ROUTES = {
 
   // Another
   PAGE_SEARCH_DIGANOSA: '/diagnosa-search',
+  PAGE_SEARCH_PROSEDUR: '/prosedur-search',
 }
 
 export const ROUTES_NAME = {
@@ -237,6 +239,10 @@ export const routerList = [
   {
     path: ROUTES.PAGE_SEARCH_DIGANOSA,
     element: <DiagnosaSearchList />,
+  },
+  {
+    path: ROUTES.PAGE_SEARCH_PROSEDUR,
+    element: <ProsedurSearchList />,
   },
 ]
 

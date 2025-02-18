@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
 import { api } from '../services/api/config.api'
+import { ToastContainer } from 'react-toastify'
+import { spesificSuccess } from './ToastInfo'
 
 const DiagnosaSearchList = () => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [listPenyakit, setListPenyakit] = useState<any[]>([])
   const [selectedDiagnosa, setSelectedDiagnosa] = useState<any[]>([]) // Data yang dipilih
+  const nmrRawat = localStorage.getItem('no_rawat')
+  const [isloading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const handleGetPenyakit = async () => {
@@ -37,16 +41,52 @@ const DiagnosaSearchList = () => {
     setListPenyakit([])
   }
 
-  const handleSave = () => {
-    if (window.opener) {
-      window.opener.postMessage(selectedDiagnosa, window.location.origin)
-      window.close()
+  const postDiagnosa = async () => {
+    try {
+      if (selectedDiagnosa.length === 0) {
+        return
+      }
+
+      const isConfirmed = window.confirm('Apakah Anda yakin ingin mengirim diagnosa yang dipilih?')
+
+      if (!isConfirmed) {
+        return
+      }
+
+      setIsLoading(true)
+
+      for (const diagnosa of selectedDiagnosa) {
+        const data = {
+          noRawat: nmrRawat,
+          status: 'Ralan',
+          kdPenyakit: diagnosa.kode,
+          prioritas: '1',
+          statusPenyakit: 'Baru',
+        }
+
+        const response = await api.post('/api/v1/insertDiagnosaPasien', data)
+        console.log(`Diagnosa ${diagnosa.kode} dikirim:`, response.data)
+      }
+
+      setSelectedDiagnosa([])
+      spesificSuccess({ doneMessage: 'Data Berhasil Dikirim.' })
+      setTimeout(() => {
+        window.close()
+        window.opener?.location.reload()
+      }, 500)
+    } catch (error) {
+      console.error('Diagnosa gagal dikirim:', error)
+      setIsLoading(false)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <div className='p-5'>
-      <label className='label font-bold'>Cari Diagnosa :</label>
+      <label className='label font-bold'>
+        Cari Diagnosa : {nmrRawat ? nmrRawat : 'Tidak ada data no rawat'}
+      </label>
       <input
         type='text'
         value={searchTerm}
@@ -111,12 +151,14 @@ const DiagnosaSearchList = () => {
       {/* Tombol Simpan */}
       {selectedDiagnosa.length > 0 && (
         <button
-          onClick={handleSave}
+          disabled={isloading}
+          onClick={postDiagnosa}
           className='mt-4 px-4 py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600'
         >
           Simpan & Kirim
         </button>
       )}
+      <ToastContainer />
     </div>
   )
 }
