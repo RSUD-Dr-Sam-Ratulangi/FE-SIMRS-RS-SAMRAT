@@ -25,9 +25,8 @@ const PageRanapLayananObat = () => {
   const [selectedMedicines, setSelectedMedicines] = useState<Record<string, Medicine>>({})
   const [jumlahObat, setJumlahObat] = useState<number>(0)
   const [aturanPakai, setAturanPakai] = useState<string>('')
-  const [nmrResep, setNmrResep] = useState<string>('')
+  const [nmrResep, setNmrResep] = useState<string[]>([])
   const [obatExist, setObatExist] = useState([])
-  const [haveNoResep, setHaveNoResep] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { id } = useParams()
 
@@ -88,38 +87,21 @@ const PageRanapLayananObat = () => {
       const response = await api.get(
         `/api/v1/getPrescriptionNumbers?noRkmMedis=${id}&noRawat=${nmrRawat}`,
       )
-      if (response.data.length === 0) {
-        try {
-          const data = {
-            noRawat: nmrRawat,
-            kdDokter: nipCredentials,
-          }
-          const res = await api.post('/api/v1/postResepObat', data, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-          setHaveNoResep(false)
-          setNmrResep(res.data)
-          console.log(res.data)
-        } catch (err) {
-          console.log(err)
-        }
-      } else {
-        console.log('tidak ada resep yang perlu ditambahkan.', response.data)
-        setNmrResep(response.data[0])
-        setHaveNoResep(true)
-        console.log()
-      }
+      setNmrResep(response.data)
+      console.log('data exist no resep', response.data)
+
+      response.data.forEach((noResep: string) => {
+        fetchExistObat(noResep)
+      })
     } catch (err) {
       console.log('Tidak Ada no resep', err)
     }
   }
 
-  const fetchExistObat = async () => {
+  const fetchExistObat = async (noResep: string) => {
     try {
-      const response = await api.get(`/api/v1/getResepDokterDetails?noResep=${nmrResep}`)
-      setObatExist(response.data)
+      const response = await api.get(`/api/v1/getResepDokterDetails?noResep=${noResep}`)
+      setObatExist((prevObatExist) => [...prevObatExist, ...response.data])
       console.log('data obat yang sudah ada', response.data)
     } catch (err) {
       console.log('tidak ada obat yang sudah ada', err)
@@ -127,10 +109,21 @@ const PageRanapLayananObat = () => {
   }
 
   const postResep = async () => {
+    if (role.includes('petugas')) {
+      spesificError({ errMessage: 'Gagal Mengirim Data, role petugas.' })
+      return
+    }
+
     if (Object.keys(selectedMedicines).length === 0) {
       spesificError({ errMessage: 'Mohon Memilih setidaknya satu obat untuk melanjutkan.' })
       return
     }
+
+    const confirmation = window.confirm('Obat akan dibuatkan resep baru, Lanjutkan?')
+    if (!confirmation) {
+      return
+    }
+
     setIsLoading(true)
 
     const data = {
@@ -139,75 +132,41 @@ const PageRanapLayananObat = () => {
       kdDokter: nipCredentials,
     }
 
-    if (haveNoResep === false) {
-      try {
-        const response = await api.post('/api/v1/postResepObat', data, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-
-        for (const key in selectedMedicines) {
-          const medicineData = selectedMedicines[key]
-
-          const resepDokterData = {
-            noResep: response.data.no_resep,
-            kodeBrng: medicineData.kode,
-            jml: Math.round(medicineData.jumlahObat * 55) / 54,
-            aturanPakai: medicineData.aturanPakai,
-          }
-
-          try {
-            await api.post('/api/v1/postResepDokter', resepDokterData, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            })
-          } catch (err) {
-            console.log('obat :', resepDokterData)
-            console.log(err)
-          }
-        }
-
-        console.log('post resep response', response.data.no_resep)
-      } catch (err: any) {
-        spesificError({ errMessage: `Post Resep Error : ${err.data}` })
-        console.log('post resep error', err)
-        setIsLoading(false)
-        return
-      }
-    } else if (haveNoResep === true) {
-      const existingMedicines = obatExist.map((item) => item.kode_brng)
-      const resepDokterBatch = []
+    try {
+      const response = await api.post('/api/v1/postResepObat', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
 
       for (const key in selectedMedicines) {
         const medicineData = selectedMedicines[key]
 
-        if (!existingMedicines.includes(medicineData.kode)) {
-          resepDokterBatch.push({
-            noResep: nmrResep,
-            kodeBrng: medicineData.kode,
-            jml: Math.round(medicineData.jumlahObat * 55) / 54,
-            aturanPakai: medicineData.aturanPakai,
+        const resepDokterData = {
+          noResep: response.data.no_resep,
+          kodeBrng: medicineData.kode,
+          jml: Math.round(medicineData.jumlahObat * 55) / 54,
+          aturanPakai: medicineData.aturanPakai,
+        }
+
+        try {
+          await api.post('/api/v1/postResepDokter', resepDokterData, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
           })
+        } catch (err) {
+          console.log('obat :', resepDokterData)
+          console.log(err)
         }
       }
 
-      try {
-        await Promise.all(
-          resepDokterBatch.map((resepDokterData) =>
-            api.post('/api/v1/postResepDokter', resepDokterData, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }),
-          ),
-        )
-      } catch (err) {
-        console.log('obat error :', err)
-        setIsLoading(false)
-        return
-      }
+      console.log('post resep response', response.data.no_resep)
+    } catch (err: any) {
+      spesificError({ errMessage: `Post Resep Error : ${err.data}` })
+      console.log('post resep error', err)
+      setIsLoading(false)
+      return
     }
 
     spesificSuccess({ doneMessage: 'Resep Berhasil Dikirim...' })
@@ -228,7 +187,7 @@ const PageRanapLayananObat = () => {
 
   useEffect(() => {
     if (nmrResep) {
-      fetchExistObat()
+      fetchExistObat(undefined)
     }
   }, [nmrResep])
 
@@ -464,7 +423,7 @@ const PageRanapLayananObat = () => {
                 onClick={postResep}
                 className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'
               >
-                <p className='flex justify-center items-center'>
+                <div className='flex justify-center items-center'>
                   {isLoading ? (
                     <p className='flex justify-center items-center'>
                       <ArrowPathIcon className='animate-spin mr-3' width={25} height={25} />
@@ -472,12 +431,11 @@ const PageRanapLayananObat = () => {
                     </p>
                   ) : (
                     <p className='flex items-center justify-center'>
-                      {' '}
                       <ArchiveBoxArrowDownIcon className='mr-3' width={25} height={25} />{' '}
                       <span>Kirim</span>
                     </p>
                   )}
-                </p>
+                </div>
               </button>
               {/* <button className='flex justify-center items-center font-semibold text-gray-500 border-2 text-base w-full h-[50px] py-2 mt-[20px] bg-white rounded-xl hover:opacity-80'>
                 <p className='flex justify-center items-center'>
@@ -506,32 +464,49 @@ const PageRanapLayananObat = () => {
             <label className='label font-inter font-bold text-xl text-[#121713]'>RESEP</label>
           </div>
           <div className='border-2 rounded-3xl p-2 mb-2'>
-            <table className='table w-full'>
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Tanggal</th>
-                  <th>Nomor Resep</th>
-                  <th>Nama Obat</th>
-                  <th>Jumlah</th>
-                  <th>Aturan Pakai</th>
-                </tr>
-              </thead>
-              <tbody>
-                {obatExist.map((item, index) => (
-                  <tr key={index}>
-                    <td className='font-bold'>{index}</td>
-                    <td className='font-bold'>{item.tgl_peresepan || '-'}</td>
-                    <td className='font-bold'>{item.no_resep}</td>
-                    <td className='font-bold'>{item.nama_brng}</td>
-                    <td className='font-bold'>{item.jml}</td>
-                    <td className='font-bold'>{item.aturan_pakai}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {nmrResep.length > 0 ? (
+              nmrResep.map((noResep, index) => {
+                const obatForResep = obatExist.filter((item) => item.no_resep === noResep)
+                return (
+                  <div key={index}>
+                    <div className='font-bold text-lg mt-4'>{`No Resep: ${noResep}`}</div>
+                    {obatForResep.length > 0 ? (
+                      <table className='table w-full table-fixed'>
+                        <thead>
+                          <tr>
+                            <th className='px-4 py-2 w-1/12'>No</th>
+                            <th className='px-4 py-2 w-2/12'>Tanggal</th>
+                            <th className='px-4 py-2 w-2/12'>Nomor Resep</th>
+                            <th className='px-4 py-2 w-3/12'>Nama Obat</th>
+                            <th className='px-4 py-2 w-1/12'>Jumlah</th>
+                            <th className='px-4 py-2 w-3/12'>Aturan Pakai</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {obatForResep.map((item, index) => (
+                            <tr key={index}>
+                              <td className='font-bold px-4 py-2'>{index + 1}</td>
+                              <td className='font-bold px-4 py-2'>{item.tgl_peresepan || '-'}</td>
+                              <td className='font-bold px-4 py-2'>{item.no_resep}</td>
+                              <td className='font-bold px-4 py-2'>{item.nama_brng}</td>
+                              <td className='font-bold px-4 py-2'>{item.jml}</td>
+                              <td className='font-bold px-4 py-2'>{item.aturan_pakai}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className='text-center font-bold'>NoData</div>
+                    )}
+                  </div>
+                )
+              })
+            ) : (
+              <div className='text-center font-bold'>Tidak ada resep</div>
+            )}
           </div>
         </div>
+
         {/* batas */}
       </div>
       <ToastContainer />

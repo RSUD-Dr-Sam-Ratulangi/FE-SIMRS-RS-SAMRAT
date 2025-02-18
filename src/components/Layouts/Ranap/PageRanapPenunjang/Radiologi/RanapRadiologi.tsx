@@ -8,6 +8,7 @@ import {
 import { apiRadiologi } from '../../../../../services/api/config.api'
 import { spesificError, spesificSuccess } from '../../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
+import RiwayatRadilogiRanap from './RiwayatRadiologiRanap'
 
 const RanapRadiologi = () => {
   const today = new Date()
@@ -250,6 +251,7 @@ const RanapRadiologi = () => {
         <h1 className='mt-3 text text-2xl font-bold text-red-500 animate-pulse '>{errInfo}</h1>
       </div>
       <ToastContainer />
+      <RiwayatRadilogiRanap />
     </div>
   )
 }

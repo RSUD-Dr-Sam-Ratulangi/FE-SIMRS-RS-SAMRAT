@@ -12,6 +12,7 @@ import Popup from 'reactjs-popup'
 import { PopupActions } from 'reactjs-popup/dist/types'
 import { spesificError, spesificSuccess } from '../../../../../utils/ToastInfo'
 import { ToastContainer } from 'react-toastify'
+import RiwayatLaborRanap from './RiwayatLaborRanap'
 
 const RanapLabor = () => {
   const [dataLaborPemeriksaan, setDataLaborPemeriksaan] = useState([])
@@ -363,6 +364,9 @@ const RanapLabor = () => {
               </button>
             </div>
           )}
+          <div className='mt-3'>
+            <RiwayatLaborRanap />
+          </div>
         </div>
         <ToastContainer />
       </div>
