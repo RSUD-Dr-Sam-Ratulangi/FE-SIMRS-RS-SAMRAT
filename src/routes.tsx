@@ -67,7 +67,7 @@ export const ROUTES = {
   PAGE_ANTRIAN_RALAN: '/antrian-ralan',
 
   // Another
-  PAGE_SEARCH_DIGANOSA: '/diagnosa-search',
+  PAGE_SEARCH_DIGANOSA: '/diagnosa-search/:id',
   PAGE_SEARCH_PROSEDUR: '/prosedur-search',
   PAGE_SEARCH_TINDAKAN: '/tindakan-search',
 }

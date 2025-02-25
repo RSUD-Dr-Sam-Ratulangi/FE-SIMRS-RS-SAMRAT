@@ -11,6 +11,7 @@ import {
 import Popup from 'reactjs-popup'
 import { PopupActions } from 'reactjs-popup/dist/types'
 import { spesificError, spesificSuccess } from '../../../../../utils/ToastInfo'
+import RiwayatLaborIgd from './RiwayatLaborIgd'
 
 const IgdLabor = () => {
   const [dataLaborPemeriksaan, setDataLaborPemeriksaan] = useState([])
@@ -379,6 +380,9 @@ const IgdLabor = () => {
             </div>
           )}
         </div>
+      </div>
+      <div>
+        <RiwayatLaborIgd />
       </div>
       {/* MODAL */}
       <Popup

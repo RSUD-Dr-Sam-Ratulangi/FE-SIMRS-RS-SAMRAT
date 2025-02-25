@@ -8,7 +8,6 @@ import RiwayatModalIgd from '../../RiwayatModal/RiwayatIgd'
 const RincianRiwayatCppt = () => {
   const [activeTab, setActiveTab] = useState<number>()
   const [rincianRiwayat, setRincianRiwayat] = useState<RincianRiwayat[]>([])
-  const [dokterList, setDokterList] = useState<string[]>([])
   const [NmrRawat, setNmrRawat] = useState<string>('')
   const { id } = useParams()
 
@@ -17,30 +16,8 @@ const RincianRiwayatCppt = () => {
       const response = await api.get(`/api/v1/riwayatsoap?noRkmMedis=${id}`)
       console.log('riwayat', response.data)
       setRincianRiwayat(response.data)
-
-      const noRawatList = response.data.map((item) => item.no_rawat)
-      fetchDokterNames(noRawatList)
     } catch (err) {
       console.log('err get rincian riwayat', err)
-    }
-  }
-
-  const fetchDokterNames = async (noRawatList) => {
-    try {
-      const response = await api.get(`/api/v1/getDiagnosaPasien/${id}`)
-      const allDokters = response.data
-
-      const dokterNames = noRawatList
-        .map((no_rawat) => {
-          const dokter = allDokters.find((item) => item.no_rawat === no_rawat)
-          return dokter ? dokter.nm_dokter : null
-        })
-        .filter((name) => name !== null)
-
-      setDokterList(dokterNames)
-      console.log('dokter names', dokterNames)
-    } catch (err) {
-      console.log('err get dokter names', err)
     }
   }
 
@@ -77,7 +54,7 @@ const RincianRiwayatCppt = () => {
                 <td>{index + 1}</td>
                 <td>{item.tgl_perawatan}</td>
                 <td>{item.jam_rawat}</td>
-                <td>{dokterList[index] || '-'}</td>
+                <td>{item.nama || '-'}</td>
                 <td>
                   <button
                     className='btn btn-sm bg-primary'

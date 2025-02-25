@@ -980,14 +980,14 @@ const InsertSoapRalan1: React.FC<{
     }
   }
 
-  const handleWindow = () => {
+  const handleWindow = (id: string) => {
     const width = Math.floor(window.screen.width * 0.5)
     const height = Math.floor(window.screen.height * 0.7)
     const left = Math.floor((window.screen.width - width) / 2)
     const top = Math.floor((window.screen.height - height) / 2)
 
     const popup = window.open(
-      '/diagnosa-search',
+      `/diagnosa-search/${id}`,
       'Diagnosa',
       `width=${width},height=${height},left=${left},top=${top}`,
     )
@@ -1398,7 +1398,7 @@ const InsertSoapRalan1: React.FC<{
                           placeholder='Diagnosa'
                         />
                         <button
-                          onClick={handleWindow}
+                          onClick={() => handleWindow('ralan')}
                           className='btn btn-ghost btn-xs hover:text-sm hover:bg-slate-200'
                         >
                           ??

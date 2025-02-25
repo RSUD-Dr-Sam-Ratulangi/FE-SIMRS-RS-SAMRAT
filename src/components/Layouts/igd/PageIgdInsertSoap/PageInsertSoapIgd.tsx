@@ -11,6 +11,8 @@ import RincianRiwayatCppt from './component/RincianRiwayatCppt'
 import { useEffect, useState } from 'react'
 import { api } from '../../../../services/api/config.api'
 import { useParams } from 'react-router-dom'
+import { spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
+import { ToastContainer } from 'react-toastify'
 
 const PageInsertSoapIgd = () => {
   const nmrRawat = localStorage.getItem('no_rawat')
@@ -101,32 +103,56 @@ const PageInsertSoapIgd = () => {
   const postSoapIgd = async () => {
     const dataPost = {
       noRawat: nmrRawat,
-      suhuTubuh: suhuTubuh,
-      tensi: tensi,
-      nadi: nadi,
-      respirasi: respirasi,
-      tinggi: tinggi,
-      berat: berat,
-      spo2: spo2,
-      gcs: gcs,
-      kesadaran: kesadaran,
-      keluhan: keluhan,
-      pemeriksaan: pemeriksaan,
-      alergi: alergi,
-      lingkarPerut: lingkarPerut,
-      rtl: rtl,
-      penilaian: penilaian,
-      instruksi: instruksi,
-      evaluasi: evaluasi,
+      suhuTubuh,
+      tensi,
+      nadi,
+      respirasi,
+      tinggi,
+      berat,
+      spo2,
+      gcs,
+      kesadaran,
+      keluhan,
+      pemeriksaan,
+      alergi,
+      lingkarPerut,
+      rtl,
+      penilaian,
+      instruksi,
+      evaluasi,
       nip: nipCredentials,
+    }
+
+    const emptyFields = Object.entries(dataPost)
+      .filter(([key, value]) => value === '' || value === undefined || value === null)
+      .map(([key]) => key)
+
+    if (emptyFields.length > 0) {
+      spesificError({
+        errMessage: `Data gagal dikirim: Kolom ${emptyFields.join(', ')} tidak boleh kosong.`,
+      })
+      return
+    }
+
+    const isConfirmed = window.confirm('Apakah Anda yakin ingin mengirim data ini?')
+    if (!isConfirmed) {
+      return
     }
 
     try {
       const response = await api.post('/api/v1/postPemeriksaanRalan', dataPost)
       console.log('berhasil : ', response.data)
+
+      spesificSuccess({ doneMessage: 'Data SOAP IGD berhasil dikirim...' })
+
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000)
     } catch (err) {
       console.log('error input soap igd', err)
       console.log('data yang dikirim', dataPost)
+
+      spesificError({ errMessage: `Data gagal dikirim: ${err}` })
     }
   }
 
@@ -227,7 +253,7 @@ const PageInsertSoapIgd = () => {
                   Mengirim
                 </p>
               </button>
-              <button className='flex justify-center items-center font-semibold text-gray-500 border-2 text-base w-full h-[50px] py-2 mt-[20px] bg-white rounded-xl hover:opacity-80'>
+              {/* <button className='flex justify-center items-center font-semibold text-gray-500 border-2 text-base w-full h-[50px] py-2 mt-[20px] bg-white rounded-xl hover:opacity-80'>
                 <p className='flex justify-center items-center'>
                   <BellIcon className='mr-3' width={25} height={25} />
                   ICD 9 & 10
@@ -244,12 +270,44 @@ const PageInsertSoapIgd = () => {
                   <CheckIcon className='mr-3' width={25} height={25} />
                   SELESAI
                 </p>
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
         {/* batas */}
         <RincianRiwayatCppt />
+      </div>
+      <ToastContainer />
+      <div
+        className='p-4 bg-gray-100 rounded-lg text-sm text-gray-700 
+             overflow-auto max-w-full whitespace-pre-wrap break-words 
+             w-96 opacity-90 fixed top-1 right-1 shadow-lg z-0'
+      >
+        <div className='grid gap-2'>
+          <pre>
+            {JSON.stringify({
+              noRawat: nmrRawat,
+              suhuTubuh,
+              tensi,
+              nadi,
+              respirasi,
+              tinggi,
+              berat,
+              spo2,
+              gcs,
+              kesadaran,
+              keluhan,
+              pemeriksaan,
+              alergi,
+              lingkarPerut,
+              rtl,
+              penilaian,
+              instruksi,
+              evaluasi,
+              nip: nipCredentials,
+            })}
+          </pre>
+        </div>
       </div>
     </>
   )

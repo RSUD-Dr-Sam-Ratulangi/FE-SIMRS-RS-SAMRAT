@@ -372,7 +372,8 @@ const PdfComponent = async (
             const lineY = addTitleHead(doc, img)
             belowHeader(doc, lineY)
             progress(100)
-            doc.save(`SBPK_${noRawat}`)
+            doc.autoPrint()
+            window.open(doc.output('bloburl'), '_blank')
           }
         }
       } catch (err) {

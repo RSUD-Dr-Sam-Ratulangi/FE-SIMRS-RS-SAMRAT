@@ -30,7 +30,7 @@ const RiwayatCppt: React.FC<RiwayatCpptProps> = ({ noRawat }) => {
   return (
     <div>
       <p>Riwayat CCPT</p>
-      <div>
+      <div className='h-96 overflow-auto'>
         {riwayat.map((riwayat, index) => (
           <div
             key={index}
@@ -38,7 +38,7 @@ const RiwayatCppt: React.FC<RiwayatCpptProps> = ({ noRawat }) => {
           >
             <div className='flex justify-between'>
               <div>
-                <p className=' font-bold text-xl text-[#121713] mb-2'>RIWAYAT SOAP (Rawat Jalan)</p>
+                <p className=' font-bold text-xl text-[#121713] mb-2'>RIWAYAT SOAP (IGD)</p>
               </div>
             </div>
             <div className='mt-5'>
@@ -102,6 +102,10 @@ const RiwayatCppt: React.FC<RiwayatCpptProps> = ({ noRawat }) => {
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className='mt-2 p-2'>
+                <label className=' font-semibold text-slate-700 text-sm'>PLAN</label>
+                <p className='whitespace-pre'>{riwayat.rtl || '-'}</p>
               </div>
               <div className='mt-2 p-2'>
                 <label className=' font-semibold text-slate-700 text-sm'>ASESMEN</label>

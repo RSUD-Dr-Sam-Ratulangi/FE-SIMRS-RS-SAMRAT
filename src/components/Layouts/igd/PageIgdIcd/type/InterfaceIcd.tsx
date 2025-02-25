@@ -26,3 +26,18 @@ export interface RiwayatDiagnosaIcd {
   kd_dokter: string
   nm_dokter: string
 }
+
+export interface RiwayatProsedurIcd {
+  prioritas: number
+  status: string
+  kode: string
+  tgl_registrasi: string
+  kd_dokter: string
+  no_rkm_medis: string
+  kd_poli: string
+  no_rawat: string
+  deskripsi_panjang: string
+  deskripsi_pendek: string
+  nm_pasien: string
+  nm_poli: string
+}

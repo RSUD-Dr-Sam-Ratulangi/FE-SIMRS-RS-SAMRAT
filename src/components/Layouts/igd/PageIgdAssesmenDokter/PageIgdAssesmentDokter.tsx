@@ -8,8 +8,11 @@ import { useParams } from 'react-router-dom'
 import PemeriksaanAwal from './component/PemeriksaanAwal'
 import PemeriksaanFisikDokter from './component/PemeriksaanFisikDokter'
 import PemeriksaanPenunjang from './component/PemeriksaanPenunjang'
+import { spesificError } from '../../../../utils/ToastInfo'
+import { ToastContainer } from 'react-toastify'
 
 const PageIgdAssesmenDokter = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const nmrRawat = localStorage.getItem('no_rawat')
   const [dataPasien, setDataPasien] = useState<DataPasienAssesmenDokter | null>(null)
   // Anamnesis states
@@ -167,6 +170,7 @@ const PageIgdAssesmenDokter = () => {
   }
 
   const dataPostAssesmenDokter = async () => {
+    setIsLoading(true)
     const dataPost = {
       no_rawat: nmrRawat,
       tanggal: formatDate(new Date()),
@@ -206,13 +210,38 @@ const PageIgdAssesmenDokter = () => {
       tata: tata,
     }
 
+    const emptyFields = Object.entries(dataPost)
+      .filter(([, value]) => value === '' || value === undefined || value === null)
+      .map(([key]) => key)
+
+    if (emptyFields.length > 0) {
+      spesificError({
+        errMessage: `Mohon Mengisi Kolom: ${emptyFields.join(', ')} .`,
+      })
+      setIsLoading(false)
+      return
+    }
+
+    const isConfirmed = window.confirm('Apakah Anda yakin ingin mengirim data ini?')
+    if (!isConfirmed) {
+      setIsLoading(false)
+      return
+    }
+
     try {
       const response = await api.post('/api/v1/insert', dataPost)
       console.log('berhasil', response.data)
       console.log('data yang dikirm', dataPost)
+      setIsLoading(false)
+      setTimeout(() => {
+        setIsLoading(false)
+        window.location.reload()
+      }, 1000)
     } catch (err) {
+      spesificError({ errMessage: `Data Gagal Dikirim : ${err}` })
       console.log('err', err)
       console.log('data yang dikirm err', dataPost)
+      setIsLoading(false)
     }
   }
 
@@ -341,6 +370,7 @@ const PageIgdAssesmenDokter = () => {
         </div>
         <div className='flex gap-3'>
           <button
+            disabled={isLoading}
             onClick={dataPostAssesmenDokter}
             className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'
           >
@@ -363,6 +393,7 @@ const PageIgdAssesmenDokter = () => {
           </button>
         </div>
       </div>
+      <ToastContainer />
     </>
   )
 }

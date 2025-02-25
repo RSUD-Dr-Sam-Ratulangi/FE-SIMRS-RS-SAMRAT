@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
 import { api } from '../services/api/config.api'
 import { ToastContainer } from 'react-toastify'
-import { spesificSuccess } from './ToastInfo'
+import { spesificError, spesificSuccess } from './ToastInfo'
+import { useParams } from 'react-router-dom'
 
 const DiagnosaSearchList = () => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [listPenyakit, setListPenyakit] = useState<any[]>([])
-  const [selectedDiagnosa, setSelectedDiagnosa] = useState<any[]>([]) // Data yang dipilih
+  const [selectedDiagnosa, setSelectedDiagnosa] = useState<any[]>([])
   const nmrRawat = localStorage.getItem('no_rawat')
   const [isloading, setIsLoading] = useState<boolean>(false)
+
+  const { id } = useParams()
 
   useEffect(() => {
     const handleGetPenyakit = async () => {
@@ -53,12 +56,17 @@ const DiagnosaSearchList = () => {
         return
       }
 
+      if (!id) {
+        spesificError({ errMessage: 'Parameter id tidak ditemukan' })
+        return
+      }
+
       setIsLoading(true)
 
       for (const diagnosa of selectedDiagnosa) {
         const data = {
           noRawat: nmrRawat,
-          status: 'Ralan',
+          status: id,
           kdPenyakit: diagnosa.kode,
           prioritas: '1',
           statusPenyakit: 'Baru',

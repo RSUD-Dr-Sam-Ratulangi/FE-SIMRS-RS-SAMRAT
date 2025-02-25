@@ -449,7 +449,7 @@ const PengkajianNyeriPenilaianResikoJatuh: React.FC<PengkajianNyeriPenilaianResi
                             onChange={(e) => setLapor(e.target.value)}
                           >
                             <option disabled selected>
-                              Autoanamnesa
+                              Lapor Dokter
                             </option>
                             {Object.values(LaporKeperawatan).map((lapor) => (
                               <option key={lapor} value={lapor}>

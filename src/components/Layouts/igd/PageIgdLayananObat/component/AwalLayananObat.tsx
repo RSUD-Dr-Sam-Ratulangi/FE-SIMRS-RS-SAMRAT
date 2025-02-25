@@ -6,265 +6,199 @@ import {
   BellIcon,
   CheckIcon,
   ClockIcon,
+  ArrowPathIcon,
 } from '@heroicons/react/24/solid'
 import { ListObat, MedicineObat } from '../type/InterfaceObat'
 import { api } from '../../../../../services/api/config.api'
 import { useParams } from 'react-router-dom'
+import { spesificError, spesificSuccess } from '../../../../../utils/ToastInfo'
+import { ToastContainer } from 'react-toastify'
+
+interface Medicine {
+  nama: string
+  jumlahObat: number
+  aturanPakai: string
+  kode: string
+}
 
 const AwalLayananObat: React.FC = () => {
-  const [jam, setJam] = useState<string>('')
-  const [tanggal, setTanggal] = useState<string>('')
-  const [listObat, setListObat] = useState<ListObat[]>([])
-  const [searchTermObat, setSearchTermObat] = useState<string>('')
+  const [dataPasien, setDataPasien] = useState<any | null>(null)
+  const [searchTermObat, setSearchTermObat] = useState<any>('')
+  const [listObat, setListObat] = useState<any>([])
+  const [selectedMedicines, setSelectedMedicines] = useState<Record<string, Medicine>>({})
   const [jumlahObat, setJumlahObat] = useState<number>(0)
   const [aturanPakai, setAturanPakai] = useState<string>('')
-  const [plan, setPlan] = useState<string>('')
-  const [selectedMedicines, setSelectedMedicines] = useState<{ [kode: string]: MedicineObat }>({})
-  const [editObat, setEditObat] = useState<boolean>(false)
-  const [editedRowIndex, setEditedRowIndex] = useState(null)
-  const [nmrResep, setNmrResep] = useState<string>('')
-  const [haveNoResep, setHaveNoResep] = useState<boolean>(false)
+  const [nmrResep, setNmrResep] = useState<string[]>([])
   const [obatExist, setObatExist] = useState([])
-
-  console.log('obat exis', obatExist)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { id } = useParams()
 
   const nmrRawat = localStorage.getItem('no_rawat')
-  const { id } = useParams()
-  const storedRow = localStorage.getItem('dataRow')
-  const dataRow = storedRow ? JSON.parse(storedRow) : null
+  // const noAntrian = localStorage.getItem('no_antrian')
+  // const dateNow = formatSelectedDateNow()
   const tokenValue = localStorage.getItem('token')
   const Kd = JSON.parse(tokenValue)
-  const role = Object.keys(Kd)[0]
   let nipCredentials = ''
+  const role = Object.keys(Kd)[0]
+
   if (role === 'dokter') {
     nipCredentials = Kd.dokter.kd_dokter
   } else if (role === 'petugas') {
     nipCredentials = Kd.petugas.nip
   }
 
-  const setTimeAndDate = () => {
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = (today.getMonth() + 1).toString().padStart(2, '0')
-    const day = today.getDate().toString().padStart(2, '0')
-    const hours = today.getHours().toString().padStart(2, '0')
-    const minutes = today.getMinutes().toString().padStart(2, '0')
-    const formattedDate = `${year}-${month}-${day}`
-    const formattedTime = `${hours}:${minutes}`
-    setJam(formattedTime)
-    setTanggal(formattedDate)
+  const fetchDataPasien = async () => {
+    try {
+      const response = await api.get(`/api/v1/getPatientData?noRkmMedis=${id}`)
+      setDataPasien(response.data)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
-  // cek no resep jika sudah ada
+  useEffect(() => {
+    const handleGetObat = async () => {
+      try {
+        if (searchTermObat.trim().length >= 2) {
+          const response = await api.get(`/api/v1/searchDatabarang?searchString=${searchTermObat}`)
+          setListObat(response.data)
+        } else {
+          setListObat([])
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    handleGetObat()
+  }, [searchTermObat])
+
+  const handlePilihObat = (kode: string, nama: string, jumlah: number, aturan: string) => {
+    setSelectedMedicines((prevState) => ({
+      ...prevState,
+      [kode]: {
+        nama,
+        jumlahObat: jumlah,
+        aturanPakai: aturan,
+        kode: kode,
+      },
+    }))
+  }
+
   const checkExistNoResep = async () => {
     try {
       const response = await api.get(
         `/api/v1/getPrescriptionNumbers?noRkmMedis=${id}&noRawat=${nmrRawat}`,
       )
-      console.log('reseeppp', response.data)
-      if (response.data.length === 0) {
-        try {
-          const data = {
-            noRawat: nmrRawat,
-            kdDokter: nipCredentials,
-          }
-          const res = await api.post('/api/v1/postResepObat', data, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-          console.log(res.data)
-          setHaveNoResep(false)
-          setNmrResep(res.data)
-        } catch (err) {
-          console.log(err)
-        }
-      } else {
-        console.log('tidak ada resep yang perlu ditambahkan.')
-        setNmrResep(response.data[0])
-        setHaveNoResep(true)
-        console.log()
-      }
+      setNmrResep(response.data)
+      console.log('data exist no resep', response.data)
+
+      response.data.forEach((noResep: string) => {
+        fetchExistObat(noResep)
+      })
     } catch (err) {
       console.log('Tidak Ada no resep', err)
     }
   }
 
+  const fetchExistObat = async (noResep: string) => {
+    try {
+      const response = await api.get(`/api/v1/getResepDokterDetails?noResep=${noResep}`)
+      setObatExist((prevObatExist) => [...prevObatExist, ...response.data])
+      console.log('data obat yang sudah ada', response.data)
+    } catch (err) {
+      console.log('tidak ada obat yang sudah ada', err)
+    }
+  }
+
   const postResep = async () => {
+    if (role.includes('petugas')) {
+      spesificError({ errMessage: 'Gagal Mengirim Data, role petugas.' })
+      return
+    }
+
+    if (Object.keys(selectedMedicines).length === 0) {
+      spesificError({ errMessage: 'Mohon Memilih setidaknya satu obat untuk melanjutkan.' })
+      return
+    }
+
+    const confirmation = window.confirm('Obat akan dibuatkan resep baru, Lanjutkan?')
+    if (!confirmation) {
+      return
+    }
+
+    setIsLoading(true)
+
     const data = {
       noRawat: nmrRawat,
+      status: 'ralan',
       kdDokter: nipCredentials,
     }
-    if (haveNoResep === false) {
-      try {
-        const response = await api.post('/api/v1/postResepObat', data, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        for (const key in selectedMedicines) {
-          const medicineData = selectedMedicines[key]
-          console.log(medicineData)
 
-          const resepDokterData = {
-            noResep: response.data.no_resep,
-            kodeBrng: medicineData.kode,
-            jml: Math.round(medicineData.jumlahObat * 55) / 54,
-            aturanPakai: medicineData.aturanPakai,
-          }
-          try {
-            const res = await api.post('/api/v1/postResepDokter', resepDokterData, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            })
-            console.log('Berhasil')
-            console.log(res.data)
-          } catch (err) {
-            console.log('obat :', resepDokterData)
-            console.log(err)
-          }
-        }
-        console.log('post resep response', response.data.no_resep)
-      } catch (err) {
-        console.log('post resep error', err)
-      }
-    } else if (haveNoResep === true) {
-      const existingMedicines = obatExist.map((item) => item.kode_brng)
+    try {
+      const response = await api.post('/api/v1/postResepObat', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
 
       for (const key in selectedMedicines) {
         const medicineData = selectedMedicines[key]
 
-        if (existingMedicines.includes(medicineData.kode)) {
-          console.log('Medicine already exists, skipping:', medicineData)
-          continue
-        }
-
         const resepDokterData = {
-          noResep: nmrResep,
+          noResep: response.data.no_resep,
           kodeBrng: medicineData.kode,
           jml: Math.round(medicineData.jumlahObat * 55) / 54,
           aturanPakai: medicineData.aturanPakai,
         }
 
         try {
-          const res = await api.post('/api/v1/postResepDokter', resepDokterData, {
+          await api.post('/api/v1/postResepDokter', resepDokterData, {
             headers: {
               'Content-Type': 'application/json',
             },
           })
-          console.log('Berhasil')
-          console.log(res.data)
-          console.log('obat berhasil :', resepDokterData)
         } catch (err) {
-          console.log('obat error :', resepDokterData)
+          console.log('obat :', resepDokterData)
           console.log(err)
         }
       }
+
+      console.log('post resep response', response.data.no_resep)
+    } catch (err: any) {
+      spesificError({ errMessage: `Post Resep Error : ${err.data}` })
+      console.log('post resep error', err)
+      setIsLoading(false)
+      return
     }
-    console.log('no rawat sudah ada, skip')
+
+    spesificSuccess({ doneMessage: 'Resep Berhasil Dikirim...' })
+
+    setTimeout(() => {
+      setIsLoading(false)
+      // window.location.reload()
+    }, 1000)
   }
 
-  const handleGetObat = async () => {
-    try {
-      if (searchTermObat.trim().length >= 2) {
-        const response = await api.get(`/api/v1/searchDatabarang?searchString=${searchTermObat}`)
-        setListObat(response.data)
-        console.log('List Obat', response.data)
-      } else {
-        setListObat([])
-      }
-    } catch (error) {
-      console.log(error)
+  useEffect(() => {
+    const checkAll = async () => {
+      await fetchDataPasien()
+      await checkExistNoResep()
     }
-  }
+    checkAll()
+  }, [id])
 
   useEffect(() => {
-    handleGetObat()
-  }, [searchTermObat])
-
-  useEffect(() => {
-    setTimeAndDate()
-    checkExistNoResep()
-  }, [])
-
-  useEffect(() => {
-    const fetchExistObat = async () => {
-      try {
-        const response = await api.get(`/api/v1/getResepDokterDetails?noResep=${nmrResep}`)
-        setObatExist(response.data)
-      } catch (err) {
-        console.log('tidak ada obat yang sudah ada', err)
-      }
+    if (nmrResep) {
+      fetchExistObat(undefined)
     }
-
-    fetchExistObat()
   }, [nmrResep])
-
-  const handlePilihObat = (kode: string, nama: string, jumlahObat: any, aturanPakai: string) => {
-    setSelectedMedicines((prev) => {
-      const newSelectedMedicines = { ...prev }
-
-      if (newSelectedMedicines[kode]) {
-        newSelectedMedicines[kode] = {
-          ...newSelectedMedicines[kode],
-          nama: nama,
-          jumlahObat: jumlahObat,
-          aturanPakai: aturanPakai,
-          kode: kode,
-        }
-      } else {
-        newSelectedMedicines[kode] = { nama, aturanPakai, jumlahObat, kode }
-      }
-
-      const planString = generatePlanString(newSelectedMedicines)
-      setPlan(
-        `-------------------------------------------------------------------------------- \n${planString}\n`,
-      )
-      return newSelectedMedicines
-    })
-  }
-
-  const handleEditObat = (index) => {
-    setEditObat(true)
-    setEditedRowIndex(index)
-  }
-
-  const handleHapusObat = (kode: string) => {
-    setSelectedMedicines((prev) => {
-      const newSelectedMedicines = { ...prev }
-      delete newSelectedMedicines[kode]
-
-      const planString = generatePlanString(newSelectedMedicines)
-      setPlan(
-        `-------------------------------------------------------------------------------- \n${planString}\n`,
-      )
-
-      return newSelectedMedicines
-    })
-  }
-
-  const generatePlanString = (selectedMedicines: any) => {
-    const planArray = []
-
-    for (const kode in selectedMedicines) {
-      const { nama, jumlahObat, aturanPakai } = selectedMedicines[kode]
-      const planItem = `${nama} ${kode} - Jumlah: ${jumlahObat}, Aturan Pakai: ${aturanPakai}.`
-      planArray.push(planItem)
-    }
-    return planArray.join('\n')
-  }
-
-  console.log('plan obat', plan)
-  console.log(nipCredentials)
 
   return (
     <>
-      <p className='font-inter font-bold text-xl text-[#121713]'>Layanan & Obat</p>
       <div className='flex w-full h-full bg-white mt-3 p-2'>
         <div className='w-full'>
           <div className=''>
-            <p className='font-inter font-bold text-lg text-[#121713]'>Layanan Obat</p>
             <p className='text-sm text-disabled '>
               Isi semua data dibawah ini untuk menambahkan pasien baru kedalam daftar rawat jalan
             </p>
@@ -273,31 +207,31 @@ const AwalLayananObat: React.FC = () => {
                 <div className='grid gap-2 w-full'>
                   <div className='flex gap-2'>
                     <div className='grid'>
-                      <label className='label'>Tanggal</label>
+                      <label className='label'>Tanggal Lahir</label>
                       <input
-                        type='date'
-                        value={tanggal}
+                        value={dataPasien?.tgl_lahir ? dataPasien?.tgl_lahir : '-'}
+                        type='text'
                         disabled
                         className='input w-full border-primary text-sm'
                       />
                     </div>
                     <div className='w-full'>
-                      <label className='label'>Jam</label>
+                      <label className='label'>Umur</label>
                       <input
-                        type='time'
-                        disabled
+                        type='text'
                         className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
-                        value={jam}
+                        value={dataPasien?.umur ? dataPasien?.umur : '-'}
+                        disabled
                       />
                     </div>
                   </div>
                   <div>
                     <div className='w-full'>
-                      <label className='label'>Id Rawat</label>
+                      <label className='label'>Nama Pasien</label>
                       <input
-                        type='text'
-                        value={nmrRawat}
                         disabled
+                        type='text'
+                        value={dataPasien?.nm_pasien ? dataPasien?.nm_pasien : '-'}
                         className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
                       />
                     </div>
@@ -306,20 +240,20 @@ const AwalLayananObat: React.FC = () => {
                 <div className='grid w-full'>
                   <div className='grid w-full gap-3'>
                     <div className='grid w-full'>
-                      <label className='label'>Nomor.RM</label>
+                      <label className='label'>Nomor Rawat</label>
                       <input
                         type='text'
-                        value={id}
                         disabled
+                        value={nmrRawat ? nmrRawat : '-'}
                         className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
                       />
                     </div>
                     <div className='grid w-full'>
-                      <label className='label'>Nama Pasien</label>
+                      <label className='label'>Nomor RM</label>
                       <input
                         type='text'
                         disabled
-                        value={dataRow?.nm_pasien ? dataRow.nm_pasien : '-'}
+                        value={id ? id : '-'}
                         className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
                       />
                     </div>
@@ -328,149 +262,107 @@ const AwalLayananObat: React.FC = () => {
               </div>
             </div>
             {/* BATA */}
-            <div>
-              <label className='label'>Plan</label>
-              <textarea
-                placeholder='-'
-                value={plan || undefined}
-                className='input input-bordered text-sm rounded-2xl align-text-top border-disabled disabled:bg-slate-200 disabled:text-black w-full h-36 pt-1'
-              />
-            </div>
-            <div className='grid w-full'>
-              <label className='label'>Cari Obat</label>
-              <input
-                type='text'
-                placeholder='Paracetamol?'
-                onChange={(e) => setSearchTermObat(e.target.value)}
-                className='input w-full border border-primary disabled:bg-slate-200 disabled:text-black'
-              />
-            </div>
-            {listObat.length > 0 ? (
-              <div className='overflow-auto h-56'>
-                {' '}
-                <table className='table table-lg w-full'>
-                  <thead>
-                    <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200 '>
-                      <th className='text-start'>NO</th>
-                      <th className='text-start'>KODE OBAT</th>
-                      <th className='text-start'>NAMA OBAT</th>
-                      <th className='text-start'>JUMLAH</th>
-                      <th className='text-start'>ATURAN PAKAI</th>
-                      <th className='text-start'>AKSI</th>
-                    </tr>
-                  </thead>
-                  <tbody className='overflow-auto'>
-                    {listObat.map((data, index) => (
-                      <tr
-                        key={index}
-                        className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px]'
-                      >
-                        <td className='text-start'>{index + 1}</td>
-                        <td className='text-start'>
-                          {listObat.length > 0 ? data.kode_brng || '-' : '-'}
-                        </td>
-                        <td className='text-start'>
-                          {listObat.length > 0 ? data.nama_brng || '-' : '-'}
-                        </td>
-                        <td>
-                          <input
-                            id={`input_obat_${index}`}
-                            type='number'
-                            onKeyPress={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault()
-                                const button = document.getElementById(`button_${index}`)
-                                if (button) {
-                                  button.click()
-                                  setListObat([])
-                                }
-                              }
-                            }}
-                            onChange={(e) => setJumlahObat(parseFloat(e.target.value))}
-                            className='text-center w-20 input input-bordered'
-                          />
-                        </td>
-                        <td>
-                          {data.nama_brng.includes('Racikan') ? (
-                            <textarea
-                              id={`input_aturan_pakai_${index}`}
-                              onChange={(e) => setAturanPakai(e.target.value)}
-                              className='textarea textarea-bordered w-96'
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' && e.shiftKey === false) {
-                                  e.preventDefault()
-                                  const button = document.getElementById(`button_${index}`)
-                                  if (button) {
-                                    button.click()
-                                    setListObat([])
-                                  }
-                                }
-                              }}
-                            />
-                          ) : (
-                            <input
-                              id={`input_aturan_pakai_${index}`}
-                              type='text'
-                              onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault()
-                                  const button = document.getElementById(`button_${index}`)
-                                  if (button) {
-                                    button.click()
-                                    setListObat([])
-                                  }
-                                }
-                              }}
-                              onChange={(e) => setAturanPakai(e.target.value)}
-                              className='input input-bordered w-32'
-                            />
-                          )}
-                        </td>
-                        <td>
-                          <button
-                            id={`button_${index}`}
-                            className='underline'
-                            onClick={() => {
-                              handlePilihObat(
-                                data.kode_brng,
-                                data.nama_brng,
-                                jumlahObat,
-                                aturanPakai,
-                              )
-                              setJumlahObat(0)
-                              setAturanPakai('')
-
-                              // Reset input fields
-                              const inputObat = document.getElementById(
-                                `input_obat_${index}`,
-                              ) as HTMLInputElement
-                              const inputAturanPakai = document.getElementById(
-                                `input_aturan_pakai_${index}`,
-                              ) as HTMLInputElement
-
-                              if (inputObat && inputAturanPakai) {
-                                inputObat.value = ''
-                                inputAturanPakai.value = ''
-                              }
-                            }}
+            <div className='grid grid-cols-1 gap-6'>
+              <div className='mt-4'>
+                <label className='label font-bold'>Cari Obat :</label>
+                <div className='flex relative gap-2 mt-1'>
+                  <input
+                    type='text'
+                    onChange={(e) => setSearchTermObat(e.target.value)}
+                    className='w-full px-3 py-2 border border-primary rounded-2xl disabled:bg-slate-200 disabled:text-black'
+                    placeholder='Paracetamol'
+                  />
+                  {listObat.length > 0 ? (
+                    <button
+                      onClick={() => setListObat([])}
+                      className='btn w-10 h-5 bg-white hover:bg-white border-none text-lg font-bold'
+                    >
+                      X
+                    </button>
+                  ) : null}
+                </div>
+                {listObat.length > 0 ? (
+                  <div className='mt-4 pt-4 w-full overflow-auto'>
+                    <table className='table table-lg w-full '>
+                      <thead>
+                        <tr className='text-[10px] text-gray-400 font-bold border-b-2 border-gray-200'>
+                          <th className='text-start'>NO</th>
+                          <th className='text-start'>KODE OBAT</th>
+                          <th className='text-start'>NAMA OBAT</th>
+                          <th className='text-start'>JUMLAH</th>
+                          <th className='text-start'>ATURAN PAKAI</th>
+                          <th className='text-start'>AKSI</th>
+                        </tr>
+                      </thead>
+                      <tbody className='overflow-auto'>
+                        {listObat.map((data, index) => (
+                          <tr
+                            key={index}
+                            className='text-sm text-gray-700 h-10 font-bold border-b-[1px] border-gray-200 py-[10px]'
                           >
-                            <p className='text-start'>Simpan</p>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                            <td className='text-start'>{index + 1}</td>
+                            <td className='text-start'>{data.kode_brng}</td>
+                            <td className='text-start'>{data.nama_brng}</td>
+                            <td>
+                              <input
+                                id={`input_obat_${index}`}
+                                type='number'
+                                onChange={(e) => setJumlahObat(parseFloat(e.target.value))}
+                                className='text-center w-20 input input-bordered'
+                              />
+                            </td>
+                            <td>
+                              <input
+                                id={`input_aturan_pakai_${index}`}
+                                type='text'
+                                onChange={(e) => setAturanPakai(e.target.value)}
+                                className='input input-bordered w-32'
+                              />
+                            </td>
+                            <td>
+                              <button
+                                className='underline'
+                                disabled={!aturanPakai || !jumlahObat}
+                                onClick={() => {
+                                  handlePilihObat(
+                                    data.kode_brng,
+                                    data.nama_brng,
+                                    jumlahObat,
+                                    aturanPakai,
+                                  )
+                                  setJumlahObat(0)
+                                  setAturanPakai('')
+                                  setListObat([])
+
+                                  // Reset input fields
+                                  const inputObat = document.getElementById(
+                                    `input_obat_${index}`,
+                                  ) as HTMLInputElement
+                                  const inputAturanPakai = document.getElementById(
+                                    `input_aturan_pakai_${index}`,
+                                  ) as HTMLInputElement
+
+                                  if (inputObat && inputAturanPakai) {
+                                    inputObat.value = ''
+                                    inputAturanPakai.value = ''
+                                  }
+                                }}
+                              >
+                                Simpan
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : null}
               </div>
-            ) : (
-              <div className='text-center py-4'>No data available</div>
-            )}
-            {selectedMedicines && Object.keys(selectedMedicines).length > 0 ? (
-              <>
+
+              {/* Menampilkan daftar obat yang dipilih */}
+              {Object.keys(selectedMedicines).length > 0 ? (
                 <div className='mt-4'>
-                  <label className='label'>
-                    <span>Daftar Obat yang ditambahkan :</span>
-                  </label>
+                  <label className='label font-bold'>Daftar Obat yang ditambahkan :</label>
                   <div className='pt-4 w-full h-full'>
                     <table className='table w-full'>
                       <thead className='text-xs text-gray-400 font-bold border-b-2 border-gray-200 pb-2'>
@@ -489,106 +381,84 @@ const AwalLayananObat: React.FC = () => {
                             key={index}
                             className='text-sm text-gray-700 font-bold border-b-[1px] border-gray-200'
                           >
-                            <td className='text-center'>{index + 1}</td>
-                            <td className='text-center'>{kode}</td>
-                            <td className='text-center'>{data.nama}</td>
-                            {editObat && editedRowIndex === index ? (
-                              <>
-                                <td className='text-center'>
-                                  <input
-                                    id={`input_obat_${index}`}
-                                    type='number'
-                                    onChange={(e) => setJumlahObat(parseFloat(e.target.value))}
-                                    defaultValue={data.jumlahObat || jumlahObat}
-                                    className='w-20 h-10 input input-bordered'
-                                    onKeyPress={(e) => {
-                                      if (e.key === 'Enter') {
-                                        e.preventDefault()
-                                        const button = document.getElementById(`button__${index}`)
-                                        if (button) {
-                                          button.click()
-                                          setListObat([])
-                                        }
-                                      }
-                                    }}
-                                  />
-                                </td>
-                                <td className='text-center'>
-                                  <div className='flex justify-center'>
-                                    <input
-                                      id={`input_aturan_pakai_${index}`}
-                                      type='text'
-                                      defaultValue={data.aturanPakai || aturanPakai}
-                                      onChange={(e) => setAturanPakai(e.target.value)}
-                                      className='w-32 h-10 input input-bordered'
-                                      onKeyPress={(e) => {
-                                        if (e.key === 'Enter') {
-                                          e.preventDefault()
-                                          const button = document.getElementById(`button__${index}`)
-                                          if (button) {
-                                            button.click()
-                                            setListObat([])
-                                          }
-                                        }
-                                      }}
-                                    />
-                                  </div>
-                                </td>
-                              </>
-                            ) : (
-                              <>
-                                <td className='text-center'>
-                                  {/* <input
-                                    className='input-ghost w-20 text-center'
-                                    value={jumlahObat || data.jumlahObat}
-                                  /> */}
-                                  <div className='rounded flex justify-center'>
-                                    {data.jumlahObat}
-                                    <p className='text-disabled'>x</p>
-                                  </div>
-                                </td>
-                                <td className='text-center'>{data.aturanPakai}</td>
-                              </>
-                            )}
-                            {editObat && editedRowIndex === index ? (
-                              <td className='flex justify-center items-center gap-3'>
-                                <button
-                                  onClick={() => {
-                                    handlePilihObat(
-                                      data.kode,
-                                      data.nama,
-                                      jumlahObat || data.jumlahObat,
-                                      aturanPakai || data.aturanPakai,
-                                    )
-                                    setEditObat(false)
-                                    setJumlahObat(0)
-                                    setAturanPakai('')
-                                  }}
-                                  id={`button__${index}`}
-                                >
-                                  <p className='text-green-500'>Simpan</p>
-                                </button>
-                                <button onClick={() => setEditObat(false)}>
-                                  <p className='text-red-500'>Batal</p>
-                                </button>
-                              </td>
-                            ) : (
-                              <td className='flex items-center justify-center gap-3'>
-                                <button onClick={() => handleEditObat(index)}>
-                                  <p className='text-blue-500'>Edit</p>
-                                </button>
-                                <button onClick={() => handleHapusObat(kode)}>
-                                  <p className='text-red-500'>Hapus</p>
-                                </button>
-                              </td>
-                            )}
+                            <td>{index + 1}</td>
+                            <td>{kode}</td>
+                            <td>{data.nama}</td>
+                            <td>{data.jumlahObat}</td>
+                            <td>{data.aturanPakai}</td>
+                            <td>
+                              <button
+                                onClick={() => {
+                                  const newMedicines = { ...selectedMedicines }
+                                  delete newMedicines[kode]
+                                  setSelectedMedicines(newMedicines)
+                                }}
+                              >
+                                Hapus
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
-              </>
+              ) : null}
+            </div>
+            {nmrResep.length > 0 ? (
+              <div>
+                <div className='w-full h-full bg-white mt-3 p-2'>
+                  <div className='pt-3'>
+                    <label className='label font-inter font-bold text-xl text-[#121713]'>
+                      RESEP
+                    </label>
+                  </div>
+                  <div className='border-2 rounded-3xl p-2 mb-2'>
+                    {nmrResep.length > 0 ? (
+                      nmrResep.map((noResep, index) => {
+                        const obatForResep = obatExist.filter((item) => item.no_resep === noResep)
+                        return (
+                          <div key={index}>
+                            <div className='font-bold text-lg mt-4'>{`No Resep: ${noResep}`}</div>
+                            {obatForResep.length > 0 ? (
+                              <table className='table w-full table-fixed'>
+                                <thead>
+                                  <tr>
+                                    <th className='px-4 py-2 w-1/12'>No</th>
+                                    <th className='px-4 py-2 w-2/12'>Tanggal</th>
+                                    <th className='px-4 py-2 w-2/12'>Nomor Resep</th>
+                                    <th className='px-4 py-2 w-3/12'>Nama Obat</th>
+                                    <th className='px-4 py-2 w-1/12'>Jumlah</th>
+                                    <th className='px-4 py-2 w-3/12'>Aturan Pakai</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {obatForResep.map((item, index) => (
+                                    <tr key={index}>
+                                      <td className='font-bold px-4 py-2'>{index + 1}</td>
+                                      <td className='font-bold px-4 py-2'>
+                                        {item.tgl_peresepan || '-'}
+                                      </td>
+                                      <td className='font-bold px-4 py-2'>{item.no_resep}</td>
+                                      <td className='font-bold px-4 py-2'>{item.nama_brng}</td>
+                                      <td className='font-bold px-4 py-2'>{item.jml}</td>
+                                      <td className='font-bold px-4 py-2'>{item.aturan_pakai}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            ) : (
+                              <div className='text-center font-bold'>NoData</div>
+                            )}
+                          </div>
+                        )
+                      })
+                    ) : (
+                      <div className='text-center font-bold'>Tidak ada resep</div>
+                    )}
+                  </div>
+                </div>
+              </div>
             ) : null}
           </div>
         </div>
@@ -604,15 +474,25 @@ const AwalLayananObat: React.FC = () => {
           </div>
           <div className='grid '>
             <button
+              disabled={isLoading}
               onClick={postResep}
               className='flex justify-center items-center font-semibold text-white text-base w-full h-[50px] py-2 mt-[20px] bg-primary rounded-xl hover:opacity-80'
             >
-              <p className='flex justify-center items-center'>
-                <ArchiveBoxArrowDownIcon className='mr-3' width={25} height={25} />
-                Mengirim
-              </p>
+              <div className='flex justify-center items-center'>
+                {isLoading ? (
+                  <p className='flex justify-center items-center'>
+                    <ArrowPathIcon className='animate-spin mr-3' width={25} height={25} />
+                    Mengirim
+                  </p>
+                ) : (
+                  <p className='flex items-center justify-center'>
+                    <ArchiveBoxArrowDownIcon className='mr-3' width={25} height={25} />{' '}
+                    <span>Kirim</span>
+                  </p>
+                )}
+              </div>
             </button>
-            <button className='flex justify-center items-center font-semibold text-gray-500 border-2 text-base w-full h-[50px] py-2 mt-[20px] bg-white rounded-xl hover:opacity-80'>
+            {/* <button className='flex justify-center items-center font-semibold text-gray-500 border-2 text-base w-full h-[50px] py-2 mt-[20px] bg-white rounded-xl hover:opacity-80'>
               <p className='flex justify-center items-center'>
                 <BellIcon className='mr-3' width={25} height={25} />
                 ICD 9 & 10
@@ -629,10 +509,11 @@ const AwalLayananObat: React.FC = () => {
                 <CheckIcon className='mr-3' width={25} height={25} />
                 SELESAI
               </p>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   )
 }

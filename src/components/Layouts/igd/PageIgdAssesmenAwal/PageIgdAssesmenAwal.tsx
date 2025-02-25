@@ -8,8 +8,12 @@ import RiwayatPsikologi from './component/RiwayatPsikologis'
 import PengkajianNyeriPenilaianResikoJatuh from './component/PengkajianNyeri_PenilaianResikoJatuh'
 import React, { useState } from 'react'
 import { api } from '../../../../services/api/config.api'
+import { spesificError, spesificSuccess } from '../../../../utils/ToastInfo'
+import { ToastContainer } from 'react-toastify'
 
 const PageIgdAssesmenAwal: React.FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const nmrRawat = localStorage.getItem('no_rawat')
   // State for Pengkajian Keperawatan
   const [informasi, setInformasi] = useState<string>('')
@@ -252,85 +256,115 @@ const PageIgdAssesmenAwal: React.FC = () => {
   }
 
   const postAwalKeperawatanIgd = async () => {
+    setIsLoading(true)
+
     const dataPost = {
       noRawat: nmrRawat,
       tanggal: getCurrentFormattedDate(),
-      informasi: informasi,
-      keluhanUtama: keluhanUtama,
-      rpd: rpd,
-      rpo: rpo,
-      statusKehamilan: statusKehamilan,
-      gravida: gravida,
-      para: para,
-      abortus: abortus,
-      hpht: hpht,
-      tekanan: tekanan,
-      pupil: pupil,
-      neurosensorik: neurosensorik,
-      integumen: integumen,
-      turgor: turgor,
-      edema: edema,
-      mukosa: mukosa,
-      perdarahan: perdarahan,
-      jumlahPerdarahan: jumlahPerdarahan,
-      warnaPerdarahan: warnaPerdarahan,
-      intoksikasi: intoksikasi,
-      bab: bab,
+      informasi,
+      keluhanUtama,
+      rpd,
+      rpo,
+      statusKehamilan,
+      gravida,
+      para,
+      abortus,
+      hpht,
+      tekanan,
+      pupil,
+      neurosensorik,
+      integumen,
+      turgor,
+      edema,
+      mukosa,
+      perdarahan,
+      jumlahPerdarahan,
+      warnaPerdarahan,
+      intoksikasi,
+      bab,
       xbab: xBab,
       kbab: kBab,
       wbab: wBab,
-      bak: bak,
+      bak,
       xbak: xBak,
       kbak: kBak,
       wbak: wBak,
       lbak: lBak,
       psikologis: psikologi,
-      jiwa: jiwa,
-      perilaku: perilaku,
-      dilaporkan: dilaporkan,
-      sebutkan: sebutkan,
-      hubungan: hubungan,
-      tinggalDengan: tinggalDengan,
-      ketTinggal: ketTinggal,
-      budaya: budaya,
-      ketBudaya: ketBudaya,
-      pendidikanPj: pendidikanPj,
-      ketPendidikanPj: ketPendidikanPj,
-      edukasi: edukasi,
-      ketEdukasi: ketEdukasi,
-      kemampuan: kemampuan,
-      aktifitas: aktifitas,
-      alatBantu: alatBantu,
+      jiwa,
+      perilaku,
+      dilaporkan,
+      sebutkan,
+      hubungan,
+      tinggalDengan,
+      ketTinggal,
+      budaya,
+      ketBudaya,
+      pendidikanPj,
+      ketPendidikanPj,
+      edukasi,
+      ketEdukasi,
+      kemampuan,
+      aktifitas,
+      alatBantu,
       keBantu: ketBantu,
-      nyeri: nyeri,
-      provokes: provokes,
-      ketProvokes: ketProvokes,
-      quality: quality,
-      ketQuality: ketQuality,
-      lokasi: lokasi,
-      menyebar: menyebar,
-      skalaNyeri: skalaNyeri,
-      durasi: durasi,
-      nyeriHilang: nyeriHilang,
-      ketNyeri: ketNyeri,
-      padaDokter: padaDokter,
-      ketDokter: ketDokter,
-      berjalanA: berjalanA,
-      berjalanB: berjalanB,
-      berjalanC: berjalanC,
-      hasil: hasil,
-      lapor: lapor,
-      ketLapor: ketLapor,
-      rencana: rencana,
+      nyeri,
+      provokes,
+      ketProvokes,
+      quality,
+      ketQuality,
+      lokasi,
+      menyebar,
+      skalaNyeri,
+      durasi,
+      nyeriHilang,
+      ketNyeri,
+      padaDokter,
+      ketDokter,
+      berjalanA,
+      berjalanB,
+      berjalanC,
+      hasil,
+      lapor,
+      ketLapor,
+      rencana,
       nip: nipCredentials,
+    }
+
+    const emptyFields = Object.entries(dataPost)
+      .filter(([key, value]) => value === '' || value === undefined || value === null)
+      .map(([key]) => key)
+
+    if (emptyFields.length > 0) {
+      spesificError({
+        errMessage: `Mohon Mengisi Kolom: ${emptyFields.join(', ')} .`,
+      })
+      setIsLoading(false)
+      return
+    }
+
+    const isConfirmed = window.confirm('Apakah Anda yakin ingin mengirim data ini?')
+    if (!isConfirmed) {
+      setIsLoading(false)
+      return
     }
 
     try {
       const response = await api.post('/api/v1/insert-keperawatan-igd', dataPost)
       console.log('hasil', response.data)
+
+      spesificSuccess({ doneMessage: 'Resep Berhasil Dikirim...' })
+
+      setTimeout(() => {
+        setIsLoading(false)
+        window.location.reload()
+      }, 1000)
     } catch (err) {
       console.log('Error', err)
       console.log('data yang dikirim', dataPost)
+
+      spesificError({ errMessage: `Data gagal dikirim: ${err}` })
+      setIsLoading(false)
     }
   }
 
@@ -409,6 +443,7 @@ const PageIgdAssesmenAwal: React.FC = () => {
           </button>
         </div>
       </div>
+      <ToastContainer />
     </>
   )
 }

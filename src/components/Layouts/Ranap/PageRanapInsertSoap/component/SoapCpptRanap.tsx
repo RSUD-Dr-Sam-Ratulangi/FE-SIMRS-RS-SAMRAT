@@ -34,14 +34,14 @@ const SoapCpptRanap: React.FC<SoapCpptRanapProps> = ({ onValuesChangeSoapCpptRan
     )
   }, [JSON.stringify(formData)])
 
-  const handleWindowDiagnosa = () => {
+  const handleWindowDiagnosa = (id: string) => {
     const width = Math.floor(window.screen.width * 0.5)
     const height = Math.floor(window.screen.height * 0.7)
     const left = Math.floor((window.screen.width - width) / 2)
     const top = Math.floor((window.screen.height - height) / 2)
 
     const popup = window.open(
-      '/diagnosa-search',
+      `/diagnosa-search/${id}`,
       'Diagnosa',
       `width=${width},height=${height},left=${left},top=${top}`,
     )
@@ -137,7 +137,7 @@ const SoapCpptRanap: React.FC<SoapCpptRanapProps> = ({ onValuesChangeSoapCpptRan
       <div className='flex gap-3 mt-3 items-center w-full'>
         <div>
           <button
-            onClick={handleWindowDiagnosa}
+            onClick={() => handleWindowDiagnosa('ranap')}
             className='btn bg-primary text-slate-100 flex items-center gap-2 hover:bg-primary hover:border-slate-400 hover:shadow-lg'
           >
             <MagnifyingGlassIcon width={25} height={25} />

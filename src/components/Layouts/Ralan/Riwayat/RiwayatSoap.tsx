@@ -88,6 +88,8 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   const modalRiwayatResumeRef = useRef<PopupActions>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [riwayatSoap, setRiwayatSoap] = useState<ApiData>([])
+  const [dataPasienByNoRawat, setDataPasienByNoRawat] = useState<any | null>(null)
+  const [dataPasien, setDataPasien] = useState<any | null>(null)
   const [laborNmrRawat, setLaborNmrRawat] = useState('')
   const [radiologiNmrRawat, setRadiologiNmrRawat] = useState('')
   const [dokterNames, setDokterNames] = useState({})
@@ -252,12 +254,26 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const response = await api.get(`/api/v1/getPatientData?noRkmMedis=${id}`)
+        setDataPasien(response.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    fetchData()
+  }, [riwayatSoap])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
         const updatedDokterNames = {}
         for (const riwayat of riwayatSoap) {
           const response = await api.get(
             `api/v1/getDataPasienRalanByNoRawat?noRawat=${riwayat.no_rawat}`,
           )
           const data = response.data
+          setDataPasienByNoRawat(response.data)
           updatedDokterNames[riwayat.no_rawat] = data.nm_dokter.toUpperCase()
         }
         setDokterNames(updatedDokterNames)
@@ -437,7 +453,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
       doc.setFont('helvetica', 'bold')
       doc.text(title, 10, yPos)
       doc.setFont('helvetica', 'normal')
-      const splitText = doc.splitTextToSize(content || '-', 180)
+      const splitText = doc.splitTextToSize(content || '-', 85)
       if (yPos + splitText.length * 5 + lineSpacing >= pageHeight) {
         doc.addPage()
         yPos = addTitleHead(doc, img) + lineSpacing
@@ -454,6 +470,34 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
       doc.line(10, yPos, 200, yPos)
       yPos += 4
     }
+
+    // DATA PASIEN
+    doc.setFont('helvetica', 'bold')
+    doc.text('Data Pasien', 10, yPos)
+    yPos += lineSpacing
+    doc.setFont('helvetica', 'normal')
+
+    const pasienDataKiri = [
+      `Nama : ${dataPasienByNoRawat.nm_pasien || '-'}`,
+      `No Rekam Medis : ${dataPasienByNoRawat.no_rkm_medis || '-'}`,
+      `Tanggal Lahir : ${dataPasien.tgl_lahir || '-'}`,
+    ]
+
+    const pasienDataKanan = [
+      `Jenis Kelamin : ${dataPasien.jk || '-'}`,
+      `Jam Masuk : ${dataPasienByNoRawat.jam_reg || '-'}`,
+    ]
+
+    pasienDataKiri.forEach((item, index) => {
+      doc.text(item, 10, yPos + index * 6)
+    })
+
+    pasienDataKanan.forEach((item, index) => {
+      doc.text(item, 110, yPos + index * 6)
+    })
+
+    yPos += Math.max(pasienDataKiri.length, pasienDataKanan.length) * 6 + lineSpacing
+    addLine()
 
     // Header Dokumen
     doc.setFont('helvetica', 'bold')
@@ -482,7 +526,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
     // Vital Sign
     doc.setFont('helvetica', 'bold')
     doc.text('VITALITY SIGN', 10, yPos)
-    yPos += 5
+    yPos += 10
     doc.setFont('helvetica', 'normal')
     const vitalSigns = [
       `SUHU(C) : ${riwayat.suhu_tubuh || '-'}`,
@@ -512,8 +556,9 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
     addSection('INSTRUKSI', riwayat.instruksi)
     addSection('EVALUASI', riwayat.evaluasi)
 
-    // Simpan PDF
-    doc.save(`riwayat_${riwayat.no_rawat}.pdf`)
+    // Cetak PDF tanpa menyimpan
+    doc.autoPrint()
+    window.open(doc.output('bloburl'), '_blank')
   }
 
   return (
@@ -761,7 +806,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                         className='text text-gray-100 btn bg-primary btn-md'
                         onClick={() => generatePDF(riwayat)}
                       >
-                        Print
+                        CETAK SOAP
                       </button>
                       <button
                         className='text text-gray-100 btn bg-primary btn-md'
@@ -777,7 +822,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
                           )
                         }
                       >
-                        Print PDF
+                        CETAK SBPK
                       </button>
                       <button
                         className='text text-gray-100 btn bg-primary btn-md'
