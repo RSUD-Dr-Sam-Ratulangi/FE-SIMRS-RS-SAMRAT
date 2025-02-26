@@ -348,7 +348,7 @@ const InsertSoapRalan1: React.FC<{
           tinggi: dataSoap?.tinggi || '',
           berat: dataSoap?.berat || '',
           spo2: dataSoap?.spo2 || '',
-          gcs: dataSoap?.tensi || '',
+          gcs: dataSoap?.gcs || '',
           kesadaran: dataSoap.kesadaran || '',
           keluhan: dataSoap?.keluhan || '',
           pemeriksaan: dataSoap?.pemeriksaan || '',

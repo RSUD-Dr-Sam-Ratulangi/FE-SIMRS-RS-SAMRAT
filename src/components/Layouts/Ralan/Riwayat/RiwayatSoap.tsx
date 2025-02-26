@@ -416,7 +416,7 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
       const textWidth = doc.getTextWidth(namePlace)
       const locationWidth = doc.getTextWidth(location)
 
-      const xOffset = (pageWidth - textWidth) / 1.9
+      const xOffset = (pageWidth - textWidth) / 1
       const addressOffset = (pageWidth - textWidth) / 2.5
       const locationOffset = (pageWidth - locationWidth) / 1.7
 
