@@ -105,6 +105,12 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
   const Kd = JSON.parse(tokenValue)
   const role = Object.keys(Kd)[0]
 
+  const formattedDate = new Intl.DateTimeFormat('id-ID', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date())
+
   useEffect(() => {
     const fetchRiwayatSoap = async () => {
       setIsLoading(true)
@@ -416,9 +422,9 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
       const textWidth = doc.getTextWidth(namePlace)
       const locationWidth = doc.getTextWidth(location)
 
-      const xOffset = (pageWidth - textWidth) / 1
-      const addressOffset = (pageWidth - textWidth) / 2.5
-      const locationOffset = (pageWidth - locationWidth) / 1.7
+      const xOffset = (pageWidth - textWidth) / 1.8
+      const addressOffset = (pageWidth - textWidth) / 2.7
+      const locationOffset = (pageWidth - locationWidth) / 1.8
 
       const logoWidth = 30
       const logoHeight = 25
@@ -552,9 +558,23 @@ const RiwayatSoapRalan: React.FC<RiwayatSoapRalanProps> = ({
 
     // Asesmen, Plan, Instruksi, Evaluasi
     addSection('ASESMEN', riwayat.penilaian)
+    addLine()
     addSection('PLAN', riwayat.rtl)
+    addLine()
     addSection('INSTRUKSI', riwayat.instruksi)
+    addLine()
     addSection('EVALUASI', riwayat.evaluasi)
+    addLine()
+    yPos += lineSpacing - 13
+
+    addLine()
+    yPos += lineSpacing
+    doc.setFont('helvetica', 'bold')
+    doc.text(`Tondano, ${formattedDate}`, 10, yPos)
+    yPos += lineSpacing + 15
+    doc.setFont('helvetica', 'bold')
+    doc.text(`${dokterNames[riwayat.no_rawat]}`, 10, yPos)
+    yPos += lineSpacing
 
     // Cetak PDF tanpa menyimpan
     doc.autoPrint()
